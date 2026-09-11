@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+
+  /* KIYANZA brand tokens */
+  --color-green-600: #1bb14a;
+  --color-green-accent: #00c853;
+  --color-green-accent-dark: #00a846;
+  --color-blue-500: #296bd6;
+  --color-orange-500: #f97316;
+  --color-orange-accent: #ff6a00;
+  --color-navy: #0d1f3c;
+  --color-footer-bg: #060f1e;
+  --color-gray-text: #6a7282;
+  --color-gray-text-light: #99a1af;
+  --color-border-light: #f3f4f6;
+  --color-border: #e5e7eb;
+
+  --container-page: 1280px;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
