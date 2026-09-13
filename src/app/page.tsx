@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Navbar } from "@/components/sections/Navbar";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { FeaturesSection } from "@/components/sections/FeaturesSection";
@@ -6,6 +7,24 @@ import { IntelligenceSection } from "@/components/sections/IntelligenceSection";
 import { CTASection } from "@/components/sections/CTASection";
 import { Footer } from "@/components/sections/Footer";
 import { ChatbotWidget } from "@/components/ChatbotWidget";
+import { siteConfig } from "@/lib/site-config";
+
+export const metadata: Metadata = {
+  title: { absolute: siteConfig.defaultTitle },
+  description: siteConfig.defaultDescription,
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: siteConfig.defaultTitle,
+    description: siteConfig.defaultDescription,
+    url: "/",
+  },
+  twitter: {
+    title: siteConfig.defaultTitle,
+    description: siteConfig.defaultDescription,
+  },
+};
 
 export default function Home() {
   return (

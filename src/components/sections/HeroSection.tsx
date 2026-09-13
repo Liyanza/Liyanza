@@ -41,6 +41,32 @@ function FloatingBadge({
   );
 }
 
+function StatCard({
+  icon,
+  label,
+  value,
+  className = "",
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+  className?: string;
+}) {
+  return (
+    <div
+      className={`absolute hidden items-center gap-3 rounded-2xl bg-white/95 px-4 py-3 shadow-[0_12px_32px_-8px_rgba(13,31,60,0.25)] ring-1 ring-black/5 backdrop-blur-sm sm:flex ${className}`}
+    >
+      <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[#e8f5e9]">
+        {icon}
+      </div>
+      <div className="leading-tight">
+        <p className="text-[11px] font-medium text-gray-text">{label}</p>
+        <p className="text-sm font-extrabold text-navy">{value}</p>
+      </div>
+    </div>
+  );
+}
+
 export function HeroSection() {
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-[#f0fdf4] via-white to-[#eff6ff]">
@@ -64,7 +90,7 @@ export function HeroSection() {
           </span>
         </div>
 
-        <div className="grid grid-cols-1 items-center gap-16 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-16 lg:grid-cols-2">
           <div>
             <h1 className="text-5xl font-extrabold leading-[1.08] tracking-tight text-black sm:text-6xl">
               Pilotez vos campagnes.
@@ -116,47 +142,61 @@ export function HeroSection() {
             </ul>
           </div>
 
-          <div className="relative mx-auto w-full max-w-[520px]">
-            <div className="relative">
+          <div className="relative h-full w-full">
+            {/* Organic gradient backdrop — stretches to match the text column's height */}
+            <div
+              className="absolute inset-0 -z-10 rounded-[48%_52%_54%_46%/50%_45%_55%_50%] bg-gradient-to-br from-[#d5f5e1] via-[#e3f8ee] to-[#dbeafe] shadow-[inset_0_1px_0_rgba(255,255,255,0.6)]"
+              aria-hidden="true"
+            />
+            {/* Ground shadow anchored to the true bottom of the backdrop */}
+            <div
+              className="absolute bottom-[6%] left-1/2 h-10 w-3/5 -translate-x-1/2 rounded-full bg-navy/15 blur-2xl"
+              aria-hidden="true"
+            />
+
+            <div className="relative mx-auto w-full max-w-[600px] px-4 pt-6 sm:px-8">
               <Image
-                src="/hero-illustration.png"
-                alt="Illustration d'une personne satisfaite consultant ses résultats de campagnes sur un ordinateur portable"
-                width={663}
-                height={459}
-                className="h-full w-full object-contain"
+                src="/hero-photo.png"
+                alt="Une professionnelle du marketing souriante, ordinateur portable à la main, prête à piloter ses campagnes avec KIYANZA"
+                width={1536}
+                height={1024}
+                className="relative h-auto w-full object-contain mix-blend-multiply"
                 priority
               />
-              <Image
-                src="/kiyanza-logo-mark.svg"
-                alt=""
-                width={85}
-                height={56}
-                aria-hidden="true"
-                className="absolute left-[41%] top-[55%] h-auto w-[15%] max-w-[80px]"
-              />
-            </div>
 
-            <FloatingBadge
-              icon={<TrendingUp className="size-5 text-green-600" aria-hidden="true" />}
-              className="-right-5 top-4"
-            />
-            <FloatingBadge
-              icon={<Lightbulb className="size-5 text-orange-accent" aria-hidden="true" />}
-              className="-left-6 top-8"
-            />
-            <FloatingBadge
-              icon={<Megaphone className="size-5 text-blue-500" aria-hidden="true" />}
-              className="-right-8 bottom-16"
-            />
-            <div
-              className="absolute -top-5 left-[18%] hidden size-[71px] items-center justify-center rounded-full bg-white shadow-[0_4px_16px_-2px_rgba(249,115,22,0.15)] sm:flex"
-              aria-hidden="true"
-            >
-              <div className="relative flex size-[53px] items-center justify-center rounded-full bg-white shadow-[0_4px_14px_-2px_rgba(22,163,74,0.12)]">
-                <Cloud className="size-5 text-green-600" aria-hidden="true" />
-                <span className="absolute -right-0.5 -top-0.5 size-2.5 rounded-full bg-red-500 ring-2 ring-white" />
+              <StatCard
+                icon={<Sparkles className="size-4 text-blue-500" aria-hidden="true" />}
+                label="Recommandations IA"
+                value="Temps réel"
+                className="-right-4 top-10 sm:right-0"
+              />
+
+              <FloatingBadge
+                icon={<Lightbulb className="size-5 text-orange-accent" aria-hidden="true" />}
+                className="-left-2 top-2"
+              />
+              <FloatingBadge
+                icon={<Megaphone className="size-5 text-blue-500" aria-hidden="true" />}
+                className="-right-2 bottom-6"
+              />
+              <div
+                className="absolute -top-4 left-[38%] hidden size-[62px] items-center justify-center rounded-full bg-white shadow-[0_4px_16px_-2px_rgba(249,115,22,0.15)] sm:flex"
+                aria-hidden="true"
+              >
+                <div className="relative flex size-[46px] items-center justify-center rounded-full bg-white shadow-[0_4px_14px_-2px_rgba(22,163,74,0.12)]">
+                  <Cloud className="size-4 text-green-600" aria-hidden="true" />
+                  <span className="absolute -right-0.5 -top-0.5 size-2.5 rounded-full bg-red-500 ring-2 ring-white" />
+                </div>
               </div>
             </div>
+
+            {/* Anchored lower in the backdrop to balance the composition against the text column's full height */}
+            <StatCard
+              icon={<TrendingUp className="size-4 text-green-600" aria-hidden="true" />}
+              label="Croissance ROI"
+              value="+320%"
+              className="bottom-[14%] left-[4%]"
+            />
           </div>
         </div>
       </Container>

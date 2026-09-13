@@ -14,10 +14,25 @@ import { ReportMockup } from "@/components/sections/fonctionnalites/ReportMockup
 import { ProcessSteps } from "@/components/sections/fonctionnalites/ProcessSteps";
 import { FeaturesFinalCTA } from "@/components/sections/fonctionnalites/FeaturesFinalCTA";
 
+const title = "Fonctionnalités";
+const description =
+  "Découvrez toutes les fonctionnalités de KIYANZA : création de campagnes, scénarios IA, gestion centralisée, monitoring temps réel, recommandations et rapports.";
+
 export const metadata: Metadata = {
-  title: "Fonctionnalités — KIYANZA",
-  description:
-    "Découvrez toutes les fonctionnalités de KIYANZA : création de campagnes, scénarios IA, gestion centralisée, monitoring temps réel, recommandations et rapports.",
+  title,
+  description,
+  alternates: {
+    canonical: "/fonctionnalites",
+  },
+  openGraph: {
+    title,
+    description,
+    url: "/fonctionnalites",
+  },
+  twitter: {
+    title,
+    description,
+  },
 };
 
 const accents = {

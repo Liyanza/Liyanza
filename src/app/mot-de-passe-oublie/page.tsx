@@ -4,9 +4,29 @@ import { StatTrio } from "@/components/auth/StatTrio";
 import { DashboardMockCard } from "@/components/auth/DashboardMockCard";
 import { ForgotPasswordForm } from "@/components/sections/mot-de-passe-oublie/ForgotPasswordForm";
 
+const title = "Mot de passe oublié";
+const description = "Nous allons vous envoyer un lien pour réinitialiser votre mot de passe en toute sécurité.";
+
 export const metadata: Metadata = {
-  title: "Mot de passe oublié — KIYANZA",
-  description: "Nous allons vous envoyer un lien pour réinitialiser votre mot de passe en toute sécurité.",
+  title,
+  description,
+  alternates: {
+    canonical: "/mot-de-passe-oublie",
+  },
+  // Page de compte utilisateur : pas d'intérêt à l'indexer dans Google.
+  robots: {
+    index: false,
+    follow: true,
+  },
+  openGraph: {
+    title,
+    description,
+    url: "/mot-de-passe-oublie",
+  },
+  twitter: {
+    title,
+    description,
+  },
 };
 
 export default function MotDePasseOubliePage() {

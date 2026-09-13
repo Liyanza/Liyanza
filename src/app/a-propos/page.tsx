@@ -10,14 +10,33 @@ import { TimelineSection } from "@/components/sections/apropos/TimelineSection";
 import { TeamSection } from "@/components/sections/apropos/TeamSection";
 import { AboutFAQ } from "@/components/sections/apropos/AboutFAQ";
 import { AboutFinalCTA } from "@/components/sections/apropos/AboutFinalCTA";
+import { aboutFaqs } from "@/data/faqs";
+import { faqPageJsonLd } from "@/lib/structured-data";
+
+const title = "À propos";
+const description =
+  "Nous rendons le marketing lisible par tous. Découvrez la mission, les valeurs, l'histoire et l'équipe derrière KIYANZA.";
 
 export const metadata: Metadata = {
-  title: "À propos — KIYANZA",
-  description:
-    "Nous rendons le marketing lisible par tous. Découvrez la mission, les valeurs, l'histoire et l'équipe derrière KIYANZA.",
+  title,
+  description,
+  alternates: {
+    canonical: "/a-propos",
+  },
+  openGraph: {
+    title,
+    description,
+    url: "/a-propos",
+  },
+  twitter: {
+    title,
+    description,
+  },
 };
 
 export default function AProposPage() {
+  const jsonLd = faqPageJsonLd(aboutFaqs, "/a-propos");
+
   return (
     <>
       <Navbar />
@@ -33,6 +52,10 @@ export default function AProposPage() {
       </main>
       <Footer />
       <ChatbotWidget />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
     </>
   );
 }

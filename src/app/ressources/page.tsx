@@ -11,14 +11,33 @@ import { VideosSection } from "@/components/sections/ressources/VideosSection";
 import { ResourcesFAQ } from "@/components/sections/ressources/ResourcesFAQ";
 import { NewsletterSection } from "@/components/sections/ressources/NewsletterSection";
 import { ResourcesFinalCTA } from "@/components/sections/ressources/ResourcesFinalCTA";
+import { resourcesFaqs } from "@/data/faqs";
+import { faqPageJsonLd } from "@/lib/structured-data";
+
+const title = "Ressources";
+const description =
+  "Guides, tutoriels, vidéos et FAQ — tout ce qu'il faut pour piloter vos campagnes comme un expert avec KIYANZA.";
 
 export const metadata: Metadata = {
-  title: "Ressources — KIYANZA",
-  description:
-    "Guides, tutoriels, vidéos et FAQ — tout ce qu'il faut pour piloter vos campagnes comme un expert avec KIYANZA.",
+  title,
+  description,
+  alternates: {
+    canonical: "/ressources",
+  },
+  openGraph: {
+    title,
+    description,
+    url: "/ressources",
+  },
+  twitter: {
+    title,
+    description,
+  },
 };
 
 export default function RessourcesPage() {
+  const jsonLd = faqPageJsonLd(resourcesFaqs, "/ressources");
+
   return (
     <>
       <Navbar />
@@ -35,6 +54,10 @@ export default function RessourcesPage() {
       </main>
       <Footer />
       <ChatbotWidget />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
     </>
   );
 }
