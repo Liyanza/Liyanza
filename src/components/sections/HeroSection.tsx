@@ -129,10 +129,10 @@ export function HeroSection() {
               <Image
                 src="/kiyanza-logo-mark.svg"
                 alt=""
-                width={80}
-                height={49}
+                width={85}
+                height={56}
                 aria-hidden="true"
-                className="absolute left-[41%] top-[55%] w-[15%] max-w-[80px]"
+                className="absolute left-[41%] top-[55%] h-auto w-[15%] max-w-[80px]"
               />
             </div>
 

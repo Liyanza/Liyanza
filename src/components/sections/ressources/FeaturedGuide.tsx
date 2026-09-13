@@ -1,0 +1,76 @@
+import { BookOpen, Clock, Download, Tag } from "lucide-react";
+import { Container } from "@/components/ui/Container";
+
+const tags = ["Stratégie", "Budgets", "KPIs", "IA", "Multi-canaux"];
+
+export function FeaturedGuide() {
+  return (
+    <section className="bg-[#19a546] py-20">
+      <Container>
+        <div className="grid grid-cols-1 overflow-hidden border border-white/30 lg:grid-cols-2">
+          <div className="flex items-center justify-center bg-[#18181b] p-12">
+            <div className="flex flex-col items-center text-center">
+              <div className="flex size-20 items-center justify-center rounded-full bg-orange-500">
+                <BookOpen className="size-8 text-white" aria-hidden="true" />
+              </div>
+              <p className="mt-6 text-4xl font-black text-white">Guide</p>
+              <p className="mt-2 text-base font-black tracking-wide text-orange-500">
+                COMPLET
+              </p>
+              <div className="mt-6 flex items-center gap-4 text-sm text-white">
+                <span className="flex items-center gap-1.5">
+                  <Clock className="size-3.5" aria-hidden="true" />
+                  45 min
+                </span>
+                <span aria-hidden="true">·</span>
+                <span className="flex items-center gap-1.5">
+                  <Tag className="size-3.5" aria-hidden="true" />
+                  Stratégie
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col justify-center bg-white/5 p-10 sm:p-12">
+            <span className="text-xs font-bold uppercase tracking-widest text-orange-500">
+              Guide vedette
+            </span>
+            <h3 className="mt-4 text-3xl font-black leading-tight text-white">
+              Le guide complet du pilotage de campagnes marketing
+            </h3>
+            <p className="mt-4 text-sm leading-relaxed text-white/90">
+              De la stratégie à l&apos;analyse des performances, ce guide
+              complet vous accompagne à chaque étape pour tirer le meilleur
+              de KIYANZA et de vos investissements marketing.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-2">
+              {tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="rounded-md border border-white/40 px-3 py-1 text-xs font-medium text-white"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <button
+                type="button"
+                className="flex items-center gap-2 rounded-full bg-green-accent-dark px-6 py-3 text-sm font-bold text-white transition hover:brightness-110"
+              >
+                <Download className="size-3.5" aria-hidden="true" />
+                Télécharger le guide
+              </button>
+              <button
+                type="button"
+                className="rounded-full border border-white px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+              >
+                Lire en ligne
+              </button>
+            </div>
+          </div>
+        </div>
+      </Container>
+    </section>
+  );
+}

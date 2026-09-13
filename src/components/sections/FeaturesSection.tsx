@@ -1,5 +1,6 @@
 import { ArrowRight, BarChart3, BookOpen, Cloud, Target } from "lucide-react";
-import { FaFacebook, FaGoogle, FaInstagram, FaWhatsapp } from "react-icons/fa6";
+import { FaFacebook, FaInstagram, FaWhatsapp } from "react-icons/fa6";
+import { FcGoogle } from "react-icons/fc";
 import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
 import { FeatureCard, SocialIconCircle } from "@/components/ui/FeatureCard";
@@ -103,7 +104,7 @@ export function FeaturesSection() {
                   <FaInstagram className="text-[#E4405F]" aria-hidden="true" />
                 </SocialIconCircle>
                 <SocialIconCircle>
-                  <FaGoogle className="text-[#4285F4]" aria-hidden="true" />
+                  <FcGoogle aria-hidden="true" />
                 </SocialIconCircle>
                 <SocialIconCircle>
                   <FaWhatsapp className="text-[#25D366]" aria-hidden="true" />

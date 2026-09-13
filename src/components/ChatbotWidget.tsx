@@ -1,16 +1,30 @@
 "use client";
 
 import { useState } from "react";
-import { Sparkles } from "lucide-react";
+import { Sparkles, X } from "lucide-react";
 import { ChatPanel } from "@/components/ChatPanel";
 
 export function ChatbotWidget() {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="fixed bottom-6 right-6 z-40 flex flex-col items-end gap-2">
+    <div
+      className={`fixed bottom-6 right-6 z-40 flex flex-col gap-2 ${
+        open ? "items-center" : "items-end"
+      }`}
+    >
       {open ? (
-        <ChatPanel onClose={() => setOpen(false)} />
+        <>
+          <ChatPanel />
+          <button
+            type="button"
+            aria-label="Fermer le chat"
+            onClick={() => setOpen(false)}
+            className="relative flex size-16 items-center justify-center rounded-full bg-red-500 shadow-[0_2px_8px_rgba(13,31,60,0.3),0_8px_32px_rgba(0,200,83,0.45)] transition hover:brightness-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-accent focus-visible:ring-offset-2"
+          >
+            <X className="size-6 text-white" aria-hidden="true" />
+          </button>
+        </>
       ) : (
         <>
           <div className="rounded-full bg-[#488bf6] px-3 py-1.5 shadow-[0_4px_6px_rgba(0,0,0,0.1),0_10px_15px_rgba(0,0,0,0.1)]">

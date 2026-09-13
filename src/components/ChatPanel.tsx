@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { Send, X } from "lucide-react";
+import { Send } from "lucide-react";
 
 interface Message {
   id: number;
@@ -21,7 +21,7 @@ const BOT_REPLY =
 
 let nextId = 1;
 
-export function ChatPanel({ onClose }: { onClose: () => void }) {
+export function ChatPanel() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: nextId++,
@@ -61,14 +61,6 @@ export function ChatPanel({ onClose }: { onClose: () => void }) {
           <p className="text-sm font-bold text-white">Assistant KIYANZA</p>
           <p className="text-[11px] text-[#8fafd4]">Expert Marketing IA · En ligne</p>
         </div>
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label="Fermer le chat"
-          className="flex size-7 shrink-0 items-center justify-center rounded-full text-white/80 transition hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-        >
-          <X className="size-4" aria-hidden="true" />
-        </button>
       </div>
 
       <div className="flex flex-wrap gap-2 p-3">

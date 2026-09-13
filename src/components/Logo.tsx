@@ -7,29 +7,26 @@ export function Logo({
   variant?: "light" | "dark";
   className?: string;
 }) {
-  const tagline = variant === "dark" ? "text-[#8fa3bd]" : "text-gray-text";
   const word = variant === "dark" ? "text-white" : "text-black";
 
   return (
-    <div className={`flex items-center gap-2.5 ${className}`}>
+    <div className={`relative aspect-[165/55.67] h-16 ${className}`}>
       <Image
         src="/kiyanza-logo-mark.svg"
         alt="Logo KIYANZA"
-        width={38}
-        height={25}
-        className="h-auto w-9"
+        width={85}
+        height={56}
+        className="absolute left-0 top-0 h-full w-auto"
         priority
       />
-      <div className="flex flex-col justify-center">
-        <span
-          className={`text-xl font-extrabold leading-tight tracking-[-0.02em] ${word}`}
-        >
-          KIYANZA
-        </span>
-        <span className={`text-[10px] font-medium leading-tight ${tagline}`}>
-          Light your future
-        </span>
-      </div>
+      <span
+        className={`absolute left-[45.5%] top-[37.7%] whitespace-nowrap text-2xl font-extrabold leading-none tracking-[-0.02em] ${word}`}
+      >
+        KIYANZA
+      </span>
+      <span className="absolute left-[52%] top-[77.5%] whitespace-nowrap text-[9px] font-medium leading-none text-green-accent">
+        Light your future
+      </span>
     </div>
   );
 }
