@@ -56,6 +56,29 @@ export const pricingFaqs: FaqEntry[] = [
   },
 ];
 
+export const homeFaqs: FaqEntry[] = [
+  {
+    question: "KIYANZA est-il adapté aux petites entreprises ?",
+    answer:
+      "Oui, KIYANZA s'adapte à la taille de votre équipe, de l'indépendant à la grande entreprise, grâce à des formules progressives.",
+  },
+  {
+    question: "L'IA prend-elle les décisions à ma place ?",
+    answer:
+      "Non. KIYANZA est un outil d'aide à la décision. L'IA analyse vos données et formule des recommandations — la décision finale vous appartient toujours.",
+  },
+  {
+    question: "Puis-je connecter plusieurs canaux ?",
+    answer:
+      "Oui, vous pouvez centraliser et piloter Facebook, Instagram, WhatsApp et d'autres canaux depuis un seul tableau de bord.",
+  },
+  {
+    question: "Les données sont-elles sécurisées ?",
+    answer:
+      "Vos données sont chiffrées et hébergées de manière sécurisée. KIYANZA ne partage jamais vos données avec des tiers.",
+  },
+];
+
 export const resourcesFaqs: FaqEntry[] = [
   {
     question: "Comment accéder aux rapports ?",

@@ -17,20 +17,32 @@ export function Badge({
 }
 
 type EyebrowVariant = "pill" | "plain" | "line";
+type EyebrowTone = "green" | "orange";
 
 export function SectionEyebrow({
   children,
   variant = "plain",
+  tone = "green",
   className = "",
 }: {
   children: ReactNode;
   variant?: EyebrowVariant;
+  tone?: EyebrowTone;
   className?: string;
 }) {
   const textClasses =
     "text-xs font-bold uppercase tracking-[0.1em]";
 
   if (variant === "pill") {
+    if (tone === "orange") {
+      return (
+        <span
+          className={`inline-flex items-center rounded-full border border-orange-500/30 bg-orange-500/[0.06] px-4 py-1.5 ${textClasses} text-orange-500 ${className}`}
+        >
+          {children}
+        </span>
+      );
+    }
     return (
       <span
         className={`inline-flex items-center rounded-full bg-[#e8f5e9] px-4 py-1.5 ${textClasses} text-green-accent-dark ${className}`}

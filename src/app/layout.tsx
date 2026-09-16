@@ -68,7 +68,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   const jsonLd = [organizationJsonLd(), websiteJsonLd()];
 
   return (
-    <html lang="fr" className={`${poppins.variable} h-full antialiased`}>
+    <html
+      lang="fr"
+      className={`${poppins.variable} h-full scroll-smooth scroll-pt-20 antialiased`}
+    >
       <body className="min-h-full flex flex-col font-sans">
         {children}
         {jsonLd.map((data, index) => (
