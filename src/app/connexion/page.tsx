@@ -30,8 +30,8 @@ export const metadata: Metadata = {
 export default function ConnexionPage() {
   return (
     <AuthShell
-      backVariant="icon"
-      brandHeading="Bon retour parmi nous"
+      backVariant="none"
+      brandHeading="Bon retour parmi nous !"
       brandParagraph="Accédez à votre cockpit marketing et reprenez le pilotage là où vous l'aviez laissé."
     >
       <LoginForm />

@@ -54,7 +54,8 @@ export function LandingHero() {
             </SectionEyebrow>
 
             <h1 className="mt-6 text-4xl font-black leading-[1.15] tracking-tight text-zinc-950 sm:text-5xl lg:text-6xl">
-              Pilotez vos campagnes avec l&apos;intelligence artificielle
+              Pilotez vos campagnes avec{" "}
+              <span className="text-orange-500">l&apos;intelligence artificielle</span>
             </h1>
 
             <p className="mt-6 max-w-lg text-lg leading-relaxed text-gray-text">

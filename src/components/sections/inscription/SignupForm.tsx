@@ -63,7 +63,7 @@ export function SignupForm() {
         <h2 className="text-3xl font-extrabold text-black">Créer un compte</h2>
         <p className="text-sm text-[#71717a]">
           Déjà inscrit ?{" "}
-          <Link href="/connexion" className="font-semibold text-green-accent-dark">
+          <Link href="/connexion" className="font-semibold text-green-600">
             Se connecter
           </Link>
         </p>
@@ -199,7 +199,7 @@ export function SignupForm() {
           <button
             type="submit"
             disabled={!canSubmit}
-            className="mt-2 flex items-center justify-center gap-2 rounded-full bg-green-accent-dark py-3.5 text-sm font-bold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:bg-[#e4e4e7] disabled:text-white"
+            className="mt-2 flex items-center justify-center gap-2 rounded-full bg-green-600 py-3.5 text-sm font-bold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:bg-[#e4e4e7] disabled:text-white"
           >
             Créer mon compte gratuitement
             <ArrowRight className="size-4" aria-hidden="true" />

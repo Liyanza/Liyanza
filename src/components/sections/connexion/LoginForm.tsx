@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Eye, EyeOff, Lock, Mail } from "lucide-react";
+import { ArrowLeft, ArrowRight, Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { FormField } from "@/components/auth/FormField";
 import { Checkbox } from "@/components/auth/Checkbox";
 import { SocialButtons } from "@/components/auth/SocialButtons";
@@ -20,7 +20,7 @@ export function LoginForm() {
         <h2 className="text-3xl font-extrabold text-black">Connexion</h2>
         <p className="text-sm text-[#71717a]">
           Pas encore de compte ?{" "}
-          <Link href="/inscription" className="font-semibold text-green-accent-dark">
+          <Link href="/inscription" className="font-semibold text-green-600">
             Créer un compte
           </Link>
         </p>
@@ -76,7 +76,7 @@ export function LoginForm() {
             </Checkbox>
             <Link
               href="/mot-de-passe-oublie"
-              className="text-xs font-semibold text-green-accent-dark"
+              className="text-xs font-semibold text-green-600"
             >
               Mot de passe oublié ?
             </Link>
@@ -84,7 +84,7 @@ export function LoginForm() {
 
           <button
             type="submit"
-            className="mt-2 flex items-center justify-center gap-2 rounded-full bg-green-accent-dark py-3.5 text-sm font-bold text-white transition hover:brightness-110"
+            className="mt-2 flex items-center justify-center gap-2 rounded-full bg-green-600 py-3.5 text-sm font-bold text-white transition hover:brightness-110"
           >
             Se connecter
             <ArrowRight className="size-4" aria-hidden="true" />
@@ -92,10 +92,19 @@ export function LoginForm() {
         </form>
       </div>
 
-      <p className="mt-8 border-t border-[#f4f4f5] pt-6 text-center text-xs leading-relaxed text-[#a1a1aa]">
-        En vous connectant, vous acceptez nos Conditions d&apos;utilisation et
-        notre Politique de confidentialité.
-      </p>
+      <div className="mt-6 flex flex-col items-center gap-6 border-t border-[#f4f4f5] pt-6">
+        <p className="text-center text-xs leading-relaxed text-[#a1a1aa]">
+          En vous connectant, vous acceptez nos Conditions d&apos;utilisation
+          et notre Politique de confidentialité.
+        </p>
+        <Link
+          href="/"
+          className="flex items-center gap-2 text-xs font-semibold text-black"
+        >
+          <ArrowLeft className="size-3.5 text-green-accent" aria-hidden="true" />
+          Retour à l&apos;accueil
+        </Link>
+      </div>
     </div>
   );
 }

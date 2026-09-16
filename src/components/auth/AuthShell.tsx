@@ -3,23 +3,22 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { SecurityNote } from "@/components/auth/SecurityNote";
+import { BrandVisual } from "@/components/auth/BrandVisual";
 
 export function AuthShell({
   brandHeading,
   brandParagraph,
-  brandExtra,
   backVariant = "text",
   children,
 }: {
   brandHeading: string;
   brandParagraph: string;
-  brandExtra?: ReactNode;
-  backVariant?: "icon" | "text";
+  backVariant?: "icon" | "text" | "none";
   children: ReactNode;
 }) {
   return (
     <div className="flex min-h-screen w-full bg-white">
-      <div className="relative hidden w-full max-w-[480px] shrink-0 flex-col justify-between bg-[#09090b] p-12 lg:flex">
+      <div className="relative hidden w-full max-w-[560px] shrink-0 flex-col justify-between overflow-hidden bg-gradient-to-b from-green-accent-dark to-green-600 p-12 lg:flex">
         <div>
           <Logo variant="dark" />
         </div>
@@ -28,10 +27,10 @@ export function AuthShell({
           <h1 className="text-4xl font-black leading-tight text-white">
             {brandHeading}
           </h1>
-          <p className="mt-4 text-base leading-relaxed text-white/90">
+          <p className="mt-4 text-base leading-relaxed text-white/70">
             {brandParagraph}
           </p>
-          {brandExtra && <div className="mt-10">{brandExtra}</div>}
+          <BrandVisual />
         </div>
 
         <SecurityNote />
@@ -46,7 +45,7 @@ export function AuthShell({
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
           </Link>
-        ) : (
+        ) : backVariant === "text" ? (
           <Link
             href="/"
             className="absolute right-6 top-6 flex items-center gap-1.5 border border-[#e4e4e7] px-4 py-2 text-xs font-medium text-[#71717a] transition hover:bg-[#f4f4f5] sm:right-12 sm:top-12"
@@ -54,7 +53,7 @@ export function AuthShell({
             <ArrowLeft className="size-3.5" aria-hidden="true" />
             Retour au site
           </Link>
-        )}
+        ) : null}
 
         <div className="w-full max-w-[420px] py-8">{children}</div>
       </div>

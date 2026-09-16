@@ -79,7 +79,7 @@ export function ForgotPasswordForm() {
             ← Renvoyer l&apos;email
           </button>
           <span className="text-[#e4e4e7]">|</span>
-          <Link href="/connexion" className="font-semibold text-green-accent-dark">
+          <Link href="/connexion" className="font-semibold text-green-600">
             Retour à la connexion
           </Link>
         </div>
@@ -123,7 +123,7 @@ export function ForgotPasswordForm() {
 
         <button
           type="submit"
-          className="mt-1 flex items-center justify-center gap-2 rounded-full bg-green-accent-dark py-3.5 text-sm font-bold text-white transition hover:brightness-110"
+          className="mt-1 flex items-center justify-center gap-2 rounded-full bg-green-600 py-3.5 text-sm font-bold text-white transition hover:brightness-110"
         >
           Recevoir le lien de réinitialisation
           <ArrowRight className="size-4" aria-hidden="true" />
@@ -140,7 +140,7 @@ export function ForgotPasswordForm() {
 
       <p className="mt-8 border-t border-[#f4f4f5] pt-6 text-center text-sm text-[#71717a]">
         Vous vous souvenez de votre mot de passe ?{" "}
-        <Link href="/connexion" className="font-semibold text-green-accent-dark">
+        <Link href="/connexion" className="font-semibold text-green-600">
           Se connecter
         </Link>
       </p>
