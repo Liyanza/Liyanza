@@ -1,5 +1,6 @@
 import { ArrowRight, BookOpen, FileText, HelpCircle, PlayCircle } from "lucide-react";
 import { Container } from "@/components/ui/Container";
+import { SectionEyebrow } from "@/components/ui/Badge";
 
 const categories = [
   {
@@ -37,22 +38,20 @@ export function ResourceCategories() {
     <section className="bg-white py-20">
       <Container>
         <div className="mx-auto max-w-2xl text-center">
-          <span className="inline-flex items-center rounded-full bg-orange-500 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-white">
-            Accès rapide
-          </span>
+          <SectionEyebrow variant="pill" tone="orange">Accès rapide</SectionEyebrow>
           <h2 className="mt-5 text-4xl font-extrabold text-black sm:text-5xl">
             Trouvez ce dont vous avez besoin
           </h2>
         </div>
 
-        <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {categories.map((cat) => (
-            <div key={cat.number} className="border border-[#e4e4e7] p-7">
+            <div key={cat.number} className="rounded-[5px] border border-[#e4e4e7] p-7">
               <span className="text-[10px] font-black tracking-widest text-[#e4e4e7]">
                 {cat.number}
               </span>
-              <div className="mt-5 flex size-10 items-center justify-center rounded-full border border-green-accent-dark bg-green-accent">
-                <cat.icon className="size-5 text-white" aria-hidden="true" />
+              <div className="mt-5 flex size-10 items-center justify-center rounded-full border border-green-accent-dark/20 bg-green-accent/[0.08]">
+                <cat.icon className="size-5 text-green-accent-dark" aria-hidden="true" />
               </div>
               <h3 className="mt-5 text-base font-bold text-black">{cat.title}</h3>
               <p className="mt-2 text-sm leading-relaxed text-[#71717a]">

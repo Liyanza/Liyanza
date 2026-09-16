@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Minus, Plus } from "lucide-react";
 import { Container } from "@/components/ui/Container";
+import { SectionEyebrow } from "@/components/ui/Badge";
 
 const faqs = [
   {
@@ -31,13 +32,11 @@ export function AboutFAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <section className="bg-[#fafafa] py-24">
+    <section className="border-t border-[#e4e4e7] bg-[#fafafa] py-24">
       <Container>
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_2fr]">
+        <div className="grid grid-cols-1 gap-16 lg:grid-cols-[1fr_2fr]">
           <div>
-            <span className="inline-flex items-center gap-2 rounded-full bg-orange-500 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-white">
-              FAQ
-            </span>
+            <SectionEyebrow variant="pill" tone="orange">FAQ</SectionEyebrow>
             <h2 className="mt-5 text-4xl font-extrabold text-black">
               Questions sur KIYANZA
             </h2>
@@ -61,9 +60,9 @@ export function AboutFAQ() {
                     <span className="text-base font-semibold text-black">
                       {faq.question}
                     </span>
-                    <span className="flex size-7 shrink-0 items-center justify-center rounded-full border border-border text-gray-text">
+                    <span className="flex size-7 shrink-0 items-center justify-center rounded-full border border-zinc-300 text-gray-text">
                       {isOpen ? (
-                        <Minus className="size-4" aria-hidden="true" />
+                        <Minus className="size-4 text-orange-500" aria-hidden="true" />
                       ) : (
                         <Plus className="size-4" aria-hidden="true" />
                       )}

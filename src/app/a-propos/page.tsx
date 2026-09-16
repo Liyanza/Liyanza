@@ -6,7 +6,6 @@ import { AboutHero } from "@/components/sections/apropos/AboutHero";
 import { MissionSection } from "@/components/sections/apropos/MissionSection";
 import { ChallengesSection } from "@/components/sections/apropos/ChallengesSection";
 import { ValuesSection } from "@/components/sections/apropos/ValuesSection";
-import { TimelineSection } from "@/components/sections/apropos/TimelineSection";
 import { TeamSection } from "@/components/sections/apropos/TeamSection";
 import { AboutFAQ } from "@/components/sections/apropos/AboutFAQ";
 import { AboutFinalCTA } from "@/components/sections/apropos/AboutFinalCTA";
@@ -45,7 +44,6 @@ export default function AProposPage() {
         <MissionSection />
         <ChallengesSection />
         <ValuesSection />
-        <TimelineSection />
         <TeamSection />
         <AboutFAQ />
         <AboutFinalCTA />

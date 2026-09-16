@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import Link from "next/link";
 
-type Variant = "solid" | "outline" | "hero" | "cta" | "outline-white";
+type Variant = "solid" | "outline" | "cta";
 type Size = "sm" | "md" | "lg";
 
 const base =
@@ -12,10 +12,7 @@ const variants: Record<Variant, string> = {
     "bg-green-accent-dark text-white hover:bg-green-600 shadow-sm shadow-green-accent-dark/20",
   outline:
     "border-2 border-green-accent-dark text-green-accent-dark bg-transparent hover:bg-green-accent-dark/5",
-  hero: "bg-gradient-to-r from-green-accent via-green-accent-dark to-navy text-white shadow-lg shadow-navy/25 hover:brightness-105",
   cta: "bg-gradient-to-r from-green-accent to-green-accent-dark text-white shadow-xl shadow-green-accent/40 hover:brightness-105",
-  "outline-white":
-    "border-2 border-green-accent text-green-accent bg-transparent hover:bg-green-accent/10",
 };
 
 const sizes: Record<Size, string> = {

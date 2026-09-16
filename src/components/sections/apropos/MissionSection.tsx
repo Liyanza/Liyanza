@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Check } from "lucide-react";
 import { Container } from "@/components/ui/Container";
+import { SectionEyebrow } from "@/components/ui/Badge";
 
 const commitments = [
   "Unifier vos canaux marketing dans un seul cockpit",
@@ -19,13 +20,11 @@ const barHeights = [17, 26, 20, 34, 29, 41, 43];
 
 export function MissionSection() {
   return (
-    <section className="bg-white py-24">
+    <section className="bg-green-accent-dark/[0.08] py-24">
       <Container>
         <div className="grid grid-cols-1 items-center gap-16 lg:grid-cols-2">
           <div>
-            <span className="inline-flex items-center rounded-full bg-orange-500 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-white">
-              Notre mission
-            </span>
+            <SectionEyebrow variant="pill" tone="orange">Notre mission</SectionEyebrow>
             <h2 className="mt-5 text-4xl font-extrabold leading-tight text-black sm:text-5xl">
               Donner à chaque équipe une boussole, pas juste un tableau de
               bord
@@ -44,14 +43,14 @@ export function MissionSection() {
             <ul className="mt-8 space-y-3">
               {commitments.map((item) => (
                 <li key={item} className="flex items-center gap-3">
-                  <Check className="size-4 shrink-0 text-orange-500" aria-hidden="true" />
+                  <Check className="size-4 shrink-0 text-green-accent-dark" aria-hidden="true" />
                   <span className="text-sm font-medium text-[#3f3f46]">{item}</span>
                 </li>
               ))}
             </ul>
           </div>
 
-          <div className="rounded-2xl border border-border-light bg-white p-8 shadow-[0_2px_12px_-2px_rgba(0,0,0,0.07)]">
+          <div className="rounded-[5px] border border-black/20 bg-white p-8 shadow-[0_2px_6px_0_rgba(255,102,0,0.25)]">
             <Image
               src="/kiyanza-logo-mark.svg"
               alt="Logo KIYANZA"
@@ -59,24 +58,24 @@ export function MissionSection() {
               height={56}
               className="h-10 w-auto"
             />
-            <div className="mt-6 grid grid-cols-2 gap-4">
+            <div className="mt-6 grid grid-cols-2 gap-3">
               {stats.map((stat) => (
                 <div
                   key={stat.label}
-                  className="rounded-xl border border-border-light bg-slate-50 p-4"
+                  className="rounded-[5px] border border-black/[0.07] bg-white p-3"
                 >
-                  <p className="text-xs text-gray-text">{stat.label}</p>
-                  <p className="mt-2 text-2xl font-black text-navy">{stat.value}</p>
+                  <p className="text-[10px] text-black/30">{stat.label}</p>
+                  <p className="mt-2 text-xl font-black text-black">{stat.value}</p>
                 </div>
               ))}
             </div>
-            <div className="mt-6 rounded-xl border border-border-light bg-slate-50 p-4">
-              <p className="text-xs text-gray-text">Performance hebdomadaire</p>
-              <div className="mt-3 flex h-16 items-end gap-2">
+            <div className="mt-4 border border-black/[0.06] bg-black/[0.03] p-3">
+              <p className="text-[10px] text-black/30">Performance hebdomadaire</p>
+              <div className="mt-3 flex h-16 items-end gap-1.5">
                 {barHeights.map((h, i) => (
                   <div
                     key={i}
-                    className="flex-1 rounded-t bg-blue-500"
+                    className="flex-1 bg-blue-500"
                     style={{ height: `${h}px` }}
                   />
                 ))}

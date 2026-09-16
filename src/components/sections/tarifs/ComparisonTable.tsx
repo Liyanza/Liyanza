@@ -1,5 +1,6 @@
 import { Check } from "lucide-react";
 import { Container } from "@/components/ui/Container";
+import { SectionEyebrow } from "@/components/ui/Badge";
 
 type Cell = boolean | "limited";
 
@@ -35,16 +36,21 @@ const columns: { key: keyof Omit<Row, "feature">; label: string; sub?: string }[
   { key: "enterprise", label: "ENTERPRISE" },
 ];
 
-function Cell({ value }: { value: Cell }) {
+function Cell({ value, pro = false }: { value: Cell; pro?: boolean }) {
   if (value === "limited") {
     return (
-      <span className="rounded-full border border-border bg-slate-100 px-2.5 py-1 text-[10px] font-semibold text-gray-text">
+      <span className="border border-[#e4e4e7] bg-zinc-100 px-2.5 py-1 text-[10px] font-semibold text-gray-text">
         Limité
       </span>
     );
   }
   if (value) {
-    return <Check className="mx-auto size-4 text-[#3f3f46]" aria-hidden="true" />;
+    return (
+      <Check
+        className={`mx-auto size-4 ${pro ? "text-green-accent" : "text-[#3f3f46]"}`}
+        aria-hidden="true"
+      />
+    );
   }
   return <span className="mx-auto block h-px w-1.5 bg-[#d4d4d8]" aria-hidden="true" />;
 }
@@ -54,9 +60,7 @@ export function ComparisonTable() {
     <section className="bg-white py-24">
       <Container>
         <div className="mx-auto max-w-2xl text-center">
-          <span className="inline-flex items-center rounded-full bg-blue-500 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-white">
-            Comparaison
-          </span>
+          <SectionEyebrow variant="pill" tone="orange">Comparaison</SectionEyebrow>
           <h2 className="mt-5 text-4xl font-extrabold text-black sm:text-5xl">
             Comparez les fonctionnalités
           </h2>
@@ -68,22 +72,22 @@ export function ComparisonTable() {
         <div className="mt-14 overflow-x-auto">
           <table className="w-full min-w-[720px] border-collapse">
             <thead>
-              <tr className="border-b-2 border-black">
-                <th className="p-4 text-left text-sm font-bold text-black">
+              <tr>
+                <th className="border-b border-black p-4 text-left text-sm font-bold text-black">
                   Fonctionnalité
                 </th>
                 {columns.map((col) => (
                   <th
                     key={col.key}
-                    className={`p-4 text-center text-sm font-black ${
+                    className={`border-b p-4 text-center text-sm font-black ${
                       col.key === "pro"
-                        ? "bg-green-600 text-white"
-                        : "text-gray-text"
+                        ? "border-blue-500 bg-[#f0fdf4] text-green-600"
+                        : "border-black text-gray-text"
                     }`}
                   >
                     {col.label}
                     {col.sub && (
-                      <span className="mt-0.5 block text-[9px] font-semibold uppercase tracking-wide text-white/90">
+                      <span className="mt-0.5 block text-[9px] font-semibold uppercase tracking-wide text-green-600">
                         {col.sub}
                       </span>
                     )}
@@ -105,7 +109,7 @@ export function ComparisonTable() {
                       key={col.key}
                       className={`p-4 text-center ${col.key === "pro" ? "bg-[#f0fdf4]" : ""}`}
                     >
-                      <Cell value={row[col.key]} />
+                      <Cell value={row[col.key]} pro={col.key === "pro"} />
                     </td>
                   ))}
                 </tr>

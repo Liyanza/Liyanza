@@ -1,14 +1,15 @@
 import { FaLinkedinIn } from "react-icons/fa6";
 import { Container } from "@/components/ui/Container";
+import { SectionEyebrow } from "@/components/ui/Badge";
 
 const team = [
   "Cedric K.",
   "Leane N.",
   "Bauduoin B.",
+  "Aristide N.",
   "Loic F.",
   "Djunette A.",
   "Thomas E.",
-  "Aristide N.",
   "Ismael C.",
 ];
 
@@ -22,12 +23,10 @@ function initials(name: string) {
 
 export function TeamSection() {
   return (
-    <section id="equipe" className="bg-white py-24">
+    <section id="equipe" className="border-t border-[#e4e4e7] bg-[#fafafa] py-24">
       <Container>
         <div className="mx-auto max-w-2xl text-center">
-          <span className="inline-flex items-center rounded-full bg-orange-500 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-white">
-            L&apos;équipe
-          </span>
+          <SectionEyebrow variant="pill" tone="orange">L&apos;équipe</SectionEyebrow>
           <h2 className="mt-5 text-4xl font-extrabold text-black sm:text-5xl">
             Les personnes derrière KIYANZA
           </h2>
@@ -37,11 +36,11 @@ export function TeamSection() {
           </p>
         </div>
 
-        <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {team.map((name) => (
             <div
               key={name}
-              className="rounded-xl border border-border-light bg-white p-6"
+              className="rounded-[5px] border border-[#e4e4e7] bg-white p-6"
             >
               <div className="flex size-14 items-center justify-center rounded-full border-2 border-orange-500 text-lg font-black text-orange-500">
                 {initials(name)}

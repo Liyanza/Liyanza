@@ -1,5 +1,6 @@
 import { Eye, Target, Users, Zap } from "lucide-react";
 import { Container } from "@/components/ui/Container";
+import { SectionEyebrow } from "@/components/ui/Badge";
 
 const values = [
   {
@@ -30,22 +31,20 @@ const values = [
 
 export function ValuesSection() {
   return (
-    <section className="bg-white py-24">
+    <section className="border-t border-[#e4e4e7] bg-white py-24">
       <Container>
         <div className="mx-auto max-w-2xl text-center">
-          <span className="inline-flex items-center rounded-full bg-orange-500 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-white">
-            Nos valeurs
-          </span>
+          <SectionEyebrow variant="pill" tone="orange">Nos valeurs</SectionEyebrow>
           <h2 className="mt-5 text-4xl font-extrabold text-black sm:text-5xl">
             Ce qui guide chaque décision
           </h2>
         </div>
 
-        <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {values.map((value) => (
-            <div key={value.title} className="border border-border-light p-7">
-              <div className="flex size-10 items-center justify-center rounded-lg bg-orange-500">
-                <value.icon className="size-5 text-white" aria-hidden="true" />
+            <div key={value.title} className="rounded-[5px] border border-[#e4e4e7] p-7">
+              <div className="flex size-10 items-center justify-center rounded-full border border-green-accent-dark/20 bg-green-accent/10">
+                <value.icon className="size-5 text-green-accent-dark" aria-hidden="true" />
               </div>
               <h3 className="mt-5 text-base font-bold text-black">{value.title}</h3>
               <p className="mt-3 text-sm leading-relaxed text-gray-text">

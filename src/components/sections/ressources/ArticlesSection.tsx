@@ -1,5 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/Container";
+import { SectionEyebrow } from "@/components/ui/Badge";
 
 const articles = [
   {
@@ -28,9 +29,7 @@ export function ArticlesSection() {
       <Container>
         <div className="flex flex-wrap items-center justify-between gap-6">
           <div>
-            <span className="inline-flex items-center rounded-full bg-orange-500 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-white">
-              Blog
-            </span>
+            <SectionEyebrow variant="pill" tone="orange">Blog</SectionEyebrow>
             <h2 className="mt-5 text-4xl font-extrabold text-black sm:text-5xl">
               Derniers articles &amp; conseils
             </h2>
@@ -44,17 +43,17 @@ export function ArticlesSection() {
           </button>
         </div>
 
-        <div className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-2">
-          <div className="border border-[#e4e4e7]">
-            <div className="relative flex h-[200px] items-center justify-center bg-[#18181b]">
-              <span className="absolute left-4 top-4 bg-orange-500 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wide text-white">
+        <div className="mt-10 grid grid-cols-1 gap-5 lg:grid-cols-3 lg:grid-rows-2">
+          <div className="rounded-[5px] border border-[#e4e4e7] lg:col-start-1 lg:row-span-2 lg:row-start-1">
+            <div className="relative flex h-[200px] items-center justify-center bg-green-accent-dark">
+              <span className="absolute left-4 top-4 rounded-full bg-orange-500 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wide text-white">
                 À la une
               </span>
               <span className="text-5xl font-black text-white/10">BLOG</span>
             </div>
             <div className="p-6">
               <div className="flex items-center justify-between gap-2">
-                <span className="rounded-md bg-[#f4f4f5] px-2.5 py-1 text-[10px] font-bold tracking-wide text-[#52525b]">
+                <span className="rounded-full bg-orange-500/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-orange-500">
                   Stratégie
                 </span>
                 <span className="text-xs text-[#a1a1aa]">6 min de lecture</span>
@@ -75,26 +74,30 @@ export function ArticlesSection() {
             </div>
           </div>
 
-          <div className="flex flex-col gap-6">
-            {articles.map((article) => (
-              <div
-                key={article.title}
-                className="border border-[#e4e4e7] p-5"
-              >
-                <span className="rounded-md bg-[#f4f4f5] px-2.5 py-1 text-[10px] font-bold tracking-wide text-[#52525b]">
-                  {article.tag}
-                </span>
-                <h3 className="mt-3 text-sm font-semibold leading-snug text-black">
-                  {article.title}
-                </h3>
-                <div className="mt-3 flex items-center gap-3 text-xs text-[#a1a1aa]">
-                  <span>{article.date}</span>
-                  <span aria-hidden="true">·</span>
-                  <span>{article.readingTime}</span>
-                </div>
+          {articles.map((article, i) => (
+            <div
+              key={article.title}
+              className={`rounded-[5px] border border-[#e4e4e7] p-5 ${
+                i === 0
+                  ? "lg:col-start-2 lg:row-start-1"
+                  : i === 1
+                    ? "lg:col-start-3 lg:row-start-1"
+                    : "lg:col-start-2 lg:row-start-2"
+              }`}
+            >
+              <span className="rounded-full border border-[#e4e4e7] bg-[#f4f4f5] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-[#52525b]">
+                {article.tag}
+              </span>
+              <h3 className="mt-3 text-sm font-semibold leading-snug text-black">
+                {article.title}
+              </h3>
+              <div className="mt-3 flex items-center gap-3 text-xs text-[#a1a1aa]">
+                <span>{article.date}</span>
+                <span aria-hidden="true">·</span>
+                <span>{article.readingTime}</span>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </Container>
     </section>

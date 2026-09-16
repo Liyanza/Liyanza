@@ -85,27 +85,35 @@ const plans: Plan[] = [
 function PlanCard({ plan }: { plan: Plan }) {
   return (
     <div
-      className={`relative flex h-full flex-col rounded-2xl bg-white p-6 ${
+      className={`relative flex h-full flex-col bg-white p-6 ${
         plan.featured
-          ? "border-2 border-green-accent shadow-[0_12px_24px_-8px_rgba(0,200,83,0.2)]"
-          : "border border-border-light"
+          ? "border-2 border-green-accent-dark shadow-[0_2px_12px_0_rgba(255,102,0,0.25)]"
+          : "border border-green-accent/10"
       }`}
     >
       {plan.featured && (
-        <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-green-600 px-4 py-1.5 text-[10px] font-black uppercase tracking-wide text-white">
+        <span className="absolute inset-x-0 -top-4 flex h-8 items-center justify-center bg-blue-500 text-[10px] font-black uppercase tracking-wide text-white">
           Recommandé
         </span>
       )}
 
-      <p className={`text-xs font-black uppercase tracking-wide ${plan.tierColor}`}>
-        {plan.tier}
-      </p>
-      <p className="mt-1.5 text-sm text-black">{plan.tagline}</p>
-      <div className="mt-4">
-        <p className="text-2xl font-black tracking-tight text-black">{plan.price}</p>
-        {plan.priceNote && (
-          <p className="mt-0.5 text-xs text-black">{plan.priceNote}</p>
-        )}
+      <div className="border-b border-black/[0.08] pb-6">
+        <p className={`text-xs font-black uppercase tracking-wide ${plan.tierColor}`}>
+          {plan.tier}
+        </p>
+        <p className="mt-1.5 text-sm text-black/40">{plan.tagline}</p>
+        <div className="mt-5">
+          <p
+            className={`font-black tracking-tight text-black ${
+              plan.priceNote ? "text-xl" : "text-2xl"
+            }`}
+          >
+            {plan.price}
+          </p>
+          {plan.priceNote && (
+            <p className="mt-0.5 text-xs text-black/30">{plan.priceNote}</p>
+          )}
+        </div>
       </div>
 
       <button
@@ -119,8 +127,8 @@ function PlanCard({ plan }: { plan: Plan }) {
         {plan.cta}
       </button>
 
-      <div className="mt-6 flex-1 border-t border-border-light pt-6">
-        <p className="text-[10px] font-bold uppercase tracking-wide text-black">
+      <div className="mt-6 flex-1">
+        <p className="text-[9px] font-bold uppercase tracking-wide text-black/25">
           Inclus
         </p>
         <ul className="mt-3 space-y-3">
@@ -128,11 +136,11 @@ function PlanCard({ plan }: { plan: Plan }) {
             <li key={item} className="flex items-start gap-2.5">
               <Check
                 className={`mt-0.5 size-3.5 shrink-0 ${
-                  plan.featured ? "text-green-accent" : "text-black"
+                  plan.featured ? "text-green-accent" : "text-black/30"
                 }`}
                 aria-hidden="true"
               />
-              <span className="text-sm text-black">{item}</span>
+              <span className="text-sm text-black/60">{item}</span>
             </li>
           ))}
         </ul>
@@ -143,21 +151,21 @@ function PlanCard({ plan }: { plan: Plan }) {
 
 export function PricingCards() {
   return (
-    <section className="bg-white pb-20">
+    <section className="bg-green-600/10 pb-20">
       <Container>
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {plans.map((plan) => (
             <PlanCard key={plan.tier} plan={plan} />
           ))}
         </div>
 
-        <div className="mt-14 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 border-t border-border-light pt-8">
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 border-t border-black/[0.08] pt-8">
           {[
             "Aucune carte pour FREE",
             "Changement de formule à tout moment",
             "Annulation sans engagement",
           ].map((item) => (
-            <span key={item} className="flex items-center gap-2 text-sm text-black">
+            <span key={item} className="flex items-center gap-2 text-sm text-black/35">
               <Check className="size-3.5 text-green-accent" aria-hidden="true" />
               {item}
             </span>

@@ -5,7 +5,6 @@ import { ChatbotWidget } from "@/components/ChatbotWidget";
 import { PricingHero } from "@/components/sections/tarifs/PricingHero";
 import { PricingCards } from "@/components/sections/tarifs/PricingCards";
 import { ComparisonTable } from "@/components/sections/tarifs/ComparisonTable";
-import { PricingQuiz } from "@/components/sections/tarifs/PricingQuiz";
 import { PricingFAQ } from "@/components/sections/tarifs/PricingFAQ";
 import { PricingFinalCTA } from "@/components/sections/tarifs/PricingFinalCTA";
 import { pricingFaqs } from "@/data/faqs";
@@ -42,7 +41,6 @@ export default function TarifsPage() {
         <PricingHero />
         <PricingCards />
         <ComparisonTable />
-        <PricingQuiz />
         <PricingFAQ />
         <PricingFinalCTA />
       </main>

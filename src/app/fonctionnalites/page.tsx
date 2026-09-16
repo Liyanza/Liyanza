@@ -36,26 +36,10 @@ export const metadata: Metadata = {
 };
 
 const accents = {
-  green: {
-    check: "bg-green-600",
-    ctaBorder: "border-green-accent",
-    ctaText: "text-green-accent-dark",
-  },
-  orange: {
-    check: "bg-orange-500",
-    ctaBorder: "border-orange-500",
-    ctaText: "text-orange-500",
-  },
-  blue: {
-    check: "bg-blue-500",
-    ctaBorder: "border-blue-500",
-    ctaText: "text-blue-500",
-  },
-  violet: {
-    check: "bg-violet-500",
-    ctaBorder: "border-violet-500",
-    ctaText: "text-violet-500",
-  },
+  green: { check: "bg-green-600" },
+  orange: { check: "bg-orange-500" },
+  blue: { check: "bg-blue-500" },
+  violet: { check: "bg-violet-500" },
 };
 
 export default function FonctionnalitesPage() {
@@ -87,7 +71,7 @@ export default function FonctionnalitesPage() {
 
         <FeatureDetailSection
           id="scenarios-ia"
-          bg="slate"
+          bg="green-tint"
           eyebrowNumber="02"
           eyebrowLabel="Scénarios IA"
           heading={["Testez vos stratégies", "avant d'investir"]}
@@ -109,7 +93,7 @@ export default function FonctionnalitesPage() {
 
         <FeatureDetailSection
           id="monitoring"
-          bg="slate"
+          bg="blue-tint"
           eyebrowNumber="04"
           eyebrowLabel="Monitoring"
           heading={["Suivez vos campagnes", "en temps réel"]}
@@ -137,7 +121,6 @@ export default function FonctionnalitesPage() {
             "Analyse automatique des performances",
             "Recommandations actionnables en 1 clic",
             "Estimation d'impact avant application",
-            "Calendrier d'impact avec prévisions",
             "Priorisation et calendrier des actions",
           ]}
           ctaText="Découvrir les recommandations"

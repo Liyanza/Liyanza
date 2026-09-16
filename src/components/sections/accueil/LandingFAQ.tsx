@@ -12,8 +12,8 @@ export function LandingFAQ() {
   return (
     <section className="bg-zinc-50 py-16 sm:py-20 lg:py-24">
       <Container>
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_2fr]">
-          <div>
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_2fr] lg:gap-12">
+          <div className="lg:col-start-1 lg:row-start-1">
             <SectionEyebrow variant="pill" tone="orange">
               FAQ
             </SectionEyebrow>
@@ -24,16 +24,9 @@ export function LandingFAQ() {
               Tout ce que vous devez savoir sur KIYANZA. Vous ne trouvez pas votre
               réponse ?
             </p>
-            <a
-              href="/ressources"
-              className="mt-6 inline-flex items-center gap-2 rounded-full border border-zinc-300 px-6 py-3 text-sm font-semibold text-zinc-950 transition hover:bg-white"
-            >
-              Voir toutes les ressources
-              <ArrowRight className="size-3.5" aria-hidden="true" />
-            </a>
           </div>
 
-          <div className="divide-y divide-zinc-200 border-t border-zinc-200">
+          <div className="order-2 divide-y divide-zinc-200 border-t border-zinc-200 lg:order-none lg:col-start-2 lg:row-start-1 lg:row-span-2">
             {homeFaqs.map((faq, i) => {
               const isOpen = openIndex === i;
               return (
@@ -64,6 +57,14 @@ export function LandingFAQ() {
               );
             })}
           </div>
+
+          <a
+            href="/ressources"
+            className="order-3 inline-flex items-center gap-2 self-start rounded-full border border-zinc-300 px-6 py-3 text-sm font-semibold text-zinc-950 transition hover:bg-white lg:order-none lg:col-start-1 lg:row-start-2"
+          >
+            Voir toutes les ressources
+            <ArrowRight className="size-3.5" aria-hidden="true" />
+          </a>
         </div>
       </Container>
     </section>

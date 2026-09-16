@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ArrowRight, Minus, Plus } from "lucide-react";
 import { Container } from "@/components/ui/Container";
+import { SectionEyebrow } from "@/components/ui/Badge";
 
 const faqs = [
   {
@@ -41,13 +42,11 @@ export function ResourcesFAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <section className="bg-white py-20">
+    <section className="border-t border-[#e4e4e7] bg-white py-20">
       <Container>
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_2fr]">
+        <div className="grid grid-cols-1 gap-16 lg:grid-cols-[1fr_2fr]">
           <div>
-            <span className="inline-flex items-center rounded-full bg-orange-500 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-white">
-              FAQ
-            </span>
+            <SectionEyebrow variant="pill" tone="orange">FAQ</SectionEyebrow>
             <h2 className="mt-5 text-4xl font-black text-black">
               Questions fréquentes
             </h2>
@@ -80,7 +79,7 @@ export function ResourcesFAQ() {
                     </span>
                     <span className="flex size-7 shrink-0 items-center justify-center rounded-full border border-[#d4d4d8] text-[#71717a]">
                       {isOpen ? (
-                        <Minus className="size-4" aria-hidden="true" />
+                        <Minus className="size-4 text-orange-500" aria-hidden="true" />
                       ) : (
                         <Plus className="size-4" aria-hidden="true" />
                       )}

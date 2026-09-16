@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ArrowRight, Clock } from "lucide-react";
 import { Container } from "@/components/ui/Container";
+import { SectionEyebrow } from "@/components/ui/Badge";
 
 type GuideType = "Guide" | "Tutoriel";
 type Level = "Débutant" | "Intermédiaire" | "Avancé";
@@ -68,9 +69,9 @@ const guides: GuideCard[] = [
 ];
 
 const levelStyles: Record<Level, string> = {
-  Débutant: "bg-blue-500 text-white",
-  Intermédiaire: "bg-orange-500 text-white",
-  Avancé: "bg-red-500 text-white",
+  Débutant: "bg-blue-500/10 text-blue-500",
+  Intermédiaire: "bg-orange-500/10 text-orange-500",
+  Avancé: "bg-red-500/10 text-red-600",
 };
 
 export function GuidesSection() {
@@ -80,13 +81,11 @@ export function GuidesSection() {
     active === "Tous" ? guides : guides.filter((g) => g.type === active);
 
   return (
-    <section className="border-y border-[#e4e4e7] bg-[#fafafa] py-20">
+    <section className="border-t border-[#e4e4e7] bg-blue-500/[0.09] py-20">
       <Container>
         <div className="flex flex-wrap items-center justify-between gap-6">
           <div>
-            <span className="inline-flex items-center rounded-full bg-orange-500 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-white">
-              Guides &amp; Tutoriels
-            </span>
+            <SectionEyebrow variant="pill" tone="orange">Guides &amp; Tutoriels</SectionEyebrow>
             <h2 className="mt-5 text-4xl font-extrabold text-black sm:text-5xl">
               Apprenez à mieux piloter vos campagnes
             </h2>
@@ -110,7 +109,7 @@ export function GuidesSection() {
                 onClick={() => setActive(filter)}
                 className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
                   isActive
-                    ? "bg-green-accent text-white"
+                    ? "bg-green-600 text-white"
                     : "border border-[#e4e4e7] bg-white text-[#52525b] hover:bg-[#f4f4f5]"
                 }`}
               >
@@ -120,18 +119,18 @@ export function GuidesSection() {
           })}
         </div>
 
-        <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {visible.map((guide) => (
             <div
               key={guide.title}
-              className="flex flex-col border border-[#e4e4e7] bg-white p-6"
+              className="flex flex-col rounded-[5px] border border-[#e4e4e7] bg-white p-6"
             >
               <div className="flex items-center justify-between gap-2">
-                <span className="rounded-md bg-[#f4f4f5] px-2.5 py-1 text-[10px] font-bold tracking-wide text-[#52525b]">
+                <span className="rounded-full border border-[#e4e4e7] bg-[#f4f4f5] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-[#52525b]">
                   {guide.type}
                 </span>
                 <span
-                  className={`rounded-md px-2 py-1 text-[10px] font-bold tracking-wide ${levelStyles[guide.level]}`}
+                  className={`rounded-full px-2 py-1 text-[10px] font-bold tracking-wide ${levelStyles[guide.level]}`}
                 >
                   {guide.level}
                 </span>

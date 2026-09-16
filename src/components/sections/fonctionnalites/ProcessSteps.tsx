@@ -1,14 +1,14 @@
-import { Cloud, Download, Play, Sparkles, Target, Zap } from "lucide-react";
+import { ArrowRight, BarChart3, Cloud, Download, Play, Sparkles, TrendingUp } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
 
 const steps = [
-  { icon: Target, label: "Créer", bg: "bg-green-600" },
-  { icon: Sparkles, label: "Simuler", bg: "bg-blue-500" },
-  { icon: Play, label: "Lancer", bg: "bg-orange-500" },
-  { icon: Cloud, label: "Monitorer", bg: "bg-violet-600" },
-  { icon: Zap, label: "Optimiser", bg: "bg-[#fbc92d]" },
-  { icon: Download, label: "Exporter", bg: "bg-[#5489de]" },
+  { icon: BarChart3, label: "Créer" },
+  { icon: Sparkles, label: "Simuler" },
+  { icon: Play, label: "Lancer" },
+  { icon: Cloud, label: "Monitorer" },
+  { icon: TrendingUp, label: "Optimiser" },
+  { icon: Download, label: "Exporter" },
 ];
 
 export function ProcessSteps() {
@@ -16,7 +16,7 @@ export function ProcessSteps() {
     <section className="bg-white py-20">
       <Container>
         <div className="mx-auto max-w-2xl text-center">
-          <SectionEyebrow variant="pill">Comment ça marche ?</SectionEyebrow>
+          <SectionEyebrow variant="pill" tone="orange">Comment ça marche ?</SectionEyebrow>
           <h2 className="mt-5 text-4xl font-extrabold text-black">
             Un seul parcours pour piloter
             <br />
@@ -32,16 +32,14 @@ export function ProcessSteps() {
           {steps.map((step, i) => (
             <div key={step.label} className="flex items-start">
               <div className="flex w-20 flex-col items-center gap-2.5">
-                <span
-                  className={`flex size-14 items-center justify-center rounded-full border-4 border-border-light shadow-[0_1px_2px_rgba(0,0,0,0.1),0_1px_3px_rgba(0,0,0,0.1)] ${step.bg}`}
-                >
-                  <step.icon className="size-6 text-white" aria-hidden="true" />
+                <span className="flex size-14 items-center justify-center rounded-full border-4 border-green-accent/40 bg-green-accent/20 shadow-[0_1px_2px_rgba(0,0,0,0.1),0_1px_3px_rgba(0,0,0,0.1)]">
+                  <step.icon className="size-6 text-green-accent-dark" aria-hidden="true" />
                 </span>
                 <p className="text-xs font-bold text-navy">{step.label}</p>
               </div>
               {i < steps.length - 1 && (
-                <div
-                  className="mt-7 h-px w-6 border-t-2 border-dashed border-border sm:w-10"
+                <ArrowRight
+                  className="mt-7 size-4 shrink-0 text-gray-text-light sm:mt-7"
                   aria-hidden="true"
                 />
               )}

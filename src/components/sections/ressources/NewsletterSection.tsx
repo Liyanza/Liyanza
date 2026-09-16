@@ -2,16 +2,15 @@
 
 import { Check, Star } from "lucide-react";
 import { Container } from "@/components/ui/Container";
+import { SectionEyebrow } from "@/components/ui/Badge";
 
 export function NewsletterSection() {
   return (
-    <section className="border-y border-[#e4e4e7] bg-[#fafafa] py-20">
+    <section className="border-t border-[#e4e4e7] bg-[#fafafa] py-20">
       <Container>
-        <div className="grid grid-cols-1 border border-[#e4e4e7] lg:grid-cols-2">
-          <div className="flex flex-col justify-center bg-white p-10 sm:p-12">
-            <span className="inline-flex w-fit items-center rounded-full bg-orange-500 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-white">
-              Newsletter
-            </span>
+        <div className="grid grid-cols-1 overflow-hidden border border-[#e4e4e7] lg:grid-cols-2">
+          <div className="flex flex-col justify-center rounded-[5px] bg-white p-10 sm:p-12">
+            <SectionEyebrow variant="pill" tone="orange" className="w-fit">Newsletter</SectionEyebrow>
             <h2 className="mt-6 text-3xl font-black leading-tight text-black">
               Restez informé des dernières ressources
             </h2>
@@ -23,19 +22,19 @@ export function NewsletterSection() {
 
           <div className="flex flex-col justify-center bg-[#fafafa] p-10 sm:p-12">
             <form
-              className="flex flex-col gap-3 sm:flex-row"
+              className="flex items-stretch border border-[#e4e4e7]"
               onSubmit={(e) => e.preventDefault()}
             >
-              <div className="flex-1 border border-[#e4e4e7] bg-white px-4 py-3.5">
+              <div className="flex-1 rounded-[5px] bg-white px-4 py-3.5">
                 <input
                   type="email"
                   placeholder="Votre adresse email"
-                  className="w-full text-sm text-black placeholder:text-[#71717a] focus:outline-none"
+                  className="w-full text-sm text-black placeholder:text-black/50 focus:outline-none"
                 />
               </div>
               <button
                 type="submit"
-                className="shrink-0 rounded-none bg-green-accent-dark px-6 py-3.5 text-sm font-bold text-white transition hover:brightness-110"
+                className="shrink-0 bg-green-accent-dark px-6 py-3.5 text-sm font-bold text-white transition hover:brightness-110"
               >
                 S&apos;inscrire
               </button>
