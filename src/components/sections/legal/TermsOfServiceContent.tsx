@@ -30,13 +30,12 @@ export function TermsOfServiceContent() {
             régissent l&apos;accès et l&apos;utilisation de la plateforme KIYANZA
             (le «&nbsp;Service&nbsp;»), éditée par{" "}
             <strong>
-              [Dénomination sociale de l&apos;entité exploitant KIYANZA — à
-              compléter]
+              Kiyanza
             </strong>
             , dont le siège social est situé{" "}
-            <strong>[adresse du siège social — Douala, 696370479]</strong>,
+            <strong>adresse du siège social — Douala, 696370479</strong>,
             immatriculée sous le numéro{" "}
-            <strong>[numéro d&apos;immatriculation — CM-DLA-01-2026-B12-00529]</strong>{" "}
+            <strong>numéro d&apos;immatriculation — CM-DLA-01-2026-B12-00529</strong>{" "}
             (ci-après «&nbsp;KIYANZA&nbsp;», «&nbsp;nous&nbsp;»).
           </p>
           <p>
@@ -290,10 +289,10 @@ export function TermsOfServiceContent() {
         <LegalSection id="droit-applicable" title="15. Droit applicable et litiges">
           <p>
             Les présentes Conditions sont régies par le droit{" "}
-            <strong>[droit applicable — au Cameroun]</strong>. Tout litige
+            <strong>droit applicable — au Cameroun</strong>. Tout litige
             relatif à leur interprétation ou leur exécution relève de la
             compétence exclusive des tribunaux{" "}
-            <strong>[juridiction compétente — Cameroun]</strong>, sauf
+            <strong>juridiction compétente — Cameroun</strong>, sauf
             disposition d&apos;ordre public contraire.
           </p>
         </LegalSection>
@@ -302,7 +301,7 @@ export function TermsOfServiceContent() {
           <p>
             Pour toute question relative aux présentes Conditions, vous
             pouvez nous contacter à l&apos;adresse&nbsp;:{" "}
-            <strong>[adresse email de contact — contact@kiyanza.com]</strong>.
+            <strong>adresse email de contact — contact@kiyanza.com</strong>.
           </p>
         </LegalSection>
       </div>

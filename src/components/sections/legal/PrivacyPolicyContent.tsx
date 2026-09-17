@@ -29,11 +29,10 @@ export function PrivacyPolicyContent() {
           <p>
             La présente Politique de confidentialité explique comment{" "}
             <strong>
-              [Dénomination sociale de l&apos;entité exploitant KIYANZA — à
-              compléter]
+              Kiyanza
             </strong>
             , dont le siège social est situé{" "}
-            <strong>[adresse du siège social — Douala, 696370479]</strong>{" "}
+            <strong>adresse du siège social — Douala, 696370479</strong>{" "}
             («&nbsp;KIYANZA&nbsp;», «&nbsp;nous&nbsp;»), responsable du
             traitement, collecte, utilise et protège les données à caractère
             personnel des utilisateurs («&nbsp;vous&nbsp;») de la plateforme
@@ -263,7 +262,7 @@ export function PrivacyPolicyContent() {
             droit d&apos;introduire une réclamation auprès de l&apos;autorité
             de protection des données compétente{" "}
             <strong>
-              [autorité de contrôle compétente — APDP]
+              autorité de contrôle compétente — APDP
             </strong>
             .
           </p>
@@ -290,7 +289,7 @@ export function PrivacyPolicyContent() {
           <p>
             Pour toute question relative à cette Politique ou pour exercer
             vos droits, contactez-nous à l&apos;adresse&nbsp;:{" "}
-            <strong>[adresse email de contact — contact@kiyanza.com]</strong>.
+            <strong>adresse email de contact — contact@kiyanza.com</strong>.
           </p>
         </LegalSection>
       </div>
