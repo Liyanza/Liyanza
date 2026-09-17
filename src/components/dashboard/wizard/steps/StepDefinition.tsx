@@ -38,6 +38,7 @@ export function StepDefinition({
             <input
               id="campaign-name"
               type="text"
+              maxLength={200}
               value={data.name}
               onChange={(event) => onChange({ ...data, name: event.target.value })}
               placeholder="Donnez un nom à votre campagne"

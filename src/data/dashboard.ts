@@ -1,9 +1,3 @@
-export const currentUser = {
-  initials: "AN",
-  name: "Aristide Nna",
-  role: "Marketing Manager",
-};
-
 export interface NavItem {
   href: string;
   label: string;

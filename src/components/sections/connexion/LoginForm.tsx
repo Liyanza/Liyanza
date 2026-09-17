@@ -2,17 +2,35 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Eye, EyeOff, Lock, Mail } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ArrowLeft, ArrowRight, Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
 import { FormField } from "@/components/auth/FormField";
 import { Checkbox } from "@/components/auth/Checkbox";
 import { SocialButtons } from "@/components/auth/SocialButtons";
 import { OrDivider } from "@/components/auth/OrDivider";
+import { apiLogin, ApiError } from "@/lib/api/client";
 
 export function LoginForm() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [remember, setRemember] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+
+  async function handleSubmit(event: React.FormEvent) {
+    event.preventDefault();
+    setFormError(null);
+    setSubmitting(true);
+    try {
+      await apiLogin(email, password);
+      router.push("/dashboard");
+    } catch (error) {
+      setFormError(error instanceof ApiError ? error.message : "Une erreur est survenue.");
+      setSubmitting(false);
+    }
+  }
 
   return (
     <div>
@@ -30,10 +48,13 @@ export function LoginForm() {
         <SocialButtons />
         <OrDivider />
 
-        <form
-          className="flex flex-col gap-4"
-          onSubmit={(e) => e.preventDefault()}
-        >
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+          {formError && (
+            <p role="alert" className="rounded-md bg-red-50 px-3 py-2 text-xs font-medium text-red-600">
+              {formError}
+            </p>
+          )}
+
           <FormField
             id="email"
             label="Adresse email"
@@ -84,10 +105,17 @@ export function LoginForm() {
 
           <button
             type="submit"
-            className="mt-2 flex items-center justify-center gap-2 rounded-full bg-green-600 py-3.5 text-sm font-bold text-white transition hover:brightness-110"
+            disabled={submitting}
+            className="mt-2 flex items-center justify-center gap-2 rounded-full bg-green-600 py-3.5 text-sm font-bold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-70"
           >
-            Se connecter
-            <ArrowRight className="size-4" aria-hidden="true" />
+            {submitting ? (
+              <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+            ) : (
+              <>
+                Se connecter
+                <ArrowRight className="size-4" aria-hidden="true" />
+              </>
+            )}
           </button>
         </form>
       </div>

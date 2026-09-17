@@ -13,7 +13,8 @@ import { StepAudience, type AudienceData } from "./steps/StepAudience";
 import { StepBudget, type BudgetData } from "./steps/StepBudget";
 import { StepChannels } from "./steps/StepChannels";
 import { StepSimulation } from "./steps/StepSimulation";
-import { wizardSteps } from "@/data/dashboard";
+import { wizardSteps, objectiveOptions } from "@/data/dashboard";
+import type { CampaignType, CreateCampagnePayload } from "@/lib/api/types";
 
 interface WizardState {
   type: string | null;
@@ -35,9 +36,58 @@ const initialState: WizardState = {
 
 const LAST_STEP = wizardSteps.length - 1;
 
+// StepType n'expose que 3 options (voir src/data/dashboard.ts) : leur id
+// correspond 1:1 à l'enum CampaignType du backend.
+const TYPE_TO_BACKEND: Record<string, CampaignType> = {
+  digital: "DIGITAL",
+  radio: "RADIO",
+  print: "POSTER",
+};
+
+function durationInDays(start: string, end: string): number {
+  const diff = Math.round(
+    (new Date(end).getTime() - new Date(start).getTime()) / (1000 * 60 * 60 * 24)
+  );
+  return diff > 0 ? diff : 1;
+}
+
+/**
+ * Traduit l'état (riche, orienté UX) du wizard vers les champs exacts
+ * attendus par POST /campagnes. Décisions de mapping :
+ *  - "objective" (texte libre, requis) = objectif choisi à l'étape 3 +
+ *    description libre de l'étape 2, si renseignée.
+ *  - un budget "quotidien" est converti en budget total en le multipliant
+ *    par la durée de la période sélectionnée (le backend n'a qu'un seul
+ *    champ plannedBudget).
+ */
+function buildCampagnePayload(state: WizardState): CreateCampagnePayload | null {
+  const type = state.type ? TYPE_TO_BACKEND[state.type] : undefined;
+  const objectiveOption = objectiveOptions.find((option) => option.id === state.objective);
+  if (!type || !objectiveOption || !state.definition.name.trim()) return null;
+
+  const days = durationInDays(state.budget.startDate, state.budget.endDate);
+  const rawBudget = state.budget.budgetType === "daily" ? state.budget.amount * days : state.budget.amount;
+  const plannedBudget = Math.min(9_999_999_999, Math.max(0.01, Math.round(rawBudget * 100) / 100));
+
+  const objective = [objectiveOption.title, state.definition.description.trim() || objectiveOption.description]
+    .join(" — ")
+    .slice(0, 2000);
+
+  return {
+    name: state.definition.name.trim().slice(0, 200),
+    startDate: state.budget.startDate,
+    endDate: state.budget.endDate,
+    plannedBudget,
+    objective,
+    type,
+  };
+}
+
 export function CampaignWizard() {
   const [stepIndex, setStepIndex] = useState(0);
   const [state, setState] = useState<WizardState>(initialState);
+
+  const payload = useMemo(() => buildCampagnePayload(state), [state]);
 
   const canContinue = useMemo(() => {
     switch (stepIndex) {
@@ -117,7 +167,7 @@ export function CampaignWizard() {
               <StepBudget data={state.budget} onChange={(budget) => setState((prev) => ({ ...prev, budget }))} />
             )}
             {stepIndex === 5 && <StepChannels value={state.channels} onToggle={toggleChannel} />}
-            {stepIndex === 6 && <StepSimulation />}
+            {stepIndex === 6 && <StepSimulation payload={payload} />}
 
             {stepIndex < LAST_STEP && (
               <WizardFooterNav onBack={goBack} onNext={goNext} nextDisabled={!canContinue} showBack={stepIndex > 0} />

@@ -12,10 +12,12 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { FormField } from "@/components/auth/FormField";
+import { requestPasswordReset } from "@/lib/api/client";
 
 export function ForgotPasswordForm() {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   if (sent) {
     return (
@@ -105,9 +107,16 @@ export function ForgotPasswordForm() {
 
       <form
         className="mt-8 flex flex-col gap-4"
-        onSubmit={(e) => {
+        onSubmit={async (e) => {
           e.preventDefault();
-          if (email) setSent(true);
+          if (!email || submitting) return;
+          setSubmitting(true);
+          // requestPasswordReset() est un stub : voir sa définition dans
+          // src/lib/api/client.ts (POST /auth/forgot-password absent côté
+          // backend à ce jour).
+          await requestPasswordReset(email);
+          setSubmitting(false);
+          setSent(true);
         }}
       >
         <FormField
@@ -123,7 +132,8 @@ export function ForgotPasswordForm() {
 
         <button
           type="submit"
-          className="mt-1 flex items-center justify-center gap-2 rounded-full bg-green-600 py-3.5 text-sm font-bold text-white transition hover:brightness-110"
+          disabled={submitting}
+          className="mt-1 flex items-center justify-center gap-2 rounded-full bg-green-600 py-3.5 text-sm font-bold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-70"
         >
           Recevoir le lien de réinitialisation
           <ArrowRight className="size-4" aria-hidden="true" />

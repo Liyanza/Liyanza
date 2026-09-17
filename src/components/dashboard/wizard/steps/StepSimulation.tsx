@@ -1,14 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import { CheckCircle2, Lightbulb, Sparkle } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { CheckCircle2, Lightbulb, Loader2, Sparkle } from "lucide-react";
 import { scenarioResults, scenarioInsight, simulationChecklist } from "@/data/dashboard";
 import { CircularProgress } from "./CircularProgress";
 import { ScenarioCard } from "./ScenarioCard";
+import { apiCreateCampagne, ApiError } from "@/lib/api/client";
+import type { CreateCampagnePayload } from "@/lib/api/types";
 
-export function StepSimulation() {
+export function StepSimulation({ payload }: { payload: CreateCampagnePayload | null }) {
+  const router = useRouter();
   const [percent, setPercent] = useState(0);
+  const [creating, setCreating] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
 
   useEffect(() => {
     if (percent >= 100) return;
@@ -92,12 +97,35 @@ export function StepSimulation() {
         <p className="text-[12.5px] leading-[20px] text-blue-500">{scenarioInsight}</p>
       </div>
 
-      <Link
-        href="/dashboard/campagnes"
-        className="mt-6 rounded-full bg-green-accent px-8 py-3 text-sm font-semibold text-white shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)] hover:brightness-105"
+      {createError && (
+        <p role="alert" className="mt-4 w-full rounded-lg bg-red-50 px-4 py-2.5 text-center text-xs font-medium text-red-600">
+          {createError}
+        </p>
+      )}
+
+      <button
+        type="button"
+        disabled={creating || !payload}
+        onClick={async () => {
+          if (!payload) {
+            setCreateError("Formulaire incomplet : revenez aux étapes précédentes.");
+            return;
+          }
+          setCreateError(null);
+          setCreating(true);
+          try {
+            await apiCreateCampagne(payload);
+            router.push("/dashboard/campagnes");
+          } catch (error) {
+            setCreateError(error instanceof ApiError ? error.message : "Une erreur est survenue.");
+            setCreating(false);
+          }
+        }}
+        className="mt-6 flex items-center gap-2 rounded-full bg-green-accent px-8 py-3 text-sm font-semibold text-white shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)] transition-opacity hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"
       >
+        {creating && <Loader2 className="size-4 animate-spin" aria-hidden="true" />}
         Créer la campagne
-      </Link>
+      </button>
     </div>
   );
 }

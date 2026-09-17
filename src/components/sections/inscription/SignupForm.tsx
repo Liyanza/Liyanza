@@ -2,11 +2,13 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Check, Circle, Eye, EyeOff, Lock, Mail, User } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ArrowRight, Check, Circle, Eye, EyeOff, Loader2, Lock, Mail, Phone, User } from "lucide-react";
 import { FormField } from "@/components/auth/FormField";
 import { Checkbox } from "@/components/auth/Checkbox";
 import { SocialButtons } from "@/components/auth/SocialButtons";
 import { OrDivider } from "@/components/auth/OrDivider";
+import { apiLogin, apiRegister, ApiError } from "@/lib/api/client";
 
 type Strength = "" | "Faible" | "Moyen" | "Fort" | "Très fort";
 
@@ -30,14 +32,18 @@ function getStrength(password: string): Strength {
 }
 
 export function SignupForm() {
+  const router = useRouter();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
 
   const hasLength = password.length >= 8;
   const hasUpper = /[A-Z]/.test(password);
@@ -53,9 +59,29 @@ export function SignupForm() {
     firstName &&
     lastName &&
     email &&
-    password &&
+    phone &&
+    password.length >= 8 &&
     confirmPassword === password &&
     acceptTerms;
+
+  async function handleSubmit(event: React.FormEvent) {
+    event.preventDefault();
+    if (!canSubmit) return;
+    setFormError(null);
+    setSubmitting(true);
+    try {
+      await apiRegister({ email, password, firstName, lastName, phone });
+      // Le backend ne connecte pas automatiquement après l'inscription
+      // (POST /auth/register ne renvoie pas de tokens) : on enchaîne un
+      // login avec les identifiants qui viennent d'être créés pour éviter
+      // à l'utilisateur de les ressaisir immédiatement.
+      await apiLogin(email, password);
+      router.push("/dashboard");
+    } catch (error) {
+      setFormError(error instanceof ApiError ? error.message : "Une erreur est survenue.");
+      setSubmitting(false);
+    }
+  }
 
   return (
     <div>
@@ -73,10 +99,13 @@ export function SignupForm() {
         <SocialButtons />
         <OrDivider />
 
-        <form
-          className="flex flex-col gap-4"
-          onSubmit={(e) => e.preventDefault()}
-        >
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+          {formError && (
+            <p role="alert" className="rounded-md bg-red-50 px-3 py-2 text-xs font-medium text-red-600">
+              {formError}
+            </p>
+          )}
+
           <div className="grid grid-cols-2 gap-4">
             <FormField
               id="firstName"
@@ -107,6 +136,17 @@ export function SignupForm() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             autoComplete="email"
+          />
+
+          <FormField
+            id="phone"
+            label="Téléphone"
+            type="tel"
+            placeholder="+225 07 00 00 00 00"
+            icon={<Phone className="size-4" aria-hidden="true" />}
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            autoComplete="tel"
           />
 
           <div>
@@ -198,11 +238,17 @@ export function SignupForm() {
 
           <button
             type="submit"
-            disabled={!canSubmit}
+            disabled={!canSubmit || submitting}
             className="mt-2 flex items-center justify-center gap-2 rounded-full bg-green-600 py-3.5 text-sm font-bold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:bg-[#e4e4e7] disabled:text-white"
           >
-            Créer mon compte gratuitement
-            <ArrowRight className="size-4" aria-hidden="true" />
+            {submitting ? (
+              <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+            ) : (
+              <>
+                Créer mon compte gratuitement
+                <ArrowRight className="size-4" aria-hidden="true" />
+              </>
+            )}
           </button>
 
           <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-[#71717a]">

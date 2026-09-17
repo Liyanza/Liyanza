@@ -1,7 +1,9 @@
 "use client";
 
-import { ChevronDown, Search } from "lucide-react";
-import { currentUser } from "@/data/dashboard";
+import { useState } from "react";
+import { ChevronDown, LogOut, Search } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import { ROLE_LABELS } from "@/lib/api/types";
 
 export function TopBar({
   title,
@@ -12,6 +14,17 @@ export function TopBar({
   searchPlaceholder?: string;
   showPeriodFilter?: boolean;
 }) {
+  const { user, logout } = useAuth();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const displayName =
+    user?.firstName && user?.lastName ? `${user.firstName} ${user.lastName}` : user?.email ?? "…";
+  const initials =
+    user?.firstName && user?.lastName
+      ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase()
+      : (user?.email?.[0] ?? "?").toUpperCase();
+  const roleLabel = user ? ROLE_LABELS[user.role] : "";
+
   return (
     <header className="flex h-16 shrink-0 items-center justify-between border-b border-border bg-white px-8">
       <p className="text-[15px] font-bold text-gray-900">{title}</p>
@@ -51,15 +64,51 @@ export function TopBar({
             3
           </span>
         </button>
-        <div className="flex items-center gap-2.5">
-          <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-green-600 text-xs font-extrabold text-white">
-            {currentUser.initials}
-          </div>
-          <div className="hidden sm:block">
-            <p className="text-xs font-semibold text-black">{currentUser.name}</p>
-            <p className="text-[10px] text-gray-text">{currentUser.role}</p>
-          </div>
-          <ChevronDown className="hidden size-3 text-gray-text sm:block" aria-hidden="true" />
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => setMenuOpen((open) => !open)}
+            aria-haspopup="menu"
+            aria-expanded={menuOpen}
+            className="flex items-center gap-2.5"
+          >
+            <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-green-600 text-xs font-extrabold text-white">
+              {initials}
+            </div>
+            <div className="hidden text-left sm:block">
+              <p className="text-xs font-semibold text-black">{displayName}</p>
+              <p className="text-[10px] text-gray-text">{roleLabel}</p>
+            </div>
+            <ChevronDown className="hidden size-3 text-gray-text sm:block" aria-hidden="true" />
+          </button>
+
+          {menuOpen && (
+            <>
+              <button
+                type="button"
+                aria-label="Fermer le menu"
+                className="fixed inset-0 z-10 cursor-default"
+                onClick={() => setMenuOpen(false)}
+              />
+              <div
+                role="menu"
+                className="absolute right-0 top-full z-20 mt-2 w-48 rounded-xl border border-border bg-white p-1.5 shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
+              >
+                <button
+                  type="button"
+                  role="menuitem"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    logout();
+                  }}
+                  className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-xs font-semibold text-red-600 hover:bg-red-50"
+                >
+                  <LogOut className="size-3.5" aria-hidden="true" />
+                  Se déconnecter
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </header>
