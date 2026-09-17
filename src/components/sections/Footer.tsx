@@ -19,8 +19,11 @@ const columns = [
   {
     title: "Légal",
     links: [
-      "Conditions d'utilisation",
-      "Politique de confidentialité",
+      { label: "Conditions d'utilisation", href: "/conditions-utilisation" },
+      {
+        label: "Politique de confidentialité",
+        href: "/politique-confidentialite",
+      },
       "Mentions légales",
       "Cookies",
     ],

@@ -1,9 +1,11 @@
+type FooterLink = string | { label: string; href: string };
+
 export function FooterColumn({
   title,
   links,
 }: {
   title: string;
-  links: string[];
+  links: FooterLink[];
 }) {
   return (
     <div>
@@ -11,16 +13,20 @@ export function FooterColumn({
         {title}
       </h3>
       <ul className="mt-4 space-y-3">
-        {links.map((link) => (
-          <li key={link}>
-            <a
-              href="#"
-              className="text-xs text-[#6b8ab0] transition hover:text-white"
-            >
-              {link}
-            </a>
-          </li>
-        ))}
+        {links.map((link) => {
+          const label = typeof link === "string" ? link : link.label;
+          const href = typeof link === "string" ? "#" : link.href;
+          return (
+            <li key={label}>
+              <a
+                href={href}
+                className="text-xs text-[#6b8ab0] transition hover:text-white"
+              >
+                {label}
+              </a>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

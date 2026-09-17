@@ -232,8 +232,15 @@ export function SignupForm() {
           />
 
           <Checkbox checked={acceptTerms} onChange={setAcceptTerms}>
-            J&apos;accepte les Conditions d&apos;utilisation et la Politique
-            de confidentialité de KIYANZA.
+            J&apos;accepte les{" "}
+            <Link href="/conditions-utilisation" className="font-semibold text-black underline">
+              Conditions d&apos;utilisation
+            </Link>{" "}
+            et la{" "}
+            <Link href="/politique-confidentialite" className="font-semibold text-black underline">
+              Politique de confidentialité
+            </Link>{" "}
+            de KIYANZA.
           </Checkbox>
 
           <button

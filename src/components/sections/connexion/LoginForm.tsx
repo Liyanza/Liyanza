@@ -122,8 +122,15 @@ export function LoginForm() {
 
       <div className="mt-6 flex flex-col items-center gap-6 border-t border-[#f4f4f5] pt-6">
         <p className="text-center text-xs leading-relaxed text-[#a1a1aa]">
-          En vous connectant, vous acceptez nos Conditions d&apos;utilisation
-          et notre Politique de confidentialité.
+          En vous connectant, vous acceptez nos{" "}
+          <Link href="/conditions-utilisation" className="font-semibold text-black underline">
+            Conditions d&apos;utilisation
+          </Link>{" "}
+          et notre{" "}
+          <Link href="/politique-confidentialite" className="font-semibold text-black underline">
+            Politique de confidentialité
+          </Link>
+          .
         </p>
         <Link
           href="/"
