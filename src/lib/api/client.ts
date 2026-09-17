@@ -106,29 +106,41 @@ export function apiMe() {
   return request<AuthUser>("/api/auth/me");
 }
 
-/**
- * TODO: brancher sur POST /auth/forgot-password une fois disponible côté
- * backend (absent à ce jour — voir src/modules/auth/auth.controller.ts dans
- * Liyanza-backend, qui n'expose que register/login/refresh/logout/me).
- * Stub unique et clairement isolé : le formulaire (ForgotPasswordForm) ne
- * changera pas quand cet appel sera remplacé par un vrai fetch.
- */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- signature documente le futur param réel
-export async function requestPasswordReset(_email: string): Promise<{ success: true }> {
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  return { success: true };
+export function requestPasswordReset(email: string) {
+  return request<{ success: true }>("/api/auth/forgot-password", {
+    method: "POST",
+    body: JSON.stringify({ email }),
+  });
+}
+
+export function resetPassword(token: string, newPassword: string) {
+  return request<{ success: true }>("/api/auth/reset-password", {
+    method: "POST",
+    body: JSON.stringify({ token, newPassword }),
+  });
 }
 
 /**
- * TODO: brancher sur POST /auth/google et /auth/facebook une fois qu'une
- * stratégie OAuth de CONNEXION (différente du flow de liaison Meta pour les
- * campagnes, voir startSocialOAuth ci-dessous) existera côté backend.
- * Stub unique et clairement isolé pour ne pas retoucher SocialButtons quand
- * le vrai endpoint sera disponible.
+ * Démarre la connexion Google/Facebook : récupère l'URL d'autorisation
+ * auprès du backend puis navigue le NAVIGATEUR entier vers celle-ci (pas un
+ * fetch — la connexion doit remplacer la page courante, contrairement au
+ * flow de liaison Meta qui s'ouvre dans un popup depuis une page déjà
+ * authentifiée). Le retour se fait sur /connexion/oauth-callback, voir
+ * OAUTH_LOGIN_REDIRECT_URL côté backend.
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- signature documente le futur param réel
-export async function loginWithProvider(_provider: "google" | "facebook"): Promise<never> {
-  throw new ApiError(501, "Cette méthode de connexion arrive bientôt.");
+export async function loginWithProvider(provider: "google" | "facebook"): Promise<void> {
+  const { authorizationUrl } = await request<{ authorizationUrl: string }>(
+    `/api/auth/oauth/${provider}`
+  );
+  window.location.assign(authorizationUrl);
+}
+
+/** Appelée par /connexion/oauth-callback avec le code reçu dans l'URL. */
+export function exchangeOAuthCode(code: string) {
+  return request<{ user: LoginUser }>("/api/auth/oauth/exchange", {
+    method: "POST",
+    body: JSON.stringify({ code }),
+  });
 }
 
 // ---------------------------------------------------------------------------

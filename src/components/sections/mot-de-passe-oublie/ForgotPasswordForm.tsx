@@ -6,18 +6,19 @@ import {
   ArrowLeft,
   ArrowRight,
   CheckCircle2,
-  Lock,
+  Loader2,
   Mail,
   ShieldAlert,
   ShieldCheck,
 } from "lucide-react";
 import { FormField } from "@/components/auth/FormField";
-import { requestPasswordReset } from "@/lib/api/client";
+import { requestPasswordReset, ApiError } from "@/lib/api/client";
 
 export function ForgotPasswordForm() {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
 
   if (sent) {
     return (
@@ -35,28 +36,6 @@ export function ForgotPasswordForm() {
           </div>
         </div>
 
-        <div className="mt-6 border border-[#e4e4e7] bg-[#fafafa] p-5">
-          <p className="text-xs font-bold tracking-wide text-[#71717a]">
-            Nouveau mot de passe (aperçu)
-          </p>
-          <div className="mt-3">
-            <label className="text-xs font-semibold text-[#3f3f46]">
-              Nouveau mot de passe
-            </label>
-            <div className="mt-1.5 flex items-center gap-2 rounded-md border border-[#e4e4e7] bg-white px-3 py-3 opacity-60">
-              <Lock className="size-4 text-[#a1a1aa]" aria-hidden="true" />
-              <span className="text-sm text-[#a1a1aa]">Minimum 8 caractères</span>
-            </div>
-          </div>
-          <button
-            type="button"
-            disabled
-            className="mt-4 w-full cursor-not-allowed rounded-full bg-[#e4e4e7] py-3 text-sm font-bold text-white"
-          >
-            Réinitialiser et se connecter
-          </button>
-        </div>
-
         <div className="mt-6 flex flex-col gap-2.5 text-xs text-[#71717a]">
           <span className="flex items-center gap-2">
             <ShieldAlert className="size-3.5 shrink-0 text-orange-500" aria-hidden="true" />
@@ -64,7 +43,7 @@ export function ForgotPasswordForm() {
           </span>
           <span className="flex items-center gap-2">
             <ShieldCheck className="size-3.5 shrink-0 text-green-accent-dark" aria-hidden="true" />
-            Le lien expire dans 24 heures.
+            Le lien expire dans 30 minutes.
           </span>
           <span className="flex items-center gap-2">
             <ShieldCheck className="size-3.5 shrink-0 text-green-accent-dark" aria-hidden="true" />
@@ -110,15 +89,24 @@ export function ForgotPasswordForm() {
         onSubmit={async (e) => {
           e.preventDefault();
           if (!email || submitting) return;
+          setFormError(null);
           setSubmitting(true);
-          // requestPasswordReset() est un stub : voir sa définition dans
-          // src/lib/api/client.ts (POST /auth/forgot-password absent côté
-          // backend à ce jour).
-          await requestPasswordReset(email);
-          setSubmitting(false);
-          setSent(true);
+          try {
+            await requestPasswordReset(email);
+            setSent(true);
+          } catch (error) {
+            setFormError(error instanceof ApiError ? error.message : "Une erreur est survenue.");
+          } finally {
+            setSubmitting(false);
+          }
         }}
       >
+        {formError && (
+          <p role="alert" className="rounded-md bg-red-50 px-3 py-2 text-xs font-medium text-red-600">
+            {formError}
+          </p>
+        )}
+
         <FormField
           id="email"
           label="Adresse email"
@@ -135,8 +123,14 @@ export function ForgotPasswordForm() {
           disabled={submitting}
           className="mt-1 flex items-center justify-center gap-2 rounded-full bg-green-600 py-3.5 text-sm font-bold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-70"
         >
-          Recevoir le lien de réinitialisation
-          <ArrowRight className="size-4" aria-hidden="true" />
+          {submitting ? (
+            <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+          ) : (
+            <>
+              Recevoir le lien de réinitialisation
+              <ArrowRight className="size-4" aria-hidden="true" />
+            </>
+          )}
         </button>
 
         <div className="mt-2 flex items-start gap-3 border border-[#e4e4e7] bg-[#fafafa] p-4">
