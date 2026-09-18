@@ -11,7 +11,7 @@ import { authenticatedBackendRequest } from "@/lib/api/proxy";
  * devenir un tunnel ouvert vers n'importe quelle route backend (ex: /auth/*,
  * qui a son propre traitement dédié sous /api/auth/*).
  */
-const ALLOWED_PREFIXES = ["campagnes", "social-accounts", "entreprises"];
+const ALLOWED_PREFIXES = ["campagnes", "social-accounts", "entreprises", "dashboard"];
 
 // GET /social-accounts/oauth/callback est appelé DIRECTEMENT par Meta,
 // jamais par ce frontend — on ne le relaie donc jamais ici, par sécurité

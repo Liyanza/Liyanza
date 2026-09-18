@@ -32,10 +32,11 @@ export function TermsOfServiceContent() {
             <strong>
               Kiyanza
             </strong>
-            , dont le siège social est situé{" "}
-            <strong>adresse du siège social — Douala, 696370479</strong>,
+            , dont le siège social est situé à{" "}
+            <strong>Douala, Cameroun</strong>, joignable au{" "}
+            <strong>696370479</strong>,
             immatriculée sous le numéro{" "}
-            <strong>numéro d&apos;immatriculation — CM-DLA-01-2026-B12-00529</strong>{" "}
+            <strong>CM-DLA-01-2026-B12-00529</strong>{" "}
             (ci-après «&nbsp;KIYANZA&nbsp;», «&nbsp;nous&nbsp;»).
           </p>
           <p>

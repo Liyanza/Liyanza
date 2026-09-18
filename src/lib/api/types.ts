@@ -79,6 +79,47 @@ export interface CampagneRecord extends CreateCampagnePayload {
   updatedAt: string;
 }
 
+export interface CampagneListParams {
+  page?: number;
+  limit?: number;
+  status?: CampaignStatus;
+  type?: CampaignType;
+}
+
+export interface PaginatedCampagnes {
+  items: CampagneRecord[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+/** Miroir de `DashboardResponseDto` (backend, module `statistiques`). */
+export interface DashboardCampaignSummary {
+  id: string;
+  name: string;
+  status: CampaignStatus;
+  plannedBudget: number;
+  actualBudget: number;
+  broadcastCount: number;
+  broadcastedCount: number;
+  installationCount: number;
+  installedCount: number;
+}
+
+export interface DashboardSummary {
+  companyId: string;
+  totalCampaigns: number;
+  campaignsByStatus: Partial<Record<CampaignStatus, number>>;
+  totalPlannedBudget: number;
+  totalActualBudget: number;
+  budgetDeviation: number;
+  complianceRate: number;
+  installationRate: number;
+  unreadNotifications: number;
+  campaignsSummary: DashboardCampaignSummary[];
+}
+
 export interface SocialAccountRecord {
   id: string;
   platform: SocialPlatform;

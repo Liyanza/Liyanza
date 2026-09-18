@@ -31,8 +31,9 @@ export function PrivacyPolicyContent() {
             <strong>
               Kiyanza
             </strong>
-            , dont le siège social est situé{" "}
-            <strong>adresse du siège social — Douala, 696370479</strong>{" "}
+            , dont le siège social est situé à{" "}
+            <strong>Douala, Cameroun</strong>, joignable au{" "}
+            <strong>696370479</strong>{" "}
             («&nbsp;KIYANZA&nbsp;», «&nbsp;nous&nbsp;»), responsable du
             traitement, collecte, utilise et protège les données à caractère
             personnel des utilisateurs («&nbsp;vous&nbsp;») de la plateforme

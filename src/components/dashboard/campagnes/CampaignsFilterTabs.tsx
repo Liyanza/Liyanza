@@ -1,15 +1,15 @@
-import { campaignFilters, type CampaignFilter } from "@/data/dashboard";
-
 export function CampaignsFilterTabs({
+  filters,
   active,
   onChange,
 }: {
-  active: CampaignFilter;
-  onChange: (filter: CampaignFilter) => void;
+  filters: { label: string; count: number }[];
+  active: string;
+  onChange: (filter: string) => void;
 }) {
   return (
     <div className="flex flex-wrap items-center gap-1 rounded-full border border-border bg-white p-1">
-      {campaignFilters.map((filter) => {
+      {filters.map((filter) => {
         const isActive = filter.label === active;
         return (
           <button

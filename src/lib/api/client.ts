@@ -2,12 +2,15 @@
 
 import type {
   AuthUser,
+  CampagneListParams,
   CampagneRecord,
   CreateCampagnePayload,
   CreateEntreprisePayload,
+  DashboardSummary,
   DigitalSimulationRecord,
   EntrepriseRecord,
   LoginUser,
+  PaginatedCampagnes,
   RegisterPayload,
   SelectDigitalChannelsPayload,
   SocialAccountRecord,
@@ -163,6 +166,18 @@ export function apiGetCampagne(id: string) {
   return authenticatedRequest<CampagneRecord>(`/api/backend/campagnes/${id}`);
 }
 
+export function apiListCampagnes(params: CampagneListParams = {}) {
+  const query = new URLSearchParams();
+  if (params.page) query.set("page", String(params.page));
+  if (params.limit) query.set("limit", String(params.limit));
+  if (params.status) query.set("status", params.status);
+  if (params.type) query.set("type", params.type);
+  const qs = query.toString();
+  return authenticatedRequest<PaginatedCampagnes>(
+    `/api/backend/campagnes${qs ? `?${qs}` : ""}`
+  );
+}
+
 export function apiUpsertDigitalDetails(
   campaignId: string,
   payload: UpsertDigitalDetailsPayload
@@ -194,6 +209,14 @@ export function apiGetDigitalSimulations(campaignId: string) {
   return authenticatedRequest<
     DigitalSimulationRecord[] | { items: DigitalSimulationRecord[] }
   >(`/api/backend/campagnes/${campaignId}/simulations-digitales`);
+}
+
+// ---------------------------------------------------------------------------
+// Dashboard (agrégat entreprise)
+// ---------------------------------------------------------------------------
+
+export function apiGetDashboard() {
+  return authenticatedRequest<DashboardSummary>("/api/backend/dashboard");
 }
 
 // ---------------------------------------------------------------------------

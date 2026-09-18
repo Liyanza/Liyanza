@@ -15,9 +15,11 @@ const SERIES_COLORS = {
 export function BudgetDonutChart({
   segments,
   totalLabel,
+  totalSubLabel = "FCFA",
 }: {
   segments: { label: string; value: number; percent: number; color: string }[];
   totalLabel: string;
+  totalSubLabel?: string;
 }) {
   const size = 140;
   const strokeWidth = 22;
@@ -61,7 +63,7 @@ export function BudgetDonutChart({
           {totalLabel}
         </text>
         <text x="50%" y="61%" textAnchor="middle" className="fill-dash-muted text-[9px]">
-          FCFA
+          {totalSubLabel}
         </text>
       </svg>
       <ul className="flex flex-col gap-2.5">

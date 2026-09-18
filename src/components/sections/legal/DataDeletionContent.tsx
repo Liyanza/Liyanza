@@ -42,7 +42,7 @@ export function DataDeletionContent() {
         <LegalSection id="comment-demander" title="3. Comment demander la suppression">
           <p>
             Envoyez une demande à l&apos;adresse{" "}
-            <strong>contact@kayanza.com</strong> depuis
+            <strong>contact@kiyanza.com</strong> depuis
             l&apos;adresse email associée à votre compte KIYANZA, avec pour
             objet «&nbsp;Demande de suppression de données&nbsp;». Nous
             pouvons vous demander de confirmer votre identité avant de
@@ -63,7 +63,7 @@ export function DataDeletionContent() {
           <p>
             Pour toute question sur ce processus, contactez-nous à
             l&apos;adresse&nbsp;:{" "}
-            <strong>contact@kayanza.com</strong>. Voir
+            <strong>contact@kiyanza.com</strong>. Voir
             aussi nos <a href="/politique-confidentialite">
               droits en matière de données
             </a>{" "}
