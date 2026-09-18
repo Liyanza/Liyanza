@@ -1,4 +1,4 @@
-import { backendFetch, type BackendResult } from "./backend";
+import { backendFetch, backendFetchRaw, type BackendResult } from "./backend";
 import { getAccessToken } from "./session";
 import { performRefresh } from "./refresh";
 
@@ -39,4 +39,38 @@ export async function authenticatedBackendRequest<T = unknown>(
   }
 
   return result;
+}
+
+/**
+ * Même logique d'auth (attache le token, retente une fois après refresh sur
+ * 401) que `authenticatedBackendRequest`, mais pour un fichier téléchargeable
+ * (`GET /rapports`) : renvoie la `Response` brute (headers Content-Type /
+ * Content-Disposition + corps binaire), jamais parsée en JSON.
+ */
+export async function authenticatedBackendFileRequest(path: string): Promise<Response> {
+  let accessToken = await getAccessToken();
+
+  if (!accessToken) {
+    const refreshed = await performRefresh();
+    if (!refreshed.ok) {
+      return Response.json(refreshed.body, { status: 401 });
+    }
+    accessToken = refreshed.accessToken;
+  }
+
+  let response = await backendFetchRaw(path, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+
+  if (response.status === 401) {
+    const refreshed = await performRefresh();
+    if (!refreshed.ok) {
+      return response;
+    }
+    response = await backendFetchRaw(path, {
+      headers: { Authorization: `Bearer ${refreshed.accessToken}` },
+    });
+  }
+
+  return response;
 }

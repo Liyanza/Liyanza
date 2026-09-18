@@ -58,6 +58,12 @@ export interface CampaignTypeOption {
   title: string;
   description: string;
   icon: "digital" | "radio" | "print";
+  // Les étapes 2 à 6 du wizard (objectif, audience, budget, canaux,
+  // simulation) sont câblées uniquement pour le flux Digital/Meta — un choix
+  // Radio/Affichage y mènerait à un formulaire absurde (ex: connecter un
+  // compte Facebook pour un spot radio). Grisé en attendant leur propre
+  // flux dédié, même pattern que les canaux non supportés de StepChannels.
+  supported: boolean;
 }
 
 export const campaignTypeOptions: CampaignTypeOption[] = [
@@ -66,18 +72,21 @@ export const campaignTypeOptions: CampaignTypeOption[] = [
     title: "Campagne Digitale",
     description: "Facebook, Instagram, Google Ads & Email",
     icon: "digital",
+    supported: true,
   },
   {
     id: "radio",
     title: "Campagne Radio",
     description: "Diffusion sur les radios locales et nationales",
     icon: "radio",
+    supported: false,
   },
   {
     id: "print",
     title: "Supports Publicitaires",
     description: "Affiches, bâches, roll-ups, street marketing",
     icon: "print",
+    supported: false,
   },
 ];
 

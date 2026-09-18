@@ -49,3 +49,20 @@ export async function backendFetch<T = unknown>(
 
   return { status: response.status, body: body as T };
 }
+
+/**
+ * Variante brute de `backendFetch`, pour les réponses non-JSON (export CSV/
+ * PDF de `GET /rapports`) : `backendFetch` appelle `.text()` puis
+ * `JSON.parse`, ce qui corromprait un PDF binaire. Renvoie la `Response`
+ * telle quelle (headers + corps en flux), à retransmettre sans la parser.
+ */
+export async function backendFetchRaw(
+  path: string,
+  init: { headers?: Record<string, string> } = {}
+): Promise<Response> {
+  return fetch(`${API_URL}${path}`, {
+    method: "GET",
+    headers: init.headers,
+    cache: "no-store",
+  });
+}

@@ -28,11 +28,12 @@ export function StepType({
             <button
               key={option.id}
               type="button"
-              onClick={() => onChange(option.id)}
+              disabled={!option.supported}
+              onClick={() => option.supported && onChange(option.id)}
               aria-pressed={selected}
               className={`flex w-full items-center gap-4 rounded-2xl border-2 px-4 py-5 text-left transition-colors ${
                 selected ? "border-blue-500 bg-white" : "border-transparent bg-white shadow-[0_3px_6px_rgba(0,0,0,0.07)] hover:border-border"
-              }`}
+              } ${option.supported ? "cursor-pointer" : "cursor-not-allowed opacity-50"}`}
             >
               <span className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-green-accent-dark/10">
                 <Icon className="size-5 text-green-accent-dark" aria-hidden="true" />
@@ -41,7 +42,11 @@ export function StepType({
                 <span className="block text-base font-bold text-gray-900">{option.title}</span>
                 <span className="mt-0.5 block text-[12.5px] text-gray-text">{option.description}</span>
               </span>
-              {selected ? (
+              {!option.supported ? (
+                <span className="shrink-0 rounded-full bg-dash-pill-bg px-2.5 py-1 text-[11px] font-semibold text-dash-muted">
+                  Bientôt disponible
+                </span>
+              ) : selected ? (
                 <span className="flex size-5 shrink-0 items-center justify-center rounded-full border border-blue-500">
                   <span className="size-2 rounded-full bg-blue-500" />
                 </span>
