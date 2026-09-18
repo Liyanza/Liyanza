@@ -39,11 +39,11 @@ function formatLastSync(value: string | null) {
   return `Synchronisé il y a ${days} jours`;
 }
 
-// Peut être {data: [...]} (paginé, cohérent avec GET /campagnes) ou un
-// tableau brut selon l'implémentation exacte du contrôleur — les deux formes
-// sont gérées défensivement, la doc fournie ne précisant que "liste paginée".
-function normalizeList(result: SocialAccountRecord[] | { data: SocialAccountRecord[] }): SocialAccountRecord[] {
-  return Array.isArray(result) ? result : result.data;
+// GET /social-accounts renvoie {items, total, page, limit, totalPages}
+// (SocialAccountsService.findAll) — jamais un tableau brut en pratique, mais
+// on reste défensif au cas où la forme paginée soit désactivée un jour.
+function normalizeList(result: SocialAccountRecord[] | { items: SocialAccountRecord[] }): SocialAccountRecord[] {
+  return Array.isArray(result) ? result : result.items;
 }
 
 export function SocialAccountsPanel() {

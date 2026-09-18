@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function CampagnesPage() {
   return (
-    <RoleGate allow={["ADMIN", "MARKETING_MANAGER"]}>
+    <RoleGate allow={["ADMIN", "MARKETING_MANAGER", "COMMUNITY_MANAGER"]}>
       <CampagnesListClient />
     </RoleGate>
   );

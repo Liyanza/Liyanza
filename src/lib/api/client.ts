@@ -4,10 +4,15 @@ import type {
   AuthUser,
   CampagneRecord,
   CreateCampagnePayload,
+  CreateEntreprisePayload,
+  DigitalSimulationRecord,
+  EntrepriseRecord,
   LoginUser,
   RegisterPayload,
+  SelectDigitalChannelsPayload,
   SocialAccountRecord,
   SocialPlatform,
+  UpsertDigitalDetailsPayload,
 } from "./types";
 
 /** Erreur normalisée à partir d'une réponse d'erreur NestJS (`{message, statusCode}`). */
@@ -154,12 +159,51 @@ export function apiCreateCampagne(payload: CreateCampagnePayload) {
   });
 }
 
+export function apiGetCampagne(id: string) {
+  return authenticatedRequest<CampagneRecord>(`/api/backend/campagnes/${id}`);
+}
+
+export function apiUpsertDigitalDetails(
+  campaignId: string,
+  payload: UpsertDigitalDetailsPayload
+) {
+  return authenticatedRequest(`/api/backend/campagnes/${campaignId}/digital-details`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function apiSelectDigitalChannels(
+  campaignId: string,
+  payload: SelectDigitalChannelsPayload
+) {
+  return authenticatedRequest(
+    `/api/backend/campagnes/${campaignId}/digital-details/channels`,
+    { method: "PUT", body: JSON.stringify(payload) }
+  );
+}
+
+export function apiCreateDigitalSimulation(campaignId: string) {
+  return authenticatedRequest<DigitalSimulationRecord>(
+    `/api/backend/campagnes/${campaignId}/simulations-digitales`,
+    { method: "POST" }
+  );
+}
+
+export function apiGetDigitalSimulations(campaignId: string) {
+  return authenticatedRequest<
+    DigitalSimulationRecord[] | { items: DigitalSimulationRecord[] }
+  >(`/api/backend/campagnes/${campaignId}/simulations-digitales`);
+}
+
 // ---------------------------------------------------------------------------
 // Comptes sociaux (liaison Meta)
 // ---------------------------------------------------------------------------
 
 export function apiListSocialAccounts() {
-  return authenticatedRequest<SocialAccountRecord[] | { data: SocialAccountRecord[] }>(
+  // GET /social-accounts renvoie {items, total, page, limit, totalPages}
+  // (SocialAccountsService.findAll) — jamais {data: [...]}.
+  return authenticatedRequest<SocialAccountRecord[] | { items: SocialAccountRecord[] }>(
     "/api/backend/social-accounts"
   );
 }
@@ -181,5 +225,16 @@ export function apiRevokeSocialAccount(id: string) {
 export function apiSyncSocialAccount(id: string) {
   return authenticatedRequest<{ success: boolean }>(`/api/backend/social-accounts/${id}/sync`, {
     method: "POST",
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Entreprise
+// ---------------------------------------------------------------------------
+
+export function apiCreateEntreprise(payload: CreateEntreprisePayload) {
+  return authenticatedRequest<EntrepriseRecord>("/api/backend/entreprises", {
+    method: "POST",
+    body: JSON.stringify(payload),
   });
 }

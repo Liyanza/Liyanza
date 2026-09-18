@@ -14,23 +14,30 @@ import { StepBudget, type BudgetData } from "./steps/StepBudget";
 import { StepChannels } from "./steps/StepChannels";
 import { StepSimulation } from "./steps/StepSimulation";
 import { wizardSteps, objectiveOptions } from "@/data/dashboard";
-import type { CampaignType, CreateCampagnePayload } from "@/lib/api/types";
+import type {
+  CampaignType,
+  CreateCampagnePayload,
+  DigitalObjective,
+  SelectDigitalChannelsPayload,
+  SocialPlatform,
+  UpsertDigitalDetailsPayload,
+} from "@/lib/api/types";
 
 interface WizardState {
   type: string | null;
   definition: DefinitionData;
-  objective: string | null;
+  objective: DigitalObjective | null;
   audience: AudienceData;
   budget: BudgetData;
-  channels: string[];
+  channels: SocialPlatform[];
 }
 
 const initialState: WizardState = {
   type: null,
   definition: { name: "", product: "", description: "" },
   objective: null,
-  audience: { ageMin: 25, ageMax: 45, gender: "all", interests: ["Fintech & Mobile Money", "Entrepreneuriat", "Commerce & PME"] },
-  budget: { budgetType: "total", amount: 500000, startDate: "2025-10-15", endDate: "2025-10-29" },
+  audience: { ageMin: 25, ageMax: 45, gender: "ALL", interests: ["Fintech & Mobile Money", "Entrepreneuriat", "Commerce & PME"] },
+  budget: { budgetType: "TOTAL", amount: 500000, startDate: "2025-10-15", endDate: "2025-10-29" },
   channels: [],
 };
 
@@ -58,7 +65,8 @@ function durationInDays(start: string, end: string): number {
  *    description libre de l'étape 2, si renseignée.
  *  - un budget "quotidien" est converti en budget total en le multipliant
  *    par la durée de la période sélectionnée (le backend n'a qu'un seul
- *    champ plannedBudget).
+ *    champ plannedBudget — l'allocation TOTAL/DAILY elle-même est transmise
+ *    séparément à PUT digital-details, voir buildDigitalDetailsPayload).
  */
 function buildCampagnePayload(state: WizardState): CreateCampagnePayload | null {
   const type = state.type ? TYPE_TO_BACKEND[state.type] : undefined;
@@ -66,7 +74,7 @@ function buildCampagnePayload(state: WizardState): CreateCampagnePayload | null 
   if (!type || !objectiveOption || !state.definition.name.trim()) return null;
 
   const days = durationInDays(state.budget.startDate, state.budget.endDate);
-  const rawBudget = state.budget.budgetType === "daily" ? state.budget.amount * days : state.budget.amount;
+  const rawBudget = state.budget.budgetType === "DAILY" ? state.budget.amount * days : state.budget.amount;
   const plannedBudget = Math.min(9_999_999_999, Math.max(0.01, Math.round(rawBudget * 100) / 100));
 
   const objective = [objectiveOption.title, state.definition.description.trim() || objectiveOption.description]
@@ -83,11 +91,38 @@ function buildCampagnePayload(state: WizardState): CreateCampagnePayload | null 
   };
 }
 
+/**
+ * Détails structurés de la campagne digitale, envoyés à
+ * PUT /campagnes/:id/digital-details une fois la campagne créée.
+ * `targetLocations` : aucune saisie de localisation dans cette maquette —
+ * tableau vide, accepté par le backend (pas de @ArrayMinSize).
+ */
+function buildDigitalDetailsPayload(state: WizardState): UpsertDigitalDetailsPayload | null {
+  if (!state.objective) return null;
+  return {
+    objective: state.objective,
+    ageMin: state.audience.ageMin,
+    ageMax: state.audience.ageMax,
+    targetGender: state.audience.gender,
+    targetLocations: [],
+    targetInterests: state.audience.interests,
+    budgetAllocation: state.budget.budgetType,
+  };
+}
+
+function buildChannelsPayload(state: WizardState): SelectDigitalChannelsPayload | null {
+  if (state.channels.length === 0) return null;
+  return { channels: state.channels.map((platform) => ({ platform })) };
+}
+
 export function CampaignWizard() {
   const [stepIndex, setStepIndex] = useState(0);
   const [state, setState] = useState<WizardState>(initialState);
 
   const payload = useMemo(() => buildCampagnePayload(state), [state]);
+  const digitalDetailsPayload = useMemo(() => buildDigitalDetailsPayload(state), [state]);
+  const channelsPayload = useMemo(() => buildChannelsPayload(state), [state]);
+  const isDigital = state.type === "digital";
 
   const canContinue = useMemo(() => {
     switch (stepIndex) {
@@ -114,10 +149,12 @@ export function CampaignWizard() {
     setStepIndex((index) => Math.max(0, index - 1));
   }
 
-  function toggleChannel(id: string) {
+  function toggleChannel(platform: SocialPlatform) {
     setState((prev) => ({
       ...prev,
-      channels: prev.channels.includes(id) ? prev.channels.filter((c) => c !== id) : [...prev.channels, id],
+      channels: prev.channels.includes(platform)
+        ? prev.channels.filter((c) => c !== platform)
+        : [...prev.channels, platform],
     }));
   }
 
@@ -167,7 +204,13 @@ export function CampaignWizard() {
               <StepBudget data={state.budget} onChange={(budget) => setState((prev) => ({ ...prev, budget }))} />
             )}
             {stepIndex === 5 && <StepChannels value={state.channels} onToggle={toggleChannel} />}
-            {stepIndex === 6 && <StepSimulation payload={payload} />}
+            {stepIndex === 6 && (
+              <StepSimulation
+                payload={payload}
+                digitalDetailsPayload={isDigital ? digitalDetailsPayload : null}
+                channelsPayload={isDigital ? channelsPayload : null}
+              />
+            )}
 
             {stepIndex < LAST_STEP && (
               <WizardFooterNav onBack={goBack} onNext={goNext} nextDisabled={!canContinue} showBack={stepIndex > 0} />

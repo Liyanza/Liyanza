@@ -11,7 +11,7 @@ import { authenticatedBackendRequest } from "@/lib/api/proxy";
  * devenir un tunnel ouvert vers n'importe quelle route backend (ex: /auth/*,
  * qui a son propre traitement dédié sous /api/auth/*).
  */
-const ALLOWED_PREFIXES = ["campagnes", "social-accounts"];
+const ALLOWED_PREFIXES = ["campagnes", "social-accounts", "entreprises"];
 
 // GET /social-accounts/oauth/callback est appelé DIRECTEMENT par Meta,
 // jamais par ce frontend — on ne le relaie donc jamais ici, par sécurité
@@ -45,6 +45,11 @@ export async function GET(request: NextRequest, ctx: HandlerContext) {
 export async function POST(request: NextRequest, ctx: HandlerContext) {
   const { path } = await ctx.params;
   return handle(request, path, "POST");
+}
+
+export async function PUT(request: NextRequest, ctx: HandlerContext) {
+  const { path } = await ctx.params;
+  return handle(request, path, "PUT");
 }
 
 export async function PATCH(request: NextRequest, ctx: HandlerContext) {

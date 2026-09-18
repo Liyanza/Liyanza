@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { apiLogout, apiMe } from "@/lib/api/client";
 import type { AuthUser } from "@/lib/api/types";
 
@@ -21,10 +21,13 @@ const AuthContext = createContext<AuthContextValue | null>(null);
  * (connexion/inscription) n'ont pas besoin de connaître l'utilisateur
  * courant, elles appellent directement apiLogin/apiRegister et redirigent.
  */
+const CREATE_COMPANY_PATH = "/dashboard/entreprise/creer";
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [status, setStatus] = useState<AuthStatus>("loading");
   const router = useRouter();
+  const pathname = usePathname();
 
   const load = useCallback(() => {
     return apiMe().then(
@@ -49,8 +52,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // révèle ici et on renvoie proprement vers la connexion.
     if (status === "unauthenticated") {
       router.push("/connexion");
+      return;
     }
-  }, [status, router]);
+    // Un compte fraîchement inscrit n'appartient à aucune entreprise
+    // (`AuthService.register()`) : toutes les fonctionnalités du dashboard
+    // sont scopées à une entreprise (campagnes, comptes sociaux, etc.), donc
+    // on force ce détour tant qu'il n'en a pas créé/rejoint une.
+    if (status === "authenticated" && user) {
+      if (!user.companyId && pathname !== CREATE_COMPANY_PATH) {
+        router.push(CREATE_COMPANY_PATH);
+      } else if (user.companyId && pathname === CREATE_COMPANY_PATH) {
+        router.push("/dashboard");
+      }
+    }
+  }, [status, user, pathname, router]);
 
   const logout = useCallback(async () => {
     await apiLogout().catch(() => null);

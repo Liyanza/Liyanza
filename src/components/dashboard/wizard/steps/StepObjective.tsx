@@ -1,5 +1,6 @@
 import { CheckCircle2, Heart, Megaphone, Plus, ShoppingCart, Target, TrendingUp, UserPlus } from "lucide-react";
 import { objectiveOptions, type ObjectiveOption } from "@/data/dashboard";
+import type { DigitalObjective } from "@/lib/api/types";
 
 const icons: Record<ObjectiveOption["icon"], typeof Megaphone> = {
   awareness: Megaphone,
@@ -14,8 +15,8 @@ export function StepObjective({
   value,
   onChange,
 }: {
-  value: string | null;
-  onChange: (id: string) => void;
+  value: DigitalObjective | null;
+  onChange: (id: DigitalObjective) => void;
 }) {
   return (
     <div>

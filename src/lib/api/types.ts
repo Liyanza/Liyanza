@@ -13,6 +13,18 @@ export type CampaignStatus = "DRAFT" | "PLANNED" | "IN_PROGRESS" | "COMPLETED" |
 
 export type SocialPlatform = "FACEBOOK" | "INSTAGRAM";
 
+export type DigitalObjective =
+  | "AWARENESS"
+  | "ENGAGEMENT"
+  | "CONVERSION"
+  | "LEADS"
+  | "SALES"
+  | "TRAFFIC";
+
+export type BudgetAllocationType = "TOTAL" | "DAILY";
+
+export type TargetGender = "ALL" | "MALE" | "FEMALE";
+
 export type SocialAccountStatus = "ACTIVE" | "EXPIRED" | "REVOKED";
 
 /** Identité authentifiée résolue par le backend (`GET /auth/me`). Fait autorité pour les décisions RBAC. */
@@ -75,4 +87,86 @@ export interface SocialAccountRecord {
   status: SocialAccountStatus;
   lastSyncedAt: string | null;
   createdAt: string;
+}
+
+// ---------------------------------------------------------------------------
+// Campagnes digitales
+// ---------------------------------------------------------------------------
+
+export interface UpsertDigitalDetailsPayload {
+  objective: DigitalObjective;
+  ageMin: number;
+  ageMax: number;
+  targetGender: TargetGender;
+  targetLocations: string[];
+  targetInterests: string[];
+  budgetAllocation: BudgetAllocationType;
+}
+
+export interface DigitalCampaignChannelSelection {
+  platform: SocialPlatform;
+  socialAccountId?: string;
+}
+
+export interface SelectDigitalChannelsPayload {
+  channels: DigitalCampaignChannelSelection[];
+}
+
+export interface DigitalSimulationScenario {
+  id: string;
+  label: string;
+  isRecommended: boolean;
+  score: number;
+  predictedReach: number;
+  predictedClicks: number;
+  predictedConversions: number;
+  predictedRoas: number;
+}
+
+export interface DigitalSimulationChannelResult {
+  platform: SocialPlatform;
+  budgetAmount: number;
+  budgetPercent: number;
+  predictedReach: number;
+  predictedClicks: number;
+  predictedConversions: number;
+  predictedRoas: number;
+}
+
+export interface DigitalSimulationWeekPoint {
+  weekIndex: number;
+  predictedReach: number;
+  predictedClicks: number;
+  predictedConversions: number;
+  budgetSpent: number;
+}
+
+export interface DigitalSimulationRecord {
+  id: string;
+  campaignId: string;
+  simulatedAt: string;
+  predictedReach: number | null;
+  predictedEngagementRate: number | null;
+  predictedCtr: number | null;
+  predictedRoas: number | null;
+  narrativeSummary: string | null;
+  warnings: string[];
+  avgCpc: number | null;
+  costPerAcquisition: number | null;
+  conversionRate: number | null;
+  scenarios: DigitalSimulationScenario[];
+  channelBreakdown: DigitalSimulationChannelResult[];
+  weeklySeries: DigitalSimulationWeekPoint[];
+}
+
+export interface CreateEntreprisePayload {
+  name: string;
+  businessSector: string;
+  address: string;
+}
+
+export interface EntrepriseRecord extends CreateEntreprisePayload {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
 }

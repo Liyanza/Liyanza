@@ -4,17 +4,21 @@ import { Check, Plus, Users, UsersRound } from "lucide-react";
 import { interestTags } from "@/data/dashboard";
 import { AgeRangeSlider } from "./AgeRangeSlider";
 
+import type { TargetGender } from "@/lib/api/types";
+
 export interface AudienceData {
   ageMin: number;
   ageMax: number;
-  gender: "all" | "male" | "female";
+  // Valeur envoyée telle quelle comme `targetGender` à
+  // PUT /campagnes/:id/digital-details.
+  gender: TargetGender;
   interests: string[];
 }
 
 const genderOptions: { id: AudienceData["gender"]; label: string }[] = [
-  { id: "all", label: "Tous (Hommes/Femmes)" },
-  { id: "male", label: "Hommes uniquement" },
-  { id: "female", label: "Femmes uniquement" },
+  { id: "ALL", label: "Tous (Hommes/Femmes)" },
+  { id: "MALE", label: "Hommes uniquement" },
+  { id: "FEMALE", label: "Femmes uniquement" },
 ];
 
 export function StepAudience({

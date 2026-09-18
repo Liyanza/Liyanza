@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import { ShieldAlert } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import type { Role } from "@/lib/api/types";
+import { ROLE_LABELS, type Role } from "@/lib/api/types";
 
 /**
  * Masque une section du dashboard aux rôles non autorisés. L'autorisation
@@ -30,9 +30,9 @@ export function RoleGate({ allow, children }: { allow: Role[]; children: ReactNo
         </span>
         <p className="text-base font-semibold text-dash-heading">Accès réservé</p>
         <p className="max-w-sm text-sm text-dash-muted">
-          Cette section est réservée aux rôles Administrateur et Responsable Marketing. Contactez
-          un administrateur de votre entreprise si vous pensez qu&apos;il s&apos;agit d&apos;une
-          erreur.
+          Cette section est réservée aux rôles {allow.map((role) => ROLE_LABELS[role]).join(", ")}.
+          Contactez un administrateur de votre entreprise si vous pensez qu&apos;il s&apos;agit
+          d&apos;une erreur.
         </p>
       </div>
     );

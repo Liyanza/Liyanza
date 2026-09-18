@@ -369,8 +369,13 @@ export const campaignTypeOptions: CampaignTypeOption[] = [
   },
 ];
 
+import type { DigitalObjective } from "@/lib/api/types";
+
 export interface ObjectiveOption {
-  id: string;
+  // Valeur envoyée telle quelle à PUT /campagnes/:id/digital-details
+  // (DigitalObjective côté backend) — jamais une transformation à faire au
+  // moment de la soumission.
+  id: DigitalObjective;
   title: string;
   description: string;
   optimization: string;
@@ -379,42 +384,42 @@ export interface ObjectiveOption {
 
 export const objectiveOptions: ObjectiveOption[] = [
   {
-    id: "awareness",
+    id: "AWARENESS",
     title: "Notoriété",
     description: "Faire connaître votre marque et maximiser la mémorisation publicitaire sur l'ensemble de vos canaux.",
     optimization: "OPTIMISATION CPM",
     icon: "awareness",
   },
   {
-    id: "leads",
+    id: "LEADS",
     title: "Génération de leads",
     description: "Obtenir des contacts qualifiés et des intentions d'achat directes pour alimenter vos équipes commerciales.",
     optimization: "OPTIMISATION CPM",
     icon: "leads",
   },
   {
-    id: "conversions",
+    id: "CONVERSION",
     title: "Conversions",
     description: "Transformer davantage de prospects en utilisateurs actifs d'un service ou testeurs d'une application.",
     optimization: "OPTIMISATION CPA",
     icon: "conversions",
   },
   {
-    id: "sales",
+    id: "SALES",
     title: "Ventes directes",
     description: "Accélérer les transactions directes et maximiser le chiffre d'affaires immédiat sur boutique ou catalogue.",
     optimization: "OPTIMISATION ROAS",
     icon: "sales",
   },
   {
-    id: "traffic",
+    id: "TRAFFIC",
     title: "Trafic qualifié",
     description: "Augmenter massivement les visites sur votre site web, page produit ou application avec un rebond minimal.",
     optimization: "OPTIMISATION CPC",
     icon: "traffic",
   },
   {
-    id: "engagement",
+    id: "ENGAGEMENT",
     title: "Engagement",
     description: "Créer des interactions fortes, des partages, des commentaires et un dialogue communautaire pérenne.",
     optimization: "OPTIMISATION CPE",

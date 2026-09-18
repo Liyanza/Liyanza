@@ -3,8 +3,12 @@
 import { Calendar, Zap } from "lucide-react";
 import { budgetPresets } from "@/data/dashboard";
 
+import type { BudgetAllocationType } from "@/lib/api/types";
+
 export interface BudgetData {
-  budgetType: "total" | "daily";
+  // Valeur envoyée telle quelle comme `budgetAllocation` à
+  // PUT /campagnes/:id/digital-details.
+  budgetType: BudgetAllocationType;
   amount: number;
   startDate: string;
   endDate: string;
@@ -51,7 +55,7 @@ export function StepBudget({
             <h2 className="text-lg font-semibold text-dash-heading">Type de budget et Montant</h2>
           </div>
           <div className="flex items-start rounded-full bg-dash-pill-bg p-1">
-            {(["total", "daily"] as const).map((type) => (
+            {(["TOTAL", "DAILY"] as const).map((type) => (
               <button
                 key={type}
                 type="button"
@@ -61,7 +65,7 @@ export function StepBudget({
                   data.budgetType === type ? "bg-green-accent text-white shadow-[0_1px_1px_rgba(0,0,0,0.05)]" : "text-dash-muted"
                 }`}
               >
-                Budget {type === "total" ? "total" : "quotidien"}
+                Budget {type === "TOTAL" ? "total" : "quotidien"}
               </button>
             ))}
           </div>
