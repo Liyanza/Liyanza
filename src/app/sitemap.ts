@@ -16,6 +16,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/ressources", changeFrequency: "weekly", priority: 0.7 },
     { path: "/conditions-utilisation", changeFrequency: "yearly", priority: 0.3 },
     { path: "/politique-confidentialite", changeFrequency: "yearly", priority: 0.3 },
+    { path: "/suppression-des-donnees", changeFrequency: "yearly", priority: 0.3 },
   ];
 
   // Les pages de compte (connexion, inscription, mot de passe oublié) sont

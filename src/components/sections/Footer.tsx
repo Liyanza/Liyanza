@@ -24,6 +24,7 @@ const columns = [
         label: "Politique de confidentialité",
         href: "/politique-confidentialite",
       },
+      { label: "Suppression des données", href: "/suppression-des-donnees" },
       "Mentions légales",
       "Cookies",
     ],
