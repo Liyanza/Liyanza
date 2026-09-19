@@ -1,23 +1,18 @@
 export interface NavItem {
   href: string;
   label: string;
-  icon:
-    | "home"
-    | "campaigns"
-    | "monitoring"
-    | "ai"
-    | "reports"
-    | "teams"
-    | "company"
-    | "profile"
-    | "notifications"
-    | "help";
+  icon: "home" | "campaigns" | "ai" | "reports" | "teams" | "company" | "profile" | "notifications" | "help";
 }
 
+// "Monitoring" retiré : le seul module backend de ce nom
+// (`internal/monitoring`) est un webhook machine-à-machine pour le futur
+// service Liyanza-ia (détection de diffusion radio), pas une page
+// utilisateur — voir MonitoringController. Un vrai écran "Monitoring"
+// (diffusions détectées, statut terrain) n'a de sens qu'avec le flux
+// Radio/Affichage complet (canaux, diffusions, preuves), pas encore construit.
 export const mainNavItems: NavItem[] = [
   { href: "/dashboard", label: "Accueil", icon: "home" },
   { href: "/dashboard/campagnes", label: "Campagnes", icon: "campaigns" },
-  { href: "/dashboard/monitoring", label: "Monitoring", icon: "monitoring" },
   { href: "/dashboard/recommandations", label: "Recommandations IA", icon: "ai" },
   { href: "/dashboard/rapports", label: "Rapports", icon: "reports" },
   { href: "/dashboard/equipes", label: "Equipes", icon: "teams" },

@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Activity,
   Bell,
   Building2,
   CircleHelp,
@@ -21,7 +20,6 @@ import { mainNavItems, settingsNavItems, type NavItem } from "@/data/dashboard";
 const icons: Record<NavItem["icon"], LucideIcon> = {
   home: HomeIcon,
   campaigns: Megaphone,
-  monitoring: Activity,
   ai: Sparkles,
   reports: FileBarChart2,
   teams: Users,

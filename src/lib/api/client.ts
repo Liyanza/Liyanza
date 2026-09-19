@@ -4,8 +4,10 @@ import type {
   AuthUser,
   CampagneListParams,
   CampagneRecord,
+  CompanyMember,
   CreateCampagnePayload,
   CreateEntreprisePayload,
+  CreateSubAccountPayload,
   DashboardSummary,
   DigitalSimulationRecord,
   EntrepriseRecord,
@@ -15,6 +17,7 @@ import type {
   PaginatedCampagnes,
   PaginatedNotifications,
   RegisterPayload,
+  Role,
   SelectDigitalChannelsPayload,
   SocialAccountRecord,
   SocialPlatform,
@@ -241,6 +244,34 @@ export function apiListNotifications(
 
 export function apiMarkNotificationRead(id: string) {
   return authenticatedRequest<NotificationRecord>(`/api/backend/notifications/${id}/lue`, {
+    method: "PATCH",
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Équipes (membres de l'entreprise)
+// ---------------------------------------------------------------------------
+
+export function apiListUsers() {
+  return authenticatedRequest<CompanyMember[]>("/api/backend/users");
+}
+
+export function apiCreateSubAccount(payload: CreateSubAccountPayload) {
+  return authenticatedRequest<CompanyMember>("/api/backend/users", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function apiUpdateUserRole(id: string, role: Role) {
+  return authenticatedRequest<CompanyMember>(`/api/backend/users/${id}/role`, {
+    method: "PATCH",
+    body: JSON.stringify({ role }),
+  });
+}
+
+export function apiDeactivateUser(id: string) {
+  return authenticatedRequest<null>(`/api/backend/users/${id}/deactivate`, {
     method: "PATCH",
   });
 }

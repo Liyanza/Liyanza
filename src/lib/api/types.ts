@@ -107,6 +107,26 @@ export interface DashboardCampaignSummary {
   installedCount: number;
 }
 
+export interface CompanyMember {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  role: Role;
+  companyId: string | null;
+  createdAt: string;
+  deactivatedAt: string | null;
+}
+
+export interface CreateSubAccountPayload {
+  email: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  role: Role;
+}
+
 export type NotificationType = "INFO" | "WARNING" | "ERROR" | "SUCCESS";
 
 export type NotificationReadStatus = "UNREAD" | "READ";

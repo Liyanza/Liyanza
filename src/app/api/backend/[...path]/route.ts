@@ -11,7 +11,13 @@ import { authenticatedBackendRequest } from "@/lib/api/proxy";
  * devenir un tunnel ouvert vers n'importe quelle route backend (ex: /auth/*,
  * qui a son propre traitement dédié sous /api/auth/*).
  */
-const ALLOWED_PREFIXES = ["campagnes", "social-accounts", "entreprises", "dashboard", "notifications"];
+const ALLOWED_PREFIXES = ["campagnes", "social-accounts", "entreprises", "dashboard", "notifications", "users"];
+
+// Statuts "null body" au sens de la spec Fetch (204/205/304) : construire une
+// Response avec un corps (même `null` sérialisé en la chaîne "null") lève une
+// TypeError à l'exécution. PATCH /users/:id/deactivate renvoie 204 — premier
+// endpoint proxié à en émettre un, d'où ce garde-fou.
+const NULL_BODY_STATUSES = [204, 205, 304];
 
 // GET /social-accounts/oauth/callback est appelé DIRECTEMENT par Meta,
 // jamais par ce frontend — on ne le relaie donc jamais ici, par sécurité
@@ -30,6 +36,11 @@ async function handle(request: NextRequest, path: string[], method: string) {
   const body = hasBody ? await request.json().catch(() => undefined) : undefined;
 
   const result = await authenticatedBackendRequest(backendPath, { method, body });
+
+  if (NULL_BODY_STATUSES.includes(result.status)) {
+    return new NextResponse(null, { status: result.status });
+  }
+
   return NextResponse.json(result.body, { status: result.status });
 }
 
