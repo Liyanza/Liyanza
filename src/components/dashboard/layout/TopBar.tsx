@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import { ChevronDown, LogOut, Search } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { apiListNotifications } from "@/lib/api/client";
 import { ROLE_LABELS } from "@/lib/api/types";
 
 export function TopBar({
@@ -16,6 +18,17 @@ export function TopBar({
 }) {
   const { user, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    // Le total exact importe peu ici (juste la pastille du clocher) : on ne
+    // remonte qu'un compteur, jamais le contenu — pas de gestion d'erreur
+    // visible, un badge qui reste à 0 en cas d'échec réseau est acceptable.
+    apiListNotifications({ readStatus: "UNREAD", limit: 1 }).then(
+      (result) => setUnreadCount(result.total),
+      () => {}
+    );
+  }, []);
 
   const displayName =
     user?.firstName && user?.lastName ? `${user.firstName} ${user.lastName}` : user?.email ?? "…";
@@ -46,9 +59,9 @@ export function TopBar({
             <ChevronDown className="size-3.5" aria-hidden="true" />
           </button>
         )}
-        <button
-          type="button"
-          aria-label="Notifications"
+        <Link
+          href="/dashboard/notifications"
+          aria-label={unreadCount > 0 ? `Notifications (${unreadCount} non lues)` : "Notifications"}
           className="relative flex size-12 shrink-0 items-center justify-center rounded-full border border-border bg-dash-canvas"
         >
           <svg viewBox="0 0 24 24" fill="none" className="size-4 text-dash-body" aria-hidden="true">
@@ -60,10 +73,12 @@ export function TopBar({
             />
             <path d="M9.5 18a2.5 2.5 0 0 0 5 0" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
           </svg>
-          <span className="absolute -top-1 right-4 flex size-4 items-center justify-center rounded-full bg-[#e93c16] text-[9px] font-extrabold text-white">
-            3
-          </span>
-        </button>
+          {unreadCount > 0 && (
+            <span className="absolute -top-1 right-4 flex size-4 items-center justify-center rounded-full bg-[#e93c16] text-[9px] font-extrabold text-white">
+              {unreadCount > 9 ? "9+" : unreadCount}
+            </span>
+          )}
+        </Link>
         <div className="relative">
           <button
             type="button"

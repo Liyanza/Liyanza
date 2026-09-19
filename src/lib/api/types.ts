@@ -107,6 +107,28 @@ export interface DashboardCampaignSummary {
   installedCount: number;
 }
 
+export type NotificationType = "INFO" | "WARNING" | "ERROR" | "SUCCESS";
+
+export type NotificationReadStatus = "UNREAD" | "READ";
+
+export interface NotificationRecord {
+  id: string;
+  title: string;
+  message: string;
+  type: NotificationType;
+  sentAt: string;
+  readStatus: NotificationReadStatus;
+  recipientId: string;
+}
+
+export interface PaginatedNotifications {
+  items: NotificationRecord[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
 export interface DashboardSummary {
   companyId: string;
   totalCampaigns: number;

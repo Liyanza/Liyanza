@@ -10,7 +10,10 @@ import type {
   DigitalSimulationRecord,
   EntrepriseRecord,
   LoginUser,
+  NotificationReadStatus,
+  NotificationRecord,
   PaginatedCampagnes,
+  PaginatedNotifications,
   RegisterPayload,
   SelectDigitalChannelsPayload,
   SocialAccountRecord,
@@ -217,6 +220,29 @@ export function apiGetDigitalSimulations(campaignId: string) {
 
 export function apiGetDashboard() {
   return authenticatedRequest<DashboardSummary>("/api/backend/dashboard");
+}
+
+// ---------------------------------------------------------------------------
+// Notifications
+// ---------------------------------------------------------------------------
+
+export function apiListNotifications(
+  params: { readStatus?: NotificationReadStatus | "ALL"; page?: number; limit?: number } = {}
+) {
+  const query = new URLSearchParams();
+  if (params.readStatus) query.set("readStatus", params.readStatus);
+  if (params.page) query.set("page", String(params.page));
+  if (params.limit) query.set("limit", String(params.limit));
+  const qs = query.toString();
+  return authenticatedRequest<PaginatedNotifications>(
+    `/api/backend/notifications${qs ? `?${qs}` : ""}`
+  );
+}
+
+export function apiMarkNotificationRead(id: string) {
+  return authenticatedRequest<NotificationRecord>(`/api/backend/notifications/${id}/lue`, {
+    method: "PATCH",
+  });
 }
 
 // ---------------------------------------------------------------------------
