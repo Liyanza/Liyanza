@@ -13,8 +13,17 @@ import { StepAudience, type AudienceData } from "./steps/StepAudience";
 import { StepBudget, type BudgetData } from "./steps/StepBudget";
 import { StepChannels } from "./steps/StepChannels";
 import { StepSimulation } from "./steps/StepSimulation";
+import { RadioWizardStepper } from "./radio/RadioWizardStepper";
+import { StepRadioStation, type RadioStationData } from "./radio/StepRadioStation";
+import { StepRadioSpot, type RadioSpotData } from "./radio/StepRadioSpot";
+import { StepRadioFrequency, type RadioFrequencyData } from "./radio/StepRadioFrequency";
+import { StepRadioRecap } from "./radio/StepRadioRecap";
+import { RadioConfirmation } from "./radio/RadioConfirmation";
 import { wizardSteps, objectiveOptions } from "@/data/dashboard";
+import { radioStations } from "@/data/radioStations";
+import { apiCreateCampagne, ApiError } from "@/lib/api/client";
 import type {
+  CampagneRecord,
   CampaignType,
   CreateCampagnePayload,
   DigitalObjective,
@@ -30,6 +39,9 @@ interface WizardState {
   audience: AudienceData;
   budget: BudgetData;
   channels: SocialPlatform[];
+  radioStation: RadioStationData;
+  radioSpot: RadioSpotData;
+  radioFrequency: RadioFrequencyData;
 }
 
 const initialState: WizardState = {
@@ -39,9 +51,26 @@ const initialState: WizardState = {
   audience: { ageMin: 25, ageMax: 45, gender: "ALL", interests: ["Fintech & Mobile Money", "Entrepreneuriat", "Commerce & PME"] },
   budget: { budgetType: "TOTAL", amount: 500000, startDate: "2025-10-15", endDate: "2025-10-29" },
   channels: [],
+  radioStation: { stationId: null },
+  radioSpot: { file: null, fileName: "", durationSec: null, spotName: "" },
+  radioFrequency: {
+    perDay: 3,
+    timeSlots: ["07h00 - 09h00", "12h00 - 14h00", "17h00 - 19h00"],
+    days: ["MON", "TUE", "WED", "THU"],
+    startDate: "2026-09-25",
+    endDate: "2026-10-25",
+  },
 };
 
-const LAST_STEP = wizardSteps.length - 1;
+const DIGITAL_LAST_STEP = wizardSteps.length - 1;
+
+// Flux Radio (maquette Figma "MARKETED-OSC-2026", frames
+// Campagnes.CreationRadio) : 4 écrans propres (station, spot, fréquence,
+// récapitulatif) + un écran de confirmation, totalement différents des
+// étapes 2-6 du flux Digital — voir la note sur CampaignTypeOption.supported
+// dans src/data/dashboard.ts.
+const RADIO_STEP = { STATION: 1, SPOT: 2, FREQUENCY: 3, RECAP: 4, CONFIRMATION: 5 } as const;
+const RADIO_LAST_STEP = RADIO_STEP.CONFIRMATION;
 
 // StepType n'expose que 3 options (voir src/data/dashboard.ts) : leur id
 // correspond 1:1 à l'enum CampaignType du backend.
@@ -51,11 +80,25 @@ const TYPE_TO_BACKEND: Record<string, CampaignType> = {
   print: "POSTER",
 };
 
+// Aucune étape "budget" n'existe dans la maquette Figma du flux radio
+// (StepRadioRecap n'a pas de ligne "Budget", contrairement à son écran de
+// confirmation qui en affiche un) — placeholder documenté reprenant
+// exactement le montant démo de cet écran de confirmation, en attendant
+// qu'une vraie étape budget soit ajoutée à ce flux.
+const RADIO_DEFAULT_BUDGET = 100_000;
+
 function durationInDays(start: string, end: string): number {
   const diff = Math.round(
     (new Date(end).getTime() - new Date(start).getTime()) / (1000 * 60 * 60 * 24)
   );
   return diff > 0 ? diff : 1;
+}
+
+function formatMonthYear(iso: string): string {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return "";
+  const label = date.toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
+  return label.charAt(0).toUpperCase() + label.slice(1);
 }
 
 /**
@@ -115,16 +158,69 @@ function buildChannelsPayload(state: WizardState): SelectDigitalChannelsPayload 
   return { channels: state.channels.map((platform) => ({ platform })) };
 }
 
+/**
+ * Contrairement au flux digital, il n'y a pas de "détails" additionnels à
+ * envoyer après création : le catalogue de stations, le spot audio et le
+ * planning de diffusion n'ont aucun équivalent backend (pas de module
+ * `radio-campaigns`, voir src/data/radioStations.ts et
+ * src/data/monitoring.ts) — seule la `Campaign` générique est créée.
+ */
+function buildRadioCampagnePayload(state: WizardState): CreateCampagnePayload | null {
+  const station = radioStations.find((s) => s.id === state.radioStation.stationId);
+  const { radioSpot, radioFrequency } = state;
+  if (
+    !station ||
+    !radioSpot.file ||
+    radioFrequency.timeSlots.length === 0 ||
+    radioFrequency.days.length === 0 ||
+    !radioFrequency.startDate ||
+    !radioFrequency.endDate
+  ) {
+    return null;
+  }
+
+  return {
+    name: `Campagne Radio ${formatMonthYear(radioFrequency.startDate)}`.trim(),
+    startDate: radioFrequency.startDate,
+    endDate: radioFrequency.endDate,
+    plannedBudget: RADIO_DEFAULT_BUDGET,
+    objective: `Diffusion radio — ${station.name}`.slice(0, 2000),
+    type: "RADIO",
+  };
+}
+
 export function CampaignWizard() {
   const [stepIndex, setStepIndex] = useState(0);
   const [state, setState] = useState<WizardState>(initialState);
+  const [radioSubmitting, setRadioSubmitting] = useState(false);
+  const [radioError, setRadioError] = useState<string | null>(null);
+  const [radioCampaign, setRadioCampaign] = useState<CampagneRecord | null>(null);
 
   const payload = useMemo(() => buildCampagnePayload(state), [state]);
   const digitalDetailsPayload = useMemo(() => buildDigitalDetailsPayload(state), [state]);
   const channelsPayload = useMemo(() => buildChannelsPayload(state), [state]);
   const isDigital = state.type === "digital";
+  const isRadio = state.type === "radio";
+  const lastStep = isRadio ? RADIO_LAST_STEP : DIGITAL_LAST_STEP;
 
   const canContinue = useMemo(() => {
+    if (isRadio) {
+      switch (stepIndex) {
+        case RADIO_STEP.STATION:
+          return Boolean(state.radioStation.stationId);
+        case RADIO_STEP.SPOT:
+          return Boolean(state.radioSpot.file);
+        case RADIO_STEP.FREQUENCY:
+          return (
+            state.radioFrequency.timeSlots.length > 0 &&
+            state.radioFrequency.days.length > 0 &&
+            Boolean(state.radioFrequency.startDate) &&
+            Boolean(state.radioFrequency.endDate)
+          );
+        default:
+          return true;
+      }
+    }
     switch (stepIndex) {
       case 0:
         return Boolean(state.type);
@@ -139,10 +235,33 @@ export function CampaignWizard() {
       default:
         return true;
     }
-  }, [stepIndex, state]);
+  }, [isRadio, stepIndex, state]);
+
+  async function submitRadioCampaign() {
+    const radioPayload = buildRadioCampagnePayload(state);
+    if (!radioPayload) {
+      setRadioError("Formulaire incomplet : revenez aux étapes précédentes.");
+      return;
+    }
+    setRadioSubmitting(true);
+    setRadioError(null);
+    try {
+      const campaign = await apiCreateCampagne(radioPayload);
+      setRadioCampaign(campaign);
+      setStepIndex(RADIO_STEP.CONFIRMATION);
+    } catch (error) {
+      setRadioError(error instanceof ApiError ? error.message : "Une erreur est survenue.");
+    } finally {
+      setRadioSubmitting(false);
+    }
+  }
 
   function goNext() {
-    setStepIndex((index) => Math.min(LAST_STEP, index + 1));
+    if (isRadio && stepIndex === RADIO_STEP.RECAP) {
+      void submitRadioCampaign();
+      return;
+    }
+    setStepIndex((index) => Math.min(lastStep, index + 1));
   }
 
   function goBack() {
@@ -157,6 +276,8 @@ export function CampaignWizard() {
         : [...prev.channels, platform],
     }));
   }
+
+  const selectedRadioStation = radioStations.find((s) => s.id === state.radioStation.stationId);
 
   return (
     <>
@@ -182,29 +303,34 @@ export function CampaignWizard() {
           </div>
 
           <div>
-            <WizardStepper stepIndex={stepIndex} />
+            {isRadio && stepIndex >= RADIO_STEP.STATION && stepIndex < RADIO_STEP.CONFIRMATION ? (
+              <RadioWizardStepper stepIndex={stepIndex - 1} />
+            ) : !isRadio || stepIndex === 0 ? (
+              <WizardStepper stepIndex={stepIndex} />
+            ) : null}
 
             {stepIndex === 0 && <StepType value={state.type} onChange={(type) => setState((prev) => ({ ...prev, type }))} />}
-            {stepIndex === 1 && (
+
+            {!isRadio && stepIndex === 1 && (
               <StepDefinition
                 data={state.definition}
                 onChange={(definition) => setState((prev) => ({ ...prev, definition }))}
               />
             )}
-            {stepIndex === 2 && (
+            {!isRadio && stepIndex === 2 && (
               <StepObjective
                 value={state.objective}
                 onChange={(objective) => setState((prev) => ({ ...prev, objective }))}
               />
             )}
-            {stepIndex === 3 && (
+            {!isRadio && stepIndex === 3 && (
               <StepAudience data={state.audience} onChange={(audience) => setState((prev) => ({ ...prev, audience }))} />
             )}
-            {stepIndex === 4 && (
+            {!isRadio && stepIndex === 4 && (
               <StepBudget data={state.budget} onChange={(budget) => setState((prev) => ({ ...prev, budget }))} />
             )}
-            {stepIndex === 5 && <StepChannels value={state.channels} onToggle={toggleChannel} />}
-            {stepIndex === 6 && (
+            {!isRadio && stepIndex === 5 && <StepChannels value={state.channels} onToggle={toggleChannel} />}
+            {!isRadio && stepIndex === 6 && (
               <StepSimulation
                 payload={payload}
                 digitalDetailsPayload={isDigital ? digitalDetailsPayload : null}
@@ -212,8 +338,47 @@ export function CampaignWizard() {
               />
             )}
 
-            {stepIndex < LAST_STEP && (
-              <WizardFooterNav onBack={goBack} onNext={goNext} nextDisabled={!canContinue} showBack={stepIndex > 0} />
+            {isRadio && stepIndex === RADIO_STEP.STATION && (
+              <StepRadioStation
+                value={state.radioStation}
+                onChange={(radioStation) => setState((prev) => ({ ...prev, radioStation }))}
+              />
+            )}
+            {isRadio && stepIndex === RADIO_STEP.SPOT && (
+              <StepRadioSpot value={state.radioSpot} onChange={(radioSpot) => setState((prev) => ({ ...prev, radioSpot }))} />
+            )}
+            {isRadio && stepIndex === RADIO_STEP.FREQUENCY && (
+              <StepRadioFrequency
+                value={state.radioFrequency}
+                onChange={(radioFrequency) => setState((prev) => ({ ...prev, radioFrequency }))}
+              />
+            )}
+            {isRadio && stepIndex === RADIO_STEP.RECAP && (
+              <StepRadioRecap
+                station={state.radioStation}
+                spot={state.radioSpot}
+                frequency={state.radioFrequency}
+                error={radioError}
+              />
+            )}
+            {isRadio && stepIndex === RADIO_STEP.CONFIRMATION && radioCampaign && (
+              <RadioConfirmation
+                campaignName={radioCampaign.name}
+                stationName={selectedRadioStation?.name ?? ""}
+                budgetLabel={`${radioCampaign.plannedBudget.toLocaleString("fr-FR")} FCFA`}
+                periodLabel={`${radioCampaign.startDate} – ${radioCampaign.endDate}`}
+                startDateLabel={radioCampaign.startDate}
+              />
+            )}
+
+            {stepIndex < lastStep && (
+              <WizardFooterNav
+                onBack={goBack}
+                onNext={goNext}
+                nextDisabled={!canContinue || radioSubmitting}
+                nextLabel={isRadio && stepIndex === RADIO_STEP.RECAP && radioSubmitting ? "Création..." : "Continuer"}
+                showBack={stepIndex > 0}
+              />
             )}
           </div>
         </div>

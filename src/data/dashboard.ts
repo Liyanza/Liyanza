@@ -1,18 +1,19 @@
 export interface NavItem {
   href: string;
   label: string;
-  icon: "home" | "campaigns" | "ai" | "reports" | "teams" | "company" | "profile" | "notifications" | "help";
+  icon: "home" | "campaigns" | "monitoring" | "ai" | "reports" | "teams" | "company" | "profile" | "notifications" | "help";
 }
 
-// "Monitoring" retiré : le seul module backend de ce nom
-// (`internal/monitoring`) est un webhook machine-à-machine pour le futur
-// service Liyanza-ia (détection de diffusion radio), pas une page
-// utilisateur — voir MonitoringController. Un vrai écran "Monitoring"
-// (diffusions détectées, statut terrain) n'a de sens qu'avec le flux
-// Radio/Affichage complet (canaux, diffusions, preuves), pas encore construit.
+// "Monitoring" : réintroduit (maquette Figma "MARKETED-OSC-2026", frames
+// Campagnes.CreationRadio à node-id 2372:505 et suivants) — écran de pige
+// radio (diffusions détectées, anomalies, planning, rapports). Le moteur de
+// pige réel n'existe dans aucun repo (voir src/data/monitoring.ts) : cette
+// page tourne entièrement sur des données de démonstration en attendant ce
+// moteur, même esprit que le reste du flux Radio (StepRadioStation, etc.).
 export const mainNavItems: NavItem[] = [
   { href: "/dashboard", label: "Accueil", icon: "home" },
   { href: "/dashboard/campagnes", label: "Campagnes", icon: "campaigns" },
+  { href: "/dashboard/monitoring", label: "Monitoring", icon: "monitoring" },
   { href: "/dashboard/recommandations", label: "Recommandations IA", icon: "ai" },
   { href: "/dashboard/rapports", label: "Rapports", icon: "reports" },
   { href: "/dashboard/equipes", label: "Equipes", icon: "teams" },
@@ -53,11 +54,11 @@ export interface CampaignTypeOption {
   title: string;
   description: string;
   icon: "digital" | "radio" | "print";
-  // Les étapes 2 à 6 du wizard (objectif, audience, budget, canaux,
-  // simulation) sont câblées uniquement pour le flux Digital/Meta — un choix
-  // Radio/Affichage y mènerait à un formulaire absurde (ex: connecter un
-  // compte Facebook pour un spot radio). Grisé en attendant leur propre
-  // flux dédié, même pattern que les canaux non supportés de StepChannels.
+  // "print" (Affichage) reste grisé : aucun flux dédié n'a été maquetté pour
+  // ce type. "radio" a désormais son propre flux (StepRadioStation et
+  // suivants, voir RadioCampaignWizard) — les étapes 2 à 6 du wizard
+  // "digital" (objectif, audience, budget, canaux, simulation) restent
+  // strictement Digital/Meta et ne s'appliquent pas au flux radio.
   supported: boolean;
 }
 
@@ -74,7 +75,7 @@ export const campaignTypeOptions: CampaignTypeOption[] = [
     title: "Campagne Radio",
     description: "Diffusion sur les radios locales et nationales",
     icon: "radio",
-    supported: false,
+    supported: true,
   },
   {
     id: "print",

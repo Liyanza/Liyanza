@@ -8,6 +8,7 @@ import {
   CircleHelp,
   HomeIcon,
   Megaphone,
+  Monitor,
   Sparkles,
   FileBarChart2,
   User,
@@ -20,6 +21,7 @@ import { mainNavItems, settingsNavItems, type NavItem } from "@/data/dashboard";
 const icons: Record<NavItem["icon"], LucideIcon> = {
   home: HomeIcon,
   campaigns: Megaphone,
+  monitoring: Monitor,
   ai: Sparkles,
   reports: FileBarChart2,
   teams: Users,
