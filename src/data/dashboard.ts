@@ -1,7 +1,7 @@
 export interface NavItem {
   href: string;
   label: string;
-  icon: "home" | "campaigns" | "monitoring" | "ai" | "reports" | "teams" | "company" | "profile" | "notifications" | "help";
+  icon: "home" | "campaigns" | "monitoring" | "terrain" | "ai" | "reports" | "teams" | "company" | "profile" | "notifications" | "help";
 }
 
 // "Monitoring" : réintroduit (maquette Figma "MARKETED-OSC-2026", frames
@@ -18,6 +18,7 @@ export const mainNavItems: NavItem[] = [
   { href: "/dashboard", label: "Accueil", icon: "home" },
   { href: "/dashboard/campagnes", label: "Campagnes", icon: "campaigns" },
   { href: "/dashboard/monitoring", label: "Monitoring", icon: "monitoring" },
+  { href: "/dashboard/terrain", label: "Terrain", icon: "terrain" },
   { href: "/dashboard/recommandations", label: "Recommandations IA", icon: "ai" },
   { href: "/dashboard/rapports", label: "Rapports", icon: "reports" },
   { href: "/dashboard/equipes", label: "Equipes", icon: "teams" },

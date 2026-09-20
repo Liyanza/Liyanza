@@ -12,17 +12,21 @@ import type {
   CompanyMember,
   CreateCampagnePayload,
   CreateEntreprisePayload,
+  CreatePrestationPayload,
   CreateSchedulePayload,
   CreateSubAccountPayload,
   DashboardSummary,
   DigitalSimulationRecord,
   EntrepriseRecord,
+  InstallationRecord,
   LoginUser,
   NotificationReadStatus,
   NotificationRecord,
   PaginatedBroadcasts,
   PaginatedCampagnes,
   PaginatedNotifications,
+  ProofLinkConsultation,
+  ProofLinkResponse,
   RapportConformite,
   RegisterPayload,
   Role,
@@ -30,6 +34,8 @@ import type {
   SelectDigitalChannelsPayload,
   SocialAccountRecord,
   SocialPlatform,
+  SubmitProofViaLinkPayload,
+  SubmitProofViaLinkResult,
   UpsertDigitalDetailsPayload,
   UserProfile,
 } from "./types";
@@ -281,6 +287,42 @@ export function apiGetSchedule(campaignId: string, params: ScheduleQueryParams =
 export function apiGetRapportConformite(campaignId: string) {
   return authenticatedRequest<RapportConformite>(
     `/api/backend/campagnes/${campaignId}/rapport-conformite`
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Terrain (Affichage) — PrestationsModule
+// ---------------------------------------------------------------------------
+
+export function apiCreatePrestation(campaignId: string, payload: CreatePrestationPayload) {
+  return authenticatedRequest<InstallationRecord>(
+    `/api/backend/campagnes/${campaignId}/prestations`,
+    { method: "POST", body: JSON.stringify(payload) }
+  );
+}
+
+export function apiGenerateProofLink(installationId: string) {
+  return authenticatedRequest<ProofLinkResponse>(
+    `/api/backend/prestations/${installationId}/lien-preuve`,
+    { method: "POST" }
+  );
+}
+
+export function apiListInstallations() {
+  return authenticatedRequest<InstallationRecord[]>("/api/backend/prestations");
+}
+
+// Routes publiques (aucun compte, aucune session) — le prestataire ouvre son
+// lien de preuve sans jamais s'authentifier. Ne passent jamais par
+// authenticatedRequest ni par le proxy générique /api/backend/[...path].
+export function apiConsultProofLink(token: string) {
+  return request<ProofLinkConsultation>(`/api/public/preuve-installation/${token}`);
+}
+
+export function apiSubmitProofViaLink(token: string, payload: SubmitProofViaLinkPayload) {
+  return request<SubmitProofViaLinkResult>(
+    `/api/public/preuve-installation/${token}`,
+    { method: "POST", body: JSON.stringify(payload) }
   );
 }
 

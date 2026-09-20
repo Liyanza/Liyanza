@@ -363,3 +363,62 @@ export interface RapportConformite {
   diffusionsAnnulees: number;
   tauxConformite: number | null;
 }
+
+// ---------------------------------------------------------------------------
+// Terrain (Affichage) — PrestationsModule : installations, preuve
+// géolocalisée sans compte, carte de suivi.
+// ---------------------------------------------------------------------------
+
+export interface CreatePrestationPayload {
+  location: string;
+  providerId: string;
+  plannedLatitude: number;
+  plannedLongitude: number;
+  plannedInstallationDate: string;
+}
+
+export interface InstallationRecord {
+  id: string;
+  location: string;
+  campaignId: string;
+  campaignName: string;
+  status: string;
+  plannedLatitude: number;
+  plannedLongitude: number;
+  plannedInstallationDate: string;
+  proof: {
+    photo: string;
+    latitude: number;
+    longitude: number;
+    takenAt: string;
+    validationStatus: string;
+  } | null;
+  distanceMeters: number | null;
+  locationMatch: boolean | null;
+}
+
+export interface ProofLinkResponse {
+  link: string;
+  token: string;
+  expiresAt: string;
+}
+
+export interface ProofLinkConsultation {
+  location: string;
+  campaignName: string;
+  plannedInstallationDate: string;
+  alreadySubmitted: boolean;
+}
+
+export interface SubmitProofViaLinkPayload {
+  photo: string;
+  latitude: number;
+  longitude: number;
+  takenAt: string;
+}
+
+export interface SubmitProofViaLinkResult {
+  proofId: string;
+  distanceMeters: number;
+  locationMatch: boolean;
+}
