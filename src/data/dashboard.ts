@@ -5,11 +5,15 @@ export interface NavItem {
 }
 
 // "Monitoring" : réintroduit (maquette Figma "MARKETED-OSC-2026", frames
-// Campagnes.CreationRadio à node-id 2372:505 et suivants) — écran de pige
-// radio (diffusions détectées, anomalies, planning, rapports). Le moteur de
-// pige réel n'existe dans aucun repo (voir src/data/monitoring.ts) : cette
-// page tourne entièrement sur des données de démonstration en attendant ce
-// moteur, même esprit que le reste du flux Radio (StepRadioStation, etc.).
+// Campagnes.CreationRadio à node-id 2372:505 et suivants) — branché sur le
+// vrai pipeline Canaux/Diffusions (CanauxModule/DiffusionsModule) déjà
+// construit pour Radio/Affichage : planning réel, rapport de conformité réel
+// par campagne. Ce qui reste hors périmètre faute de backend : la détection
+// automatique des diffusions (aucun moteur de pige/fingerprinting audio
+// n'existe dans aucun repo — seul le webhook d'ingestion `internal/
+// monitoring` existe côté serveur, sans fournisseur réel qui l'appelle) et
+// une UI de saisie manuelle du constat (`PATCH /diffusions/:id/constat`
+// n'est appelé par aucune page pour l'instant).
 export const mainNavItems: NavItem[] = [
   { href: "/dashboard", label: "Accueil", icon: "home" },
   { href: "/dashboard/campagnes", label: "Campagnes", icon: "campaigns" },

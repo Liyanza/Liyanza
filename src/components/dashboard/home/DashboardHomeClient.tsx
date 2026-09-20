@@ -53,7 +53,7 @@ export function DashboardHomeClient() {
                 <CampaignStatusDonut summary={summary} />
               </div>
               <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_340px]">
-                <CampaignsTable rows={recentCampaigns} viewAllHref="/dashboard/campagnes" />
+                <CampaignsTable rows={recentCampaigns} viewAllHref="/dashboard/campagnes" onChanged={fetchDashboard} />
                 <AiRecommendations />
               </div>
             </>

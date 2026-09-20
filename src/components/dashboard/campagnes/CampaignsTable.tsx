@@ -1,6 +1,11 @@
+"use client";
+
+import { useState } from "react";
 import { Eye, SearchX } from "lucide-react";
-import type { CampagneRecord } from "@/lib/api/types";
+import type { CampagneRecord, CampaignStatus } from "@/lib/api/types";
 import { StatusPill } from "@/components/dashboard/ui/StatusPill";
+import { useAuth } from "@/context/AuthContext";
+import { apiLancerCampagne, ApiError } from "@/lib/api/client";
 
 const TYPE_LABELS: Record<CampagneRecord["type"], string> = {
   DIGITAL: "Digital",
@@ -17,6 +22,37 @@ const TYPE_COLORS: Record<CampagneRecord["type"], string> = {
 // Couleur d'avatar dérivée du nom : aucune donnée backend équivalente, mais
 // stable (même campagne = même couleur à chaque rendu) grâce au hash de l'id.
 const AVATAR_COLORS = ["#3b82f6", "#00a846", "#f97316", "#8b5cf6", "#e93c16"];
+
+// Miroir de `CampaignStateMachine` (Liyanza-backend,
+// src/modules/campagnes/state/campaign-state-machine.ts) — uniquement pour
+// décider quels boutons proposer. Le backend revalide systématiquement la
+// transition ; un décalage ici n'est qu'un bouton en trop, jamais une faille.
+interface Transition {
+  status: CampaignStatus;
+  label: string;
+  tone: "primary" | "danger";
+}
+
+const NEXT_TRANSITIONS: Record<CampaignStatus, Transition[]> = {
+  DRAFT: [
+    { status: "PLANNED", label: "Lancer", tone: "primary" },
+    { status: "CANCELLED", label: "Annuler", tone: "danger" },
+  ],
+  PLANNED: [
+    { status: "IN_PROGRESS", label: "Démarrer", tone: "primary" },
+    { status: "CANCELLED", label: "Annuler", tone: "danger" },
+  ],
+  IN_PROGRESS: [
+    { status: "COMPLETED", label: "Terminer", tone: "primary" },
+    { status: "CANCELLED", label: "Annuler", tone: "danger" },
+  ],
+  COMPLETED: [],
+  CANCELLED: [],
+};
+
+const CONFIRM_MESSAGE: Partial<Record<CampaignStatus, string>> = {
+  CANCELLED: "Annuler cette campagne ? Cette action est irréversible.",
+};
 
 function initialsOf(name: string) {
   const parts = name.trim().split(/\s+/).filter(Boolean);
@@ -44,12 +80,43 @@ export function CampaignsTable({
   title = "Campagnes récentes",
   description = "Suivez l'évolution de vos campagnes et leurs performances.",
   viewAllHref,
+  onChanged,
 }: {
   rows: CampagneRecord[];
   title?: string;
   description?: string;
   viewAllHref?: string;
+  /** Rappelée après une transition de statut réussie, pour que la page
+   * hôte (liste complète ou aperçu Accueil) rafraîchisse ses propres
+   * données (KPI, compteurs par onglet...). */
+  onChanged?: () => void;
 }) {
+  const { user } = useAuth();
+  const canManage = user?.role === "ADMIN" || user?.role === "MARKETING_MANAGER";
+  const [pendingId, setPendingId] = useState<string | null>(null);
+  const [rowErrors, setRowErrors] = useState<Record<string, string>>({});
+
+  function handleTransition(campaignId: string, status: CampaignStatus) {
+    const confirmMessage = CONFIRM_MESSAGE[status];
+    if (confirmMessage && !window.confirm(confirmMessage)) return;
+
+    setPendingId(campaignId);
+    setRowErrors((prev) => ({ ...prev, [campaignId]: "" }));
+    apiLancerCampagne(campaignId, status).then(
+      () => {
+        setPendingId(null);
+        onChanged?.();
+      },
+      (error: unknown) => {
+        setRowErrors((prev) => ({
+          ...prev,
+          [campaignId]: error instanceof ApiError ? error.message : "Impossible de changer le statut.",
+        }));
+        setPendingId(null);
+      }
+    );
+  }
+
   return (
     <div className="overflow-hidden rounded-[5px] border border-border bg-white">
       <div className="flex items-center justify-between border-b border-border px-5 py-4">
@@ -88,52 +155,76 @@ export function CampaignsTable({
               </tr>
             </thead>
             <tbody>
-              {rows.map((row) => (
-                <tr key={row.id} className="border-t border-border-light">
-                  <td className="px-5 py-3">
-                    <div className="flex items-center gap-2.5">
-                      <span
-                        className="flex size-9 shrink-0 items-center justify-center rounded-full text-[9px] font-black text-white"
-                        style={{ backgroundColor: colorFor(row.id) }}
-                      >
-                        {initialsOf(row.name)}
-                      </span>
-                      <div className="min-w-0">
-                        <p className="truncate text-xs font-semibold text-black">{row.name}</p>
-                        <p className="truncate text-[10px] text-gray-text-light">
-                          {formatDateRange(row.startDate, row.endDate)}
-                        </p>
+              {rows.map((row) => {
+                const transitions = canManage ? NEXT_TRANSITIONS[row.status] : [];
+                const isPending = pendingId === row.id;
+                const rowError = rowErrors[row.id];
+                return (
+                  <tr key={row.id} className="border-t border-border-light">
+                    <td className="px-5 py-3">
+                      <div className="flex items-center gap-2.5">
+                        <span
+                          className="flex size-9 shrink-0 items-center justify-center rounded-full text-[9px] font-black text-white"
+                          style={{ backgroundColor: colorFor(row.id) }}
+                        >
+                          {initialsOf(row.name)}
+                        </span>
+                        <div className="min-w-0">
+                          <p className="truncate text-xs font-semibold text-black">{row.name}</p>
+                          <p className="truncate text-[10px] text-gray-text-light">
+                            {formatDateRange(row.startDate, row.endDate)}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                  <td className="px-5 py-3">
-                    <span className="flex items-center gap-1.5 text-xs text-gray-700">
-                      <span
-                        className="size-2 rounded-full"
-                        style={{ backgroundColor: TYPE_COLORS[row.type] }}
-                        aria-hidden="true"
-                      />
-                      {TYPE_LABELS[row.type]}
-                    </span>
-                  </td>
-                  <td className="px-5 py-3">
-                    <StatusPill status={row.status} />
-                  </td>
-                  <td className="px-5 py-3 text-xs text-gray-700">{formatBudget(row.plannedBudget)}</td>
-                  <td className="px-5 py-3">
-                    {row.type === "DIGITAL" ? (
-                      <a
-                        href={`/dashboard/campagnes/${row.id}/resultats`}
-                        className="text-xs font-semibold text-green-accent-dark hover:underline"
-                      >
-                        Voir
-                      </a>
-                    ) : (
-                      <span className="text-xs text-gray-text-light">—</span>
-                    )}
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                    <td className="px-5 py-3">
+                      <span className="flex items-center gap-1.5 text-xs text-gray-700">
+                        <span
+                          className="size-2 rounded-full"
+                          style={{ backgroundColor: TYPE_COLORS[row.type] }}
+                          aria-hidden="true"
+                        />
+                        {TYPE_LABELS[row.type]}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3">
+                      <StatusPill status={row.status} />
+                    </td>
+                    <td className="px-5 py-3 text-xs text-gray-700">{formatBudget(row.plannedBudget)}</td>
+                    <td className="px-5 py-3">
+                      <div className="flex flex-wrap items-center gap-2">
+                        {row.type === "DIGITAL" && (
+                          <a
+                            href={`/dashboard/campagnes/${row.id}/resultats`}
+                            className="text-xs font-semibold text-green-accent-dark hover:underline"
+                          >
+                            Voir
+                          </a>
+                        )}
+                        {transitions.map((transition) => (
+                          <button
+                            key={transition.status}
+                            type="button"
+                            disabled={isPending}
+                            onClick={() => handleTransition(row.id, transition.status)}
+                            className={`rounded-full px-3 py-1 text-[11px] font-semibold disabled:opacity-50 ${
+                              transition.tone === "primary"
+                                ? "bg-green-accent-dark/10 text-green-accent-dark hover:bg-green-accent-dark/20"
+                                : "text-red-600 hover:underline"
+                            }`}
+                          >
+                            {transition.label}
+                          </button>
+                        ))}
+                        {row.type !== "DIGITAL" && transitions.length === 0 && (
+                          <span className="text-xs text-gray-text-light">—</span>
+                        )}
+                      </div>
+                      {rowError && <p className="mt-1 text-[11px] font-medium text-red-600">{rowError}</p>}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

@@ -253,3 +253,113 @@ export interface EntrepriseRecord extends CreateEntreprisePayload {
   createdAt: string;
   updatedAt: string;
 }
+
+/** Miroir de `UsersService.getProfile` (GET /users/me) — plus riche que
+ * `AuthUser` (téléphone, date d'inscription), utilisé uniquement pour la
+ * page Profil. Aucun endpoint de mise à jour n'existe côté backend : cette
+ * page est volontairement en lecture seule. */
+export interface UserProfile {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  role: Role;
+  companyId: string | null;
+  createdAt: string;
+  deactivatedAt: string | null;
+}
+
+/** Miroir du modèle Prisma `Recommendation` — `priority` est une chaîne
+ * libre côté backend (`IAEngineInterface.generateRecommendations`), le mock
+ * actuel produit "high"/"medium"/"low". */
+export interface CampaignRecommendation {
+  id: string;
+  content: string;
+  priority: string;
+  generatedAt: string;
+  campaignId: string;
+}
+
+// ---------------------------------------------------------------------------
+// Canaux / Diffusions — pipeline historique Radio/Affichage (AdvertisingChannel
+// /Broadcast), antérieur au flux Digital et réutilisé pour connecter le
+// wizard Radio et Monitoring à de vraies données.
+// ---------------------------------------------------------------------------
+
+export type MediaType = "RADIO" | "POSTER" | "FLYER";
+
+export type BroadcastStatus = "PLANNED" | "BROADCASTED" | "MISSED" | "CANCELLED";
+
+export interface AssociateChannelsPayload {
+  channels: { radio: boolean; poster: boolean; flyer: boolean }[];
+}
+
+export interface AdvertisingChannelRecord {
+  id: string;
+  radio: boolean;
+  poster: boolean;
+  flyer: boolean;
+  campaignId: string;
+}
+
+export interface CreateScheduleBroadcastPayload {
+  mediaType: MediaType;
+  scheduledAt: string;
+  duration: number;
+  channelId: string;
+}
+
+export interface CreateSchedulePayload {
+  broadcasts: CreateScheduleBroadcastPayload[];
+}
+
+export interface BroadcastRecord {
+  id: string;
+  mediaType: MediaType;
+  scheduledAt: string;
+  actualBroadcastAt: string | null;
+  duration: number;
+  status: BroadcastStatus;
+  audioProof: string | null;
+  campaignId: string;
+  channelId: string;
+  channel?: AdvertisingChannelRecord;
+}
+
+export interface ScheduleQueryParams {
+  channelId?: string;
+  dateFrom?: string;
+  dateTo?: string;
+  page?: number;
+  limit?: number;
+}
+
+export interface PaginatedBroadcasts {
+  items: BroadcastRecord[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+/** Miroir de `RapportConformiteItemDto`/`RapportConformiteDto` (backend). */
+export interface RapportConformiteItem {
+  diffusionId: string;
+  scheduledAt: string;
+  actualBroadcastAt: string | null;
+  status: string;
+  ecartMinutes: number | null;
+}
+
+export interface RapportConformite {
+  campagneId: string;
+  campagneNom: string;
+  diffusions: RapportConformiteItem[];
+  totalDiffusions: number;
+  diffusionsDiffusees: number;
+  diffusionsManquees: number;
+  diffusionsEnAttente: number;
+  diffusionsAnnulees: number;
+  tauxConformite: number | null;
+}

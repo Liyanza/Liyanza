@@ -19,9 +19,15 @@ import { StepRadioSpot, type RadioSpotData } from "./radio/StepRadioSpot";
 import { StepRadioFrequency, type RadioFrequencyData } from "./radio/StepRadioFrequency";
 import { StepRadioRecap } from "./radio/StepRadioRecap";
 import { RadioConfirmation } from "./radio/RadioConfirmation";
+import { buildBroadcastSchedule } from "./radio/buildBroadcastSchedule";
 import { wizardSteps, objectiveOptions } from "@/data/dashboard";
 import { radioStations } from "@/data/radioStations";
-import { apiCreateCampagne, ApiError } from "@/lib/api/client";
+import {
+  apiAssociateChannels,
+  apiCreateCampagne,
+  apiCreateSchedule,
+  ApiError,
+} from "@/lib/api/client";
 import type {
   CampagneRecord,
   CampaignType,
@@ -159,11 +165,13 @@ function buildChannelsPayload(state: WizardState): SelectDigitalChannelsPayload 
 }
 
 /**
- * Contrairement au flux digital, il n'y a pas de "détails" additionnels à
- * envoyer après création : le catalogue de stations, le spot audio et le
- * planning de diffusion n'ont aucun équivalent backend (pas de module
- * `radio-campaigns`, voir src/data/radioStations.ts et
- * src/data/monitoring.ts) — seule la `Campaign` générique est créée.
+ * Le catalogue de stations et le spot audio restent des données de
+ * démonstration (voir src/data/radioStations.ts) — mais la campagne, le
+ * canal de diffusion et le planning créés ensuite sont, eux, entièrement
+ * réels : ils réutilisent le pipeline `CanauxModule`/`DiffusionsModule`
+ * (`AdvertisingChannel`/`Broadcast`) déjà construit pour Radio/Affichage
+ * bien avant le flux Digital, plutôt que de rester en pur mock côté
+ * campagne comme la première version de ce wizard.
  */
 function buildRadioCampagnePayload(state: WizardState): CreateCampagnePayload | null {
   const station = radioStations.find((s) => s.id === state.radioStation.stationId);
@@ -195,6 +203,8 @@ export function CampaignWizard() {
   const [radioSubmitting, setRadioSubmitting] = useState(false);
   const [radioError, setRadioError] = useState<string | null>(null);
   const [radioCampaign, setRadioCampaign] = useState<CampagneRecord | null>(null);
+  const [radioBroadcastCount, setRadioBroadcastCount] = useState(0);
+  const [radioTruncated, setRadioTruncated] = useState(false);
 
   const payload = useMemo(() => buildCampagnePayload(state), [state]);
   const digitalDetailsPayload = useMemo(() => buildDigitalDetailsPayload(state), [state]);
@@ -247,7 +257,30 @@ export function CampaignWizard() {
     setRadioError(null);
     try {
       const campaign = await apiCreateCampagne(radioPayload);
+
+      // Un seul canal représente "la diffusion radio" de cette campagne —
+      // AdvertisingChannel ne connaît que des booléens radio/poster/flyer,
+      // pas un nom de station (voir CanauxModule côté backend) : le nom
+      // choisi à l'étape 1 reste porté par `Campaign.objective` ci-dessus.
+      const [channel] = await apiAssociateChannels(campaign.id, {
+        channels: [{ radio: true, poster: false, flyer: false }],
+      });
+
+      const { broadcasts, truncated } = buildBroadcastSchedule(
+        state.radioFrequency,
+        state.radioSpot.durationSec,
+        channel.id
+      );
+      if (broadcasts.length === 0) {
+        throw new Error(
+          "Aucune diffusion ne correspond à la période et aux jours sélectionnés."
+        );
+      }
+      const created = await apiCreateSchedule(campaign.id, { broadcasts });
+
       setRadioCampaign(campaign);
+      setRadioBroadcastCount(created.length);
+      setRadioTruncated(truncated);
       setStepIndex(RADIO_STEP.CONFIRMATION);
     } catch (error) {
       setRadioError(error instanceof ApiError ? error.message : "Une erreur est survenue.");
@@ -368,6 +401,8 @@ export function CampaignWizard() {
                 budgetLabel={`${radioCampaign.plannedBudget.toLocaleString("fr-FR")} FCFA`}
                 periodLabel={`${radioCampaign.startDate} – ${radioCampaign.endDate}`}
                 startDateLabel={radioCampaign.startDate}
+                broadcastCount={radioBroadcastCount}
+                truncated={radioTruncated}
               />
             )}
 

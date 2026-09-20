@@ -1,12 +1,18 @@
 "use client";
 
 import type {
+  AdvertisingChannelRecord,
+  AssociateChannelsPayload,
   AuthUser,
+  BroadcastRecord,
   CampagneListParams,
   CampagneRecord,
+  CampaignRecommendation,
+  CampaignStatus,
   CompanyMember,
   CreateCampagnePayload,
   CreateEntreprisePayload,
+  CreateSchedulePayload,
   CreateSubAccountPayload,
   DashboardSummary,
   DigitalSimulationRecord,
@@ -14,14 +20,18 @@ import type {
   LoginUser,
   NotificationReadStatus,
   NotificationRecord,
+  PaginatedBroadcasts,
   PaginatedCampagnes,
   PaginatedNotifications,
+  RapportConformite,
   RegisterPayload,
   Role,
+  ScheduleQueryParams,
   SelectDigitalChannelsPayload,
   SocialAccountRecord,
   SocialPlatform,
   UpsertDigitalDetailsPayload,
+  UserProfile,
 } from "./types";
 
 /** Erreur normalisée à partir d'une réponse d'erreur NestJS (`{message, statusCode}`). */
@@ -172,6 +182,17 @@ export function apiGetCampagne(id: string) {
   return authenticatedRequest<CampagneRecord>(`/api/backend/campagnes/${id}`);
 }
 
+// Transition de statut (DRAFT->PLANNED->IN_PROGRESS->COMPLETED/CANCELLED) —
+// jamais appelé par les assistants de création (Digital ou Radio), qui
+// laissent toujours la campagne en DRAFT : voir le commentaire de
+// CampagnesController côté backend. Réservé à ADMIN/MARKETING_MANAGER.
+export function apiLancerCampagne(campaignId: string, status: CampaignStatus) {
+  return authenticatedRequest<CampagneRecord>(`/api/backend/campagnes/${campaignId}/lancer`, {
+    method: "POST",
+    body: JSON.stringify({ status }),
+  });
+}
+
 export function apiListCampagnes(params: CampagneListParams = {}) {
   const query = new URLSearchParams();
   if (params.page) query.set("page", String(params.page));
@@ -215,6 +236,52 @@ export function apiGetDigitalSimulations(campaignId: string) {
   return authenticatedRequest<
     DigitalSimulationRecord[] | { items: DigitalSimulationRecord[] }
   >(`/api/backend/campagnes/${campaignId}/simulations-digitales`);
+}
+
+// ---------------------------------------------------------------------------
+// Canaux / Diffusions (pipeline Radio/Affichage — CanauxModule/DiffusionsModule)
+// ---------------------------------------------------------------------------
+
+export function apiAssociateChannels(campaignId: string, payload: AssociateChannelsPayload) {
+  return authenticatedRequest<AdvertisingChannelRecord[]>(
+    `/api/backend/campagnes/${campaignId}/canaux`,
+    { method: "POST", body: JSON.stringify(payload) }
+  );
+}
+
+export function apiCreateSchedule(campaignId: string, payload: CreateSchedulePayload) {
+  return authenticatedRequest<BroadcastRecord[]>(
+    `/api/backend/campagnes/${campaignId}/planning`,
+    { method: "POST", body: JSON.stringify(payload) }
+  );
+}
+
+// Une date "nue" (YYYY-MM-DD, ce que produisent les <input type="date"> et
+// les bornes de semaine) est interprétée par `new Date(...)` côté backend
+// comme minuit UTC — un `dateTo` nu exclurait donc toute diffusion du
+// dernier jour survenue après 00h00. Complétée à la fin de journée avant
+// envoi, uniquement quand aucune heure n'est déjà présente.
+function endOfDayIfDateOnly(value: string): string {
+  return /^\d{4}-\d{2}-\d{2}$/.test(value) ? `${value}T23:59:59.999` : value;
+}
+
+export function apiGetSchedule(campaignId: string, params: ScheduleQueryParams = {}) {
+  const query = new URLSearchParams();
+  if (params.channelId) query.set("channelId", params.channelId);
+  if (params.dateFrom) query.set("dateFrom", params.dateFrom);
+  if (params.dateTo) query.set("dateTo", endOfDayIfDateOnly(params.dateTo));
+  if (params.page) query.set("page", String(params.page));
+  if (params.limit) query.set("limit", String(params.limit));
+  const qs = query.toString();
+  return authenticatedRequest<PaginatedBroadcasts>(
+    `/api/backend/campagnes/${campaignId}/planning${qs ? `?${qs}` : ""}`
+  );
+}
+
+export function apiGetRapportConformite(campaignId: string) {
+  return authenticatedRequest<RapportConformite>(
+    `/api/backend/campagnes/${campaignId}/rapport-conformite`
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -274,6 +341,27 @@ export function apiDeactivateUser(id: string) {
   return authenticatedRequest<null>(`/api/backend/users/${id}/deactivate`, {
     method: "PATCH",
   });
+}
+
+export function apiGetProfile() {
+  return authenticatedRequest<UserProfile>("/api/backend/users/me");
+}
+
+// ---------------------------------------------------------------------------
+// Recommandations IA (par campagne — pas d'endpoint global côté backend)
+// ---------------------------------------------------------------------------
+
+export function apiListRecommendations(campaignId: string) {
+  return authenticatedRequest<CampaignRecommendation[]>(
+    `/api/backend/campagnes/${campaignId}/recommandations`
+  );
+}
+
+export function apiGenerateRecommendations(campaignId: string) {
+  return authenticatedRequest<CampaignRecommendation[]>(
+    `/api/backend/campagnes/${campaignId}/recommandations/generer`,
+    { method: "POST" }
+  );
 }
 
 // ---------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { CheckCircle2 } from "lucide-react";
+import { AlertTriangle, CheckCircle2 } from "lucide-react";
 
 export function RadioConfirmation({
   campaignName,
@@ -9,12 +9,16 @@ export function RadioConfirmation({
   budgetLabel,
   periodLabel,
   startDateLabel,
+  broadcastCount,
+  truncated,
 }: {
   campaignName: string;
   stationName: string;
   budgetLabel: string;
   periodLabel: string;
   startDateLabel: string;
+  broadcastCount: number;
+  truncated: boolean;
 }) {
   const router = useRouter();
 
@@ -31,8 +35,8 @@ export function RadioConfirmation({
       <div className="mt-6 w-full rounded-2xl border border-border bg-white p-5">
         <div className="flex items-center justify-between">
           <h3 className="text-base font-bold text-dash-heading">{campaignName}</h3>
-          <span className="rounded-full bg-orange-500/10 px-2.5 py-1 text-[11px] font-semibold text-orange-600">
-            Programmée
+          <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-600">
+            Brouillon
           </span>
         </div>
         <p className="mt-1 text-sm text-dash-muted">{stationName}</p>
@@ -45,8 +49,22 @@ export function RadioConfirmation({
             <p className="text-[11px] text-dash-muted">Période</p>
             <p className="text-sm font-bold text-dash-heading">{periodLabel}</p>
           </div>
+          <div>
+            <p className="text-[11px] text-dash-muted">Diffusions planifiées</p>
+            <p className="text-sm font-bold text-dash-heading">{broadcastCount}</p>
+          </div>
         </div>
       </div>
+
+      {truncated && (
+        <div className="mt-3 flex w-full items-start gap-2 rounded-xl bg-orange-500/5 p-3.5 text-left text-xs text-orange-600">
+          <AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+          <span>
+            Limite technique atteinte : seules les {broadcastCount} premières diffusions ont été
+            planifiées. Réduisez la fréquence ou la période pour tout couvrir.
+          </span>
+        </div>
+      )}
 
       <button
         type="button"

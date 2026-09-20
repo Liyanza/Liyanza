@@ -125,7 +125,7 @@ export function CampagnesListClient() {
 
           {loadError && <p className="text-sm text-red-600">{loadError}</p>}
 
-          <CampaignsTable rows={loading ? [] : campaigns} />
+          <CampaignsTable rows={loading ? [] : campaigns} onChanged={fetchData} />
           <Pagination page={page} pageCount={pageCount} total={total} pageSize={PAGE_SIZE} onChange={handlePageChange} />
 
           <p className="text-center text-[11px] text-gray-text-light">
