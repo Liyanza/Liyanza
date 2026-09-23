@@ -16,22 +16,26 @@ function FloatingStat({
 }) {
   return (
     <div
-      className={`absolute flex flex-col gap-1 whitespace-nowrap rounded-xl border border-zinc-100 bg-white px-3 py-2 shadow-[0_4px_16px_-2px_rgba(13,31,60,0.25)] ${className}`}
+      className={`absolute flex flex-col whitespace-nowrap rounded-xl border-[3px] border-border-light bg-white px-3 py-2 shadow-lg ${className}`}
     >
-      <p className="text-[10px] text-gray-text-light">{label}</p>
-      {children ?? <p className={`text-sm font-bold ${valueClassName}`}>{value}</p>}
+      <p className="text-[10px] leading-[15px] text-gray-text-light">{label}</p>
+      {children ?? <p className={`text-sm font-bold leading-5 ${valueClassName}`}>{value}</p>}
     </div>
   );
 }
 
+function StatLine({ children }: { children: ReactNode }) {
+  return <p className="text-[11px] font-semibold leading-[16.5px] text-black">{children}</p>;
+}
+
 export function BrandVisual() {
   return (
-    <div className="relative mx-auto mt-10 w-[85%]">
+    <div className="relative mx-auto w-full max-w-[514px]">
       <Image
         src="/auth-photo.png"
-        alt="Une professionnelle du marketing souriante et détendue, avec son ordinateur portable"
-        width={1028}
-        height={1026}
+        alt="Une professionnelle du marketing souriante, assise en tailleur avec son ordinateur portable"
+        width={1024}
+        height={1024}
         className="relative h-auto w-full object-contain"
       />
 
@@ -39,23 +43,21 @@ export function BrandVisual() {
         label="ROI"
         value="320%"
         valueClassName="text-orange-500"
-        className="left-[10%] top-[18%]"
+        className="left-[9.7%] top-[18.3%]"
       />
-      <FloatingStat label="Répartition du budget" className="left-[68%] top-[25%]">
-        <p className="text-[11px] font-semibold text-zinc-950">WhatsApp 60%</p>
-        <p className="text-[11px] font-semibold text-zinc-950">Facebook 40%</p>
+      <FloatingStat label="Répartition du budget" className="left-[72.6%] top-[25.3%]">
+        <StatLine>WhatsApp 60%</StatLine>
+        <StatLine>Facebook 40%</StatLine>
       </FloatingStat>
       <FloatingStat
         label="Conversions"
         value="+28%"
         valueClassName="text-green-accent"
-        className="left-[80%] top-[60%]"
+        className="left-[85.4%] top-[59.8%]"
       />
-      <FloatingStat
-        label="Meilleure audience"
-        value="25 – 45 ans"
-        className="left-[2%] top-[53%]"
-      />
+      <FloatingStat label="Meilleure audience" className="left-[2.3%] top-[53.4%]">
+        <StatLine>25 – 45 ans</StatLine>
+      </FloatingStat>
     </div>
   );
 }

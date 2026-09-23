@@ -67,12 +67,12 @@ export function CampaignsTableSection() {
   return (
     <section id="gestion-campagnes" className="scroll-mt-40 bg-white py-20">
       <Container>
-        <div className="mx-auto max-w-2xl text-center">
+        <div>
           <SectionEyebrow variant="pill" tone="orange">03 · Gestion des Campagnes</SectionEyebrow>
-          <h2 className="mt-5 text-4xl font-extrabold text-black">
+          <h2 className="mt-5 text-4xl font-bold leading-10 text-black">
             Centralisez toutes vos campagnes
           </h2>
-          <p className="mx-auto mt-3 max-w-lg text-sm text-gray-text">
+          <p className="mt-3 max-w-lg text-sm leading-5 text-gray-text">
             Retrouvez toutes vos campagnes au même endroit et suivez leur
             statut, leur budget et leurs performances.
           </p>

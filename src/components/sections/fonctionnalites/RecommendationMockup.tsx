@@ -8,11 +8,11 @@ export function RecommendationMockup() {
   return (
     <div className="w-full max-w-[384px] overflow-hidden rounded-2xl border border-border-light bg-white shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_10px_10px_-5px_rgba(0,0,0,0.1)]">
       <div className="flex items-center gap-3 border border-[#b2dfdb] bg-gradient-to-r from-[#e8f5e9] to-[#e0f7fa] px-5 py-4">
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-green-accent text-base text-white">
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-blue-500 text-base text-white">
           ✦
         </span>
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-bold text-green-accent-dark">
+          <p className="text-xs font-bold uppercase tracking-[0.05em] text-blue-500">
             Recommandation IA
           </p>
           <p className="text-[10px] text-gray-text-light">

@@ -35,13 +35,6 @@ export const metadata: Metadata = {
   },
 };
 
-const accents = {
-  green: { check: "bg-green-600" },
-  orange: { check: "bg-orange-500" },
-  blue: { check: "bg-blue-500" },
-  violet: { check: "bg-violet-500" },
-};
-
 export default function FonctionnalitesPage() {
   return (
     <>
@@ -65,13 +58,12 @@ export default function FonctionnalitesPage() {
             "Planification et calendrier de campagne",
           ]}
           ctaText="Explorer la planification"
-          accent={accents.green}
           mockup={<CampaignFormMockup />}
         />
 
         <FeatureDetailSection
           id="scenarios-ia"
-          bg="green-tint"
+          bg="blue-tint"
           eyebrowNumber="02"
           eyebrowLabel="Scénarios IA"
           heading={["Testez vos stratégies", "avant d'investir"]}
@@ -84,7 +76,6 @@ export default function FonctionnalitesPage() {
             "Ajustements automatiques par canal",
           ]}
           ctaText="Explorer les scénarios IA"
-          accent={accents.orange}
           mockup={<ScenariosMockup />}
           reverse
         />
@@ -93,7 +84,7 @@ export default function FonctionnalitesPage() {
 
         <FeatureDetailSection
           id="monitoring"
-          bg="blue-tint"
+          bg="green-tint"
           eyebrowNumber="04"
           eyebrowLabel="Monitoring"
           heading={["Suivez vos campagnes", "en temps réel"]}
@@ -106,7 +97,6 @@ export default function FonctionnalitesPage() {
             "Historique et comparaison de périodes",
           ]}
           ctaText="Découvrir le monitoring"
-          accent={accents.blue}
           mockup={<MonitoringMockup />}
         />
 
@@ -124,7 +114,6 @@ export default function FonctionnalitesPage() {
             "Priorisation et calendrier des actions",
           ]}
           ctaText="Découvrir les recommandations"
-          accent={accents.orange}
           mockup={<RecommendationMockup />}
           extra={
             <div className="mt-6 rounded-xl border border-orange-200 bg-orange-50 p-4">
@@ -151,7 +140,6 @@ export default function FonctionnalitesPage() {
             "Intégration avec Google Sheets et Excel",
           ]}
           ctaText="Voir un exemple de rapport"
-          accent={accents.violet}
           mockup={<ReportMockup />}
           reverse
         />

@@ -18,10 +18,10 @@ export function ReportMockup() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <span className="rounded-full bg-green-accent px-2.5 py-1 text-xs font-bold text-white">
+          <span className="rounded-full bg-blue-500 px-2.5 py-1 text-xs font-bold text-white">
             +24%
           </span>
-          <span className="rounded-lg border-2 border-violet-500 px-2.5 py-1 text-xs text-violet-500">
+          <span className="rounded-full border-2 border-green-accent px-2.5 py-1 text-xs font-medium text-green-accent">
             PDF ↓
           </span>
         </div>
@@ -51,13 +51,13 @@ export function ReportMockup() {
           >
             <polygon
               points="0,48 0,38 60,30 120,32 189,14 250,20 313,4 313,48"
-              fill="#8b5cf6"
+              fill="#296bd6"
               opacity="0.15"
             />
             <polyline
               points="0,38 60,30 120,32 189,14 250,20 313,4"
               fill="none"
-              stroke="#8b5cf6"
+              stroke="#296bd6"
               strokeWidth="1.6"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -68,13 +68,13 @@ export function ReportMockup() {
         <div className="mt-4 flex gap-2">
           <button
             type="button"
-            className="flex-1 rounded-full border-2 border-violet-500 py-2.5 text-xs font-semibold text-violet-500"
+            className="flex-1 rounded-full border-2 border-green-accent py-2.5 text-xs font-semibold text-green-accent"
           >
             Exporter PDF
           </button>
           <button
             type="button"
-            className="flex-1 rounded-full bg-violet-500 py-2.5 text-xs font-semibold text-white"
+            className="flex-1 rounded-full bg-green-accent py-2.5 text-xs font-semibold text-white"
           >
             Partager →
           </button>

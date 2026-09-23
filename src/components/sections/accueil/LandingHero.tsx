@@ -1,9 +1,8 @@
 import { ReactNode } from "react";
 import Image from "next/image";
-import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
-import { SectionEyebrow } from "@/components/ui/Badge";
 
 const trustItems = [
   "Aucune carte requise",
@@ -26,41 +25,36 @@ function FloatingStat({
 }) {
   return (
     <div
-      className={`absolute hidden flex-col gap-1 whitespace-nowrap rounded-xl border border-zinc-100 bg-white px-3 py-2 shadow-[0_4px_16px_-2px_rgba(13,31,60,0.15)] sm:flex ${className}`}
+      className={`absolute hidden flex-col whitespace-nowrap rounded-xl border-[3px] border-border-light bg-white px-3 py-2 shadow-lg sm:flex ${className}`}
     >
-      <p className="text-[10px] text-gray-text-light">{label}</p>
-      {children ?? <p className={`text-sm font-bold ${valueClassName}`}>{value}</p>}
+      <p className="text-[10px] leading-[15px] text-gray-text-light">{label}</p>
+      {children ?? <p className={`text-sm font-bold leading-5 ${valueClassName}`}>{value}</p>}
     </div>
   );
 }
 
 export function LandingHero() {
   return (
-    <section className="relative overflow-hidden bg-white">
-      <div
-        className="pointer-events-none absolute -left-32 -top-32 size-96 rounded-full bg-green-accent/15 blur-3xl"
-        aria-hidden="true"
-      />
-      <div
-        className="pointer-events-none absolute -right-20 top-1/3 size-80 rounded-full bg-blue-500/10 blur-3xl"
-        aria-hidden="true"
-      />
-
-      <Container className="relative py-16 lg:py-24">
-        <div className="grid grid-cols-1 items-center gap-16 lg:grid-cols-[1fr_1fr] lg:gap-6">
+    <section className="relative overflow-hidden bg-green-accent-dark/5">
+      <Container className="relative py-16 lg:pb-[108px] lg:pt-[140px]">
+        <div className="grid grid-cols-1 items-center gap-16 lg:grid-cols-[1fr_1fr] lg:gap-6 xl:grid-cols-[536px_1fr]">
           <div>
-            <SectionEyebrow variant="pill" tone="orange">
-              Plateforme marketing intelligente
-            </SectionEyebrow>
+            <span className="inline-flex items-center gap-2 rounded-full bg-orange-500/[0.08] px-4 py-2 text-xs font-semibold leading-4 text-orange-500">
+              <span aria-hidden="true">✦</span>
+              Découvrez l&apos;intelligence de KIYANZA
+              <span className="ml-1 rounded-full bg-blue-500 px-2 py-0.5 text-[10px] font-bold leading-[13px] text-white">
+                NOUVEAU
+              </span>
+            </span>
 
-            <h1 className="mt-6 text-4xl font-black leading-[1.15] tracking-tight text-zinc-950 sm:text-5xl lg:text-6xl">
+            <h1 className="mt-6 text-4xl font-bold leading-[1.25] tracking-[-0.02em] text-black sm:text-5xl lg:text-6xl">
               Pilotez vos campagnes avec{" "}
               <span className="text-orange-500">l&apos;intelligence artificielle</span>
             </h1>
 
-            <p className="mt-6 max-w-lg text-lg leading-relaxed text-gray-text">
+            <p className="mt-6 max-w-[480px] text-lg leading-[1.625] text-black/55">
               KIYANZA centralise la création, le monitoring et l&apos;optimisation de
-              vos campagnes marketing grâce à l&apos;IA.
+              vos campagnes marketing. Prenez de meilleures décisions, plus vite.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-4">
@@ -83,22 +77,22 @@ export function LandingHero() {
               </Button>
             </div>
 
-            <ul className="mt-10 flex flex-wrap gap-x-8 gap-y-3">
+            <ul className="mt-10 flex flex-wrap gap-x-6 gap-y-3">
               {trustItems.map((item) => (
-                <li key={item} className="flex items-center gap-1.5 text-sm text-gray-text">
-                  <CheckCircle2 className="size-3.5 text-green-accent-dark" aria-hidden="true" />
+                <li key={item} className="flex items-center gap-1.5 text-sm text-black/40">
+                  <Check className="size-3.5 text-green-accent-dark" strokeWidth={2.5} aria-hidden="true" />
                   {item}
                 </li>
               ))}
             </ul>
           </div>
 
-          <div className="relative w-full max-w-[640px] justify-self-center lg:ml-auto lg:mr-[-48px] lg:max-w-[720px] xl:mr-[-96px]">
+          <div className="relative w-full max-w-[640px] justify-self-center lg:ml-auto lg:mr-[-48px] lg:max-w-[773px] xl:ml-0 xl:mr-0 xl:w-[773px] xl:max-w-none xl:justify-self-start">
             <Image
               src="/hero-dashboard.png"
               alt="Une professionnelle du marketing souriante, ordinateur portable à la main, prête à piloter ses campagnes avec KIYANZA"
-              width={1546}
-              height={1232}
+              width={1285}
+              height={1024}
               className="relative h-auto w-full object-contain"
               priority
             />
@@ -110,8 +104,8 @@ export function LandingHero() {
               className="left-[21%] top-[12%]"
             />
             <FloatingStat label="Répartition du budget" className="left-[70%] top-[11%]">
-              <p className="text-[11px] font-semibold text-zinc-950">WhatsApp 60%</p>
-              <p className="text-[11px] font-semibold text-zinc-950">Facebook 40%</p>
+              <p className="text-[11px] font-semibold leading-[16.5px] text-black">WhatsApp 60%</p>
+              <p className="text-[11px] font-semibold leading-[16.5px] text-black">Facebook 40%</p>
             </FloatingStat>
             <FloatingStat
               label="ROI"
@@ -119,11 +113,9 @@ export function LandingHero() {
               valueClassName="text-orange-500"
               className="left-[12%] top-[41%]"
             />
-            <FloatingStat
-              label="Meilleure audience"
-              value="25 – 45 ans"
-              className="left-[75%] top-[35%]"
-            />
+            <FloatingStat label="Meilleure audience" className="left-[75%] top-[35%]">
+              <p className="text-[11px] font-semibold leading-[16.5px] text-black">25 – 45 ans</p>
+            </FloatingStat>
           </div>
         </div>
       </Container>

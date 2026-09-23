@@ -8,6 +8,7 @@ import { AIScenarioMockup } from "@/components/sections/accueil/mockups/AIScenar
 import { ChannelMonitoringMockup } from "@/components/sections/accueil/mockups/ChannelMonitoringMockup";
 import { LandingPricing } from "@/components/sections/accueil/LandingPricing";
 import { LandingFAQ } from "@/components/sections/accueil/LandingFAQ";
+import { FeaturesFinalCTA } from "@/components/sections/fonctionnalites/FeaturesFinalCTA";
 import { Footer } from "@/components/sections/Footer";
 import { ChatbotWidget } from "@/components/ChatbotWidget";
 import { siteConfig } from "@/lib/site-config";
@@ -42,7 +43,7 @@ export default function Home() {
         <LandingFeaturesOverview />
 
         <LandingFeatureDetail
-          bg="zinc"
+          bg="slate"
           heading="Créez et pilotez vos campagnes en quelques minutes"
           description="Un workflow guidé pour définir vos objectifs, sélectionner vos canaux et allouer votre budget."
           items={[
@@ -88,6 +89,7 @@ export default function Home() {
 
         <LandingPricing />
         <LandingFAQ />
+        <FeaturesFinalCTA />
       </main>
       <Footer />
       <ChatbotWidget />

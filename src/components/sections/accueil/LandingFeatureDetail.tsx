@@ -3,6 +3,12 @@ import { ArrowRight, Check } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 
+const bgClasses = {
+  white: "bg-white",
+  zinc: "bg-zinc-50",
+  slate: "bg-slate-50",
+};
+
 export function LandingFeatureDetail({
   bg = "white",
   heading,
@@ -13,7 +19,7 @@ export function LandingFeatureDetail({
   mockup,
   reverse = false,
 }: {
-  bg?: "white" | "zinc";
+  bg?: "white" | "zinc" | "slate";
   heading: string;
   description: string;
   items: string[];
@@ -53,7 +59,7 @@ export function LandingFeatureDetail({
   const mockupColumn = <div className="flex justify-center">{mockup}</div>;
 
   return (
-    <section className={`py-16 sm:py-20 lg:py-24 ${bg === "zinc" ? "border-y border-zinc-200 bg-zinc-50" : "bg-white"}`}>
+    <section className={`py-16 sm:py-20 lg:py-24 ${bgClasses[bg]}`}>
       <Container>
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-16">
           {reverse ? (

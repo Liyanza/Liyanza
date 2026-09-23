@@ -18,16 +18,16 @@ const scenarios: Scenario[] = [
     roiColor: "text-black",
     roas: "ROAS 4.2x",
     progress: 58,
-    progressClass: "bg-blue-500",
+    progressClass: "bg-[#3b82f6]",
   },
   {
     name: "Scénario B",
     budget: "350 000 FCFA",
     roi: "318%",
-    roiColor: "text-green-accent",
+    roiColor: "text-blue-500",
     roas: "ROAS 5.8x",
     progress: 82,
-    progressClass: "bg-gradient-to-r from-green-accent to-cyan-500",
+    progressClass: "bg-blue-500",
     highlighted: true,
     badge: "Recommandé IA",
   },
@@ -38,7 +38,7 @@ const scenarios: Scenario[] = [
     roiColor: "text-black",
     roas: "ROAS 4.9x",
     progress: 68,
-    progressClass: "bg-blue-500",
+    progressClass: "bg-[#3b82f6]",
   },
 ];
 
@@ -66,7 +66,7 @@ export function ScenariosMockup() {
                   {s.name}
                 </p>
                 {s.badge && (
-                  <span className="rounded-full bg-green-accent px-2 py-0.5 text-[10px] font-bold text-white">
+                  <span className="rounded-full bg-blue-500 px-2 py-0.5 text-[10px] font-bold text-white">
                     {s.badge}
                   </span>
                 )}

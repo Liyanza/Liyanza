@@ -1,4 +1,4 @@
-import { ArrowRight, Check } from "lucide-react";
+import { Check } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
 
@@ -76,28 +76,40 @@ const plans: Plan[] = [
 function PlanCard({ plan }: { plan: Plan }) {
   return (
     <div
-      className={`flex h-full flex-col overflow-hidden rounded-[5px] bg-white ${
+      className={`relative flex h-full flex-col ${
         plan.featured
-          ? "border-2 border-green-accent-dark shadow-[0_12px_24px_-8px_rgba(0,168,70,0.25)]"
-          : "border border-zinc-200"
+          ? "border border-green-accent-dark bg-green-accent-dark/10 shadow-[0_2px_4px_0_rgba(0,0,0,0.12)]"
+          : "border border-green-accent/10 bg-white"
       }`}
     >
       {plan.featured && (
-        <p className="bg-green-600 py-1.5 text-center text-[10px] font-black uppercase tracking-wide text-white">
+        <p className="absolute left-1/2 top-[-16px] -translate-x-1/2 bg-blue-500 px-4 py-1.5 text-[10px] font-black uppercase leading-[15px] text-white">
           Recommandé
         </p>
       )}
 
       <div className="flex flex-1 flex-col p-6">
-        <p className="text-[10px] font-black uppercase tracking-wide text-zinc-400">
-          {plan.tier}
-        </p>
-        <p className="mt-1 text-sm text-zinc-500">{plan.tagline}</p>
-        <div className="mt-4">
-          <p className="text-2xl font-black tracking-tight text-zinc-950">{plan.price}</p>
-          {plan.priceNote && (
-            <p className="mt-0.5 text-xs text-zinc-400">{plan.priceNote}</p>
-          )}
+        <div className="border-b border-black/[0.08] pb-6">
+          <p
+            className={`text-[10px] font-black uppercase tracking-[0.1em] ${
+              plan.featured ? "text-blue-500" : "text-black/40"
+            }`}
+          >
+            {plan.tier}
+          </p>
+          <p className="mt-1 text-sm text-black/40">{plan.tagline}</p>
+          <div className="mt-5">
+            <p
+              className={`font-bold tracking-[-0.02em] text-black ${
+                plan.priceNote ? "text-xl leading-5" : "text-2xl leading-6"
+              }`}
+            >
+              {plan.price}
+            </p>
+            {plan.priceNote && (
+              <p className="mt-1 text-[10px] leading-[15px] text-black/30">{plan.priceNote}</p>
+            )}
+          </div>
         </div>
 
         <button
@@ -105,14 +117,18 @@ function PlanCard({ plan }: { plan: Plan }) {
           className={`mt-6 w-full rounded-full py-3 text-sm font-bold transition ${
             plan.featured
               ? "bg-green-600 text-white hover:bg-green-accent-dark"
-              : "border-2 border-green-600 text-green-600 hover:bg-green-600/5"
+              : "border border-green-600 text-green-600 hover:bg-green-600/5"
           }`}
         >
           {plan.cta}
         </button>
 
-        <div className="mt-6 flex-1 border-t border-zinc-100 pt-6">
-          <p className="text-[9px] font-bold uppercase tracking-wide text-zinc-400">
+        <div className="mt-6 flex-1">
+          <p
+            className={`text-[9px] font-bold uppercase tracking-[0.1em] ${
+              plan.featured ? "text-black/40" : "text-black/25"
+            }`}
+          >
             Inclus
           </p>
           <ul className="mt-3 space-y-3">
@@ -124,7 +140,7 @@ function PlanCard({ plan }: { plan: Plan }) {
                   }`}
                   aria-hidden="true"
                 />
-                <span className="text-sm text-zinc-600">{item}</span>
+                <span className="text-sm text-black/60">{item}</span>
               </li>
             ))}
           </ul>
@@ -136,21 +152,21 @@ function PlanCard({ plan }: { plan: Plan }) {
 
 export function LandingPricing() {
   return (
-    <section id="tarifs" className="scroll-pt-20 border-y border-zinc-200 bg-white py-16 sm:py-20 lg:py-24">
+    <section id="tarifs" className="scroll-pt-20 bg-green-accent-dark/[0.02] py-16 sm:py-20 lg:py-24">
       <Container>
-        <div className="mx-auto max-w-2xl text-center">
+        <div className="mx-auto max-w-4xl text-center">
           <SectionEyebrow variant="pill" tone="orange">
             Tarifs
           </SectionEyebrow>
-          <h2 className="mt-5 text-3xl font-black leading-tight text-zinc-950 sm:text-4xl lg:text-5xl">
+          <h2 className="mt-5 text-3xl font-bold leading-[1.5] tracking-[-0.02em] text-zinc-950 sm:text-4xl lg:text-5xl">
             Des tarifs simples et transparents
           </h2>
-          <p className="mt-4 text-lg text-gray-text">
+          <p className="mt-4 text-lg text-zinc-500">
             Commencez gratuitement. Évoluez selon vos besoins.
           </p>
         </div>
 
-        <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-14 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
           {plans.map((plan) => (
             <PlanCard key={plan.tier} plan={plan} />
           ))}
@@ -159,10 +175,9 @@ export function LandingPricing() {
         <p className="mt-10 text-center">
           <a
             href="/tarifs"
-            className="inline-flex items-center gap-1.5 text-sm font-semibold text-green-accent-dark hover:underline"
+            className="text-sm font-semibold text-green-accent-dark underline hover:no-underline"
           >
-            Voir tous les tarifs et comparer les formules
-            <ArrowRight className="size-3.5" aria-hidden="true" />
+            Voir tous les tarifs et comparer les formules →
           </a>
         </p>
       </Container>

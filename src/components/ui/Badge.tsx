@@ -37,7 +37,7 @@ export function SectionEyebrow({
     if (tone === "orange") {
       return (
         <span
-          className={`inline-flex items-center rounded-full border border-orange-500/30 bg-orange-500/[0.06] px-4 py-1.5 ${textClasses} text-orange-500 ${className}`}
+          className={`inline-flex items-center rounded-full bg-orange-500/[0.06] px-3 py-1.5 text-[10px] font-bold uppercase leading-[15px] tracking-[0.1em] text-orange-500 ${className}`}
         >
           {children}
         </span>

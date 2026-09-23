@@ -4,15 +4,17 @@ export function Logo({
   variant = "light",
   className = "",
 }: {
-  variant?: "light" | "dark";
+  variant?: "light" | "dark" | "white";
   className?: string;
 }) {
-  const word = variant === "dark" ? "text-white" : "text-black";
+  const word = variant === "light" ? "text-black" : "text-white";
+  const tagline = variant === "white" ? "text-white" : "text-green-accent";
+  const mark = variant === "white" ? "/kiyanza-logo-mark-white.svg" : "/kiyanza-logo-mark.svg";
 
   return (
     <div className={`relative aspect-[165/55.67] h-16 ${className}`}>
       <Image
-        src="/kiyanza-logo-mark.svg"
+        src={mark}
         alt="Logo KIYANZA"
         width={85}
         height={56}
@@ -24,7 +26,9 @@ export function Logo({
       >
         KIYANZA
       </span>
-      <span className="absolute left-[52%] top-[77.5%] whitespace-nowrap text-[9px] font-medium leading-none text-green-accent">
+      <span
+        className={`absolute left-[52%] top-[77.5%] whitespace-nowrap text-[9px] font-medium leading-none ${tagline}`}
+      >
         Light your future
       </span>
     </div>
