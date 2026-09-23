@@ -31,7 +31,7 @@ export function Navbar() {
         </Link>
 
         <nav
-          className="hidden items-center gap-8 lg:flex"
+          className="hidden items-center gap-7 xl:flex 2xl:gap-10"
           aria-label="Navigation principale"
         >
           {links.map((link) => {
@@ -53,16 +53,7 @@ export function Navbar() {
           })}
         </nav>
 
-        <div className="hidden items-center gap-3 lg:flex">
-          <button
-            type="button"
-            className="flex items-center gap-1 rounded-full px-4 py-2 text-sm font-semibold text-black transition hover:bg-black/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-accent"
-            aria-label="Changer de langue, actuellement Français"
-          >
-            <Globe className="size-4" aria-hidden="true" />
-            FR
-            <ChevronDown className="size-4" aria-hidden="true" />
-          </button>
+        <div className="hidden items-center gap-3 xl:flex">
           <Button variant="outline" size="sm" href="/connexion">
             Se connecter
           </Button>
@@ -74,11 +65,20 @@ export function Navbar() {
           >
             Essayer gratuitement
           </Button>
+          <button
+            type="button"
+            className="-mr-3 flex items-center gap-1 rounded-full px-3 py-2 text-sm font-semibold text-black transition hover:bg-black/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-accent"
+            aria-label="Changer de langue, actuellement Français"
+          >
+            <Globe className="size-4" aria-hidden="true" />
+            FR
+            <ChevronDown className="size-4" aria-hidden="true" />
+          </button>
         </div>
 
         <button
           type="button"
-          className="relative inline-flex size-10 items-center justify-center rounded-lg text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-accent lg:hidden"
+          className="relative inline-flex size-10 items-center justify-center rounded-lg text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-accent xl:hidden"
           aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
@@ -101,7 +101,7 @@ export function Navbar() {
       {/* Always mounted so it can animate out; `invisible` keeps it out of the
           tab order and accessibility tree while closed. */}
       <div
-        className={`absolute inset-x-0 top-full border-y border-border-light bg-white shadow-lg transition-[opacity,transform,visibility] duration-300 ease-[var(--ease-out)] lg:hidden ${
+        className={`absolute inset-x-0 top-full border-y border-border-light bg-white shadow-lg transition-[opacity,transform,visibility] duration-300 ease-[var(--ease-out)] xl:hidden ${
           open ? "visible translate-y-0 opacity-100" : "invisible -translate-y-2 opacity-0"
         }`}
       >

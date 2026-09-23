@@ -91,7 +91,7 @@ export function TabNav() {
       aria-label="Sections de fonctionnalités"
       className="group sticky top-20 z-30 border-b border-border-light bg-white shadow-[0_1px_2px_rgba(0,0,0,0.1),0_1px_3px_rgba(0,0,0,0.1)]"
     >
-      <div className="relative mx-auto flex max-w-[1280px] gap-2 overflow-x-auto px-6">
+      <div className="relative mx-auto flex max-w-[1440px] gap-2 overflow-x-auto px-6 lg:px-10">
         {tabs.map((tab) => {
           const isActive = active === tab.href;
           return (
