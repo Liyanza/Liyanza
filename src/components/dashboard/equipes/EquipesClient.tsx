@@ -12,6 +12,7 @@ import {
   ApiError,
 } from "@/lib/api/client";
 import { ROLE_LABELS, type CompanyMember, type Role } from "@/lib/api/types";
+import { SkeletonRows } from "@/components/dashboard/ui/Skeleton";
 
 const ROLE_OPTIONS: Role[] = ["ADMIN", "MARKETING_MANAGER", "COMMUNITY_MANAGER", "PROVIDER"];
 
@@ -199,7 +200,7 @@ export function EquipesClient() {
 
           <div className="overflow-hidden rounded-[5px] border border-border bg-white">
             {loading ? (
-              <p className="px-5 py-10 text-center text-sm text-gray-text">Chargement...</p>
+              <SkeletonRows rows={4} label="Chargement des membres…" />
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[760px] text-left">

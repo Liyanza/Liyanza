@@ -1,3 +1,4 @@
+import { CountUp } from "@/components/motion/CountUp";
 import { ReactNode } from "react";
 
 export function KpiCard({
@@ -21,7 +22,9 @@ export function KpiCard({
         <p className="text-xs font-semibold uppercase tracking-[0.3px] text-gray-text">{label}</p>
         <div className={`flex size-9 shrink-0 items-center justify-center rounded-full ${iconBg}`}>{icon}</div>
       </div>
-      <p className="pb-2 text-[28px] font-extrabold tracking-[-0.84px] text-gray-900">{value}</p>
+      <p className="pb-2 text-[28px] font-extrabold tracking-[-0.84px] text-gray-900">
+        <CountUp value={value} />
+      </p>
       {footer && <div className="flex items-center gap-1.5 pb-3">{footer}</div>}
     </div>
   );

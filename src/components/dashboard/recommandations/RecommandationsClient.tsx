@@ -10,6 +10,7 @@ import {
   ApiError,
 } from "@/lib/api/client";
 import type { CampagneRecord, CampaignRecommendation } from "@/lib/api/types";
+import { SkeletonPanel } from "@/components/dashboard/ui/Skeleton";
 
 const PRIORITY_META: Record<string, { label: string; className: string }> = {
   high: { label: "Priorité haute", className: "bg-red-600/10 text-red-600" },
@@ -150,7 +151,7 @@ export function RecommandationsClient() {
               )}
 
               {recoLoading ? (
-                <p className="text-sm text-dash-muted">Chargement...</p>
+                <SkeletonPanel lines={3} label="Chargement des recommandations…" />
               ) : recommendations.length === 0 ? (
                 <div className="flex flex-col items-center gap-2 rounded-2xl border border-border-light bg-white p-10 text-center">
                   <span className="flex size-10 items-center justify-center rounded-full bg-dash-pill-bg">

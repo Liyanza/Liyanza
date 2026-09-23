@@ -13,6 +13,7 @@ import {
   apiSyncSocialAccount,
 } from "@/lib/api/client";
 import type { SocialAccountRecord, SocialPlatform } from "@/lib/api/types";
+import { SkeletonRows } from "@/components/dashboard/ui/Skeleton";
 
 const PLATFORM_LABEL: Record<SocialPlatform, string> = {
   FACEBOOK: "Facebook",
@@ -190,10 +191,7 @@ export function SocialAccountsPanel() {
 
           <div className="rounded-xl bg-white p-2 shadow-[0_1px_1px_rgba(0,0,0,0.05)]">
             {loading ? (
-              <div className="flex items-center justify-center gap-2 p-8 text-sm text-dash-muted">
-                <Loader2 className="size-4 animate-spin" aria-hidden="true" />
-                Chargement des comptes…
-              </div>
+              <SkeletonRows rows={3} label="Chargement des comptes…" />
             ) : loadError ? (
               <div className="flex flex-col items-center gap-2 p-8 text-center">
                 <ShieldAlert className="size-6 text-orange-500" aria-hidden="true" />

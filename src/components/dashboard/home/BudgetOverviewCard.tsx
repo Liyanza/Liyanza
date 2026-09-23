@@ -50,7 +50,7 @@ export function BudgetOverviewCard({ summary }: { summary: DashboardSummary }) {
             </div>
             <div className="h-2.5 w-full overflow-hidden rounded-full bg-slate-100">
               <div
-                className="h-full rounded-full"
+                className="dash-fill h-full rounded-full"
                 style={{
                   width: `${Math.max(2, Math.round((bar.value / max) * 100))}%`,
                   backgroundColor: bar.color,

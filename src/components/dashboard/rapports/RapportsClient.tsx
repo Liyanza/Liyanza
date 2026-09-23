@@ -7,6 +7,7 @@ import { KpiCard } from "@/components/dashboard/ui/KpiCard";
 import { StatusPill } from "@/components/dashboard/ui/StatusPill";
 import { apiGetDashboard, ApiError } from "@/lib/api/client";
 import type { DashboardSummary } from "@/lib/api/types";
+import { SkeletonKpis } from "@/components/dashboard/ui/Skeleton";
 
 function formatBudget(amount: number) {
   return `${Math.round(amount).toLocaleString("fr-FR")} FCFA`;
@@ -51,7 +52,9 @@ export function RapportsClient() {
       <TopBar title="Rapports" />
       <main className="flex-1 overflow-y-auto bg-dash-canvas">
         <div className="flex flex-col gap-6 px-8 py-6">
-          {loading && <p className="text-sm text-gray-text">Chargement des rapports...</p>}
+          {loading && (
+            <SkeletonKpis count={3} className="grid grid-cols-1 gap-3 sm:grid-cols-3" label="Chargement des rapports…" />
+          )}
           {loadError && <p className="text-sm text-red-600">{loadError}</p>}
 
           {summary && (

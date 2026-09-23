@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { DiffusionStatusPill } from "./DiffusionStatusPill";
 import { apiGetSchedule, ApiError } from "@/lib/api/client";
 import type { BroadcastRecord } from "@/lib/api/types";
+import { SkeletonRows } from "@/components/dashboard/ui/Skeleton";
 
 function startOfWeek(date: Date): Date {
   const result = new Date(date);
@@ -133,7 +134,7 @@ export function PlanningTab({ campaignId }: { campaignId: string }) {
         </h2>
         <div className="mt-4 overflow-x-auto">
           {loading ? (
-            <p className="py-6 text-center text-sm text-dash-muted">Chargement...</p>
+            <SkeletonRows rows={4} label="Chargement du planning…" />
           ) : (
             <table className="w-full min-w-[480px] text-left text-sm">
               <thead>

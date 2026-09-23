@@ -15,7 +15,7 @@ export function ProgressBar({
 
   return (
     <div className={`overflow-hidden rounded-full ${height} ${trackClassName} ${className}`}>
-      <div className={`${height} rounded-full transition-all ${barClassName}`} style={{ width: `${clamped}%` }} />
+      <div className={`dash-fill ${height} rounded-full transition-all ${barClassName}`} style={{ width: `${clamped}%` }} />
     </div>
   );
 }

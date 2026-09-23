@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { AlertTriangle, ArrowLeft, Loader2 } from "lucide-react";
+import { AlertTriangle, ArrowLeft } from "lucide-react";
 import { TopBar } from "@/components/dashboard/layout/TopBar";
 import { apiGetDigitalSimulations, ApiError } from "@/lib/api/client";
 import type { DigitalSimulationRecord } from "@/lib/api/types";
@@ -12,6 +12,7 @@ import { ResumeTab } from "./ResumeTab";
 import { CanauxTab } from "./CanauxTab";
 import { BudgetTab } from "./BudgetTab";
 import { PerformancesTab } from "./PerformancesTab";
+import { SkeletonKpis, SkeletonPanel } from "@/components/dashboard/ui/Skeleton";
 
 function normalizeList(
   result: DigitalSimulationRecord[] | { items: DigitalSimulationRecord[] }
@@ -54,9 +55,9 @@ export function DigitalResultsPage({ campaignId }: { campaignId: string }) {
           </div>
 
           {loading ? (
-            <div className="flex items-center justify-center gap-2 rounded-xl bg-white p-10 text-sm text-dash-muted shadow-[0_1px_1px_rgba(0,0,0,0.05)]">
-              <Loader2 className="size-4 animate-spin" aria-hidden="true" />
-              Chargement des résultats…
+            <div className="flex flex-col gap-4">
+              <SkeletonKpis label="Chargement des résultats…" />
+              <SkeletonPanel lines={5} />
             </div>
           ) : error ? (
             <div className="flex flex-col items-center gap-2 rounded-xl bg-white p-10 text-center shadow-[0_1px_1px_rgba(0,0,0,0.05)]">

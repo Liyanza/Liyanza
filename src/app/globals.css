@@ -201,3 +201,108 @@ body {
     animation-delay: 0s !important;
   }
 }
+
+/* ---------------------------------------------------------------------------
+ * Dashboard motion — CSS only (no GSAP in the dashboard bundle). Sober:
+ * short durations, transform/opacity, one-shot on mount. The global
+ * reduced-motion rule above neutralises all of it. Fill mode is `backwards`
+ * on purpose: once finished, no transform lingers on containers (a lingering
+ * transform would become the containing block of fixed-position modals).
+ * ------------------------------------------------------------------------- */
+
+/* Section content appearing after a sidebar navigation (dashboard/template). */
+.dash-enter {
+  animation: dash-enter 280ms var(--ease-out) backwards;
+}
+@keyframes dash-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+/* Wizard steps slide in from the direction of travel. */
+.dash-step-forward {
+  animation: dash-step 320ms var(--ease-out) backwards;
+  --dash-step-from: 16px;
+}
+.dash-step-back {
+  animation: dash-step 320ms var(--ease-out) backwards;
+  --dash-step-from: -16px;
+}
+@keyframes dash-step {
+  from {
+    opacity: 0;
+    transform: translateX(var(--dash-step-from));
+  }
+}
+
+/* Horizontal bars fill from the left; vertical bars rise from the base. */
+.dash-fill {
+  transform-origin: left center;
+  animation: dash-fill 700ms var(--ease-out) backwards;
+}
+@keyframes dash-fill {
+  from {
+    transform: scaleX(0);
+  }
+}
+.dash-grow {
+  transform-origin: center bottom;
+  animation: dash-grow 600ms var(--ease-out) backwards;
+}
+@keyframes dash-grow {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+/* Ring/donut arcs trace themselves: set --arc-circ to the circumference. */
+.dash-arc {
+  animation: dash-arc 900ms var(--ease-out) backwards;
+}
+@keyframes dash-arc {
+  from {
+    stroke-dasharray: 0 var(--arc-circ);
+  }
+}
+
+/* Line charts: give the path pathLength="1". */
+.dash-line {
+  stroke-dasharray: 1;
+  animation: dash-line 1000ms var(--ease-in-out) backwards;
+}
+@keyframes dash-line {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+.dash-pop {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: dash-pop 300ms var(--ease-out) backwards;
+}
+@keyframes dash-pop {
+  from {
+    transform: scale(0);
+  }
+}
+
+/* Skeleton shimmer: a light sweep moved with transform only. */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.65), transparent);
+  animation: skeleton-sweep 1.4s ease-in-out infinite;
+}
+@keyframes skeleton-sweep {
+  to {
+    transform: translateX(100%);
+  }
+}

@@ -13,6 +13,7 @@ import {
   ApiError,
 } from "@/lib/api/client";
 import type { CampagneRecord, CompanyMember, InstallationRecord } from "@/lib/api/types";
+import { SkeletonRows } from "@/components/dashboard/ui/Skeleton";
 
 const TerrainMap = dynamic(() => import("./TerrainMap").then((mod) => mod.TerrainMap), {
   ssr: false,
@@ -243,7 +244,7 @@ export function TerrainClient() {
               <div className="flex flex-col gap-3 rounded-2xl border border-border bg-white p-4">
                 <h2 className="text-sm font-semibold text-dash-heading">Panneaux ({installations.length})</h2>
                 {loading ? (
-                  <p className="text-sm text-dash-muted">Chargement...</p>
+                  <SkeletonRows rows={3} label="Chargement des panneaux…" />
                 ) : installations.length === 0 ? (
                   <p className="text-sm text-dash-muted">Aucun panneau pour le moment.</p>
                 ) : (
