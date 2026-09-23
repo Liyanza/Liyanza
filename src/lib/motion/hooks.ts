@@ -86,3 +86,24 @@ const noopSubscribe = () => () => {};
 function useHydrated() {
   return useSyncExternalStore(noopSubscribe, () => true, () => false);
 }
+
+function subscribeScroll(onChange: () => void) {
+  window.addEventListener("scroll", onChange, { passive: true });
+  window.addEventListener("resize", onChange);
+  return () => {
+    window.removeEventListener("scroll", onChange);
+    window.removeEventListener("resize", onChange);
+  };
+}
+
+/**
+ * True once the page has scrolled past `ratio` × viewport height. Only
+ * re-renders when the boolean flips. False during SSR.
+ */
+export function useScrolledPast(ratio: number) {
+  return useSyncExternalStore(
+    subscribeScroll,
+    () => window.scrollY > window.innerHeight * ratio,
+    () => false,
+  );
+}

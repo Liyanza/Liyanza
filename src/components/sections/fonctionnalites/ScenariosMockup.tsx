@@ -1,3 +1,5 @@
+import { CountUp } from "@/components/motion/CountUp";
+
 interface Scenario {
   name: string;
   budget: string;
@@ -54,6 +56,7 @@ export function ScenariosMockup() {
         {scenarios.map((s) => (
           <div
             key={s.name}
+            data-live="item"
             className={`px-5 py-4 ${s.highlighted ? "bg-[#f0fdf4]" : ""}`}
           >
             <div className="flex items-center justify-between">
@@ -66,13 +69,18 @@ export function ScenariosMockup() {
                   {s.name}
                 </p>
                 {s.badge && (
-                  <span className="rounded-full bg-blue-500 px-2 py-0.5 text-[10px] font-bold text-white">
+                  <span
+                    data-live="badge"
+                    className="rounded-full bg-blue-500 px-2 py-0.5 text-[10px] font-bold text-white"
+                  >
                     {s.badge}
                   </span>
                 )}
               </div>
               <div className="text-right">
-                <p className={`text-sm font-bold ${s.roiColor}`}>{s.roi}</p>
+                <p className={`text-sm font-bold ${s.roiColor}`}>
+                  <CountUp value={s.roi} />
+                </p>
                 <p className="text-[10px] text-gray-text-light">ROI estimé</p>
               </div>
             </div>
@@ -80,6 +88,7 @@ export function ScenariosMockup() {
             <div className="mt-2 flex items-center gap-2">
               <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-border-light">
                 <div
+                  data-live="fill"
                   className={`h-full rounded-full ${s.progressClass}`}
                   style={{ width: `${s.progress}%` }}
                 />

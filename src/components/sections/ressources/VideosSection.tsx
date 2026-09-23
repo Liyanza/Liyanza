@@ -1,6 +1,7 @@
 import { ArrowRight, Play } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
+import { Reveal } from "@/components/motion/Reveal";
 
 const videos = [
   { title: "Présentation générale de KIYANZA", views: "1,2k vues", duration: "5:12" },
@@ -12,7 +13,7 @@ export function VideosSection() {
   return (
     <section className="border-t border-[#e4e4e7] bg-[#fafafa] py-20">
       <Container>
-        <div className="flex flex-wrap items-center justify-between gap-6">
+        <Reveal className="flex flex-wrap items-center justify-between gap-6">
           <div>
             <SectionEyebrow variant="pill" tone="orange">Vidéos</SectionEyebrow>
             <h2 className="mt-5 text-4xl font-extrabold text-black sm:text-5xl">
@@ -26,11 +27,11 @@ export function VideosSection() {
             Voir toutes les vidéos
             <ArrowRight className="size-3.5" aria-hidden="true" />
           </button>
-        </div>
+        </Reveal>
 
-        <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <Reveal stagger className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {videos.map((video) => (
-            <div key={video.title} className="rounded-[5px] border border-[#e4e4e7] bg-white">
+            <div key={video.title} data-reveal-item className="rounded-[5px] border border-[#e4e4e7] bg-white">
               <div className="relative flex h-[140px] items-center justify-center rounded-t-[5px] bg-[#18181b]">
                 <button
                   type="button"
@@ -49,7 +50,7 @@ export function VideosSection() {
               </div>
             </div>
           ))}
-        </div>
+        </Reveal>
       </Container>
     </section>
   );

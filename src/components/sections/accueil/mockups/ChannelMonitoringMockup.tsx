@@ -1,3 +1,5 @@
+import { CountUp } from "@/components/motion/CountUp";
+
 interface ChannelStat {
   name: string;
   roas: string;
@@ -47,19 +49,22 @@ export function ChannelMonitoringMockup() {
 
       <div className="space-y-4 p-5">
         {channels.map((channel) => (
-          <div key={channel.name}>
+          <div key={channel.name} data-live="item">
             <div className="flex items-center justify-between">
               <p className="text-[10px] font-semibold text-zinc-900">{channel.name}</p>
-              <p className="text-[9px] font-bold text-blue-500">{channel.roas}</p>
+              <p className="text-[9px] font-bold text-blue-500">
+                <CountUp value={channel.roas} />
+              </p>
             </div>
             <div className="mt-1 h-2 overflow-hidden rounded-full bg-zinc-200">
               <div
+                data-live="fill"
                 className="h-full rounded-full bg-blue-500"
                 style={{ width: `${channel.progress}%` }}
               />
             </div>
             <p className="mt-0.5 text-[8px] text-gray-text">
-              {channel.progress} % de l&apos;objectif
+              <CountUp value={`${channel.progress} %`} /> de l&apos;objectif
             </p>
           </div>
         ))}
@@ -68,6 +73,7 @@ export function ChannelMonitoringMockup() {
           {activities.map((activity) => (
             <div
               key={activity.text}
+              data-live="item"
               className={`flex items-center gap-2.5 rounded-[5px] border p-2.5 ${
                 activity.tone === "alert"
                   ? "border-orange-500/20 bg-orange-500/[0.04]"

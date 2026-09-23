@@ -3,15 +3,20 @@
 import { useState } from "react";
 import { Sparkles, X } from "lucide-react";
 import { ChatPanel } from "@/components/ChatPanel";
+import { useScrolledPast } from "@/lib/motion/hooks";
 
 export function ChatbotWidget() {
   const [open, setOpen] = useState(false);
+  // On phones the launcher waits until the hero is scrolled past, so it never
+  // covers the hero's content on arrival. Always shown from `sm` up.
+  const pastHero = useScrolledPast(0.7);
+  const hiddenOnPhone = !open && !pastHero;
 
   return (
     <div
-      className={`fixed bottom-4 right-4 z-40 flex flex-col gap-2 sm:bottom-6 sm:right-6 ${
+      className={`fixed bottom-4 right-4 z-40 flex flex-col gap-2 transition-[opacity,transform,visibility] duration-300 ease-[var(--ease-out)] sm:bottom-6 sm:right-6 ${
         open ? "items-center" : "items-end"
-      }`}
+      } ${hiddenOnPhone ? "max-sm:invisible max-sm:translate-y-4 max-sm:opacity-0" : ""}`}
     >
       {open ? (
         <>

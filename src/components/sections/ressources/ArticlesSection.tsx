@@ -1,6 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
+import { Reveal } from "@/components/motion/Reveal";
 
 const articles = [
   {
@@ -27,7 +28,7 @@ export function ArticlesSection() {
   return (
     <section className="bg-white py-20">
       <Container>
-        <div className="flex flex-wrap items-center justify-between gap-6">
+        <Reveal className="flex flex-wrap items-center justify-between gap-6">
           <div>
             <SectionEyebrow variant="pill" tone="orange">Blog</SectionEyebrow>
             <h2 className="mt-5 text-4xl font-extrabold text-black sm:text-5xl">
@@ -41,10 +42,10 @@ export function ArticlesSection() {
             Voir tous les articles
             <ArrowRight className="size-3.5" aria-hidden="true" />
           </button>
-        </div>
+        </Reveal>
 
-        <div className="mt-10 grid grid-cols-1 gap-5 lg:grid-cols-3 lg:grid-rows-2">
-          <div className="rounded-[5px] border border-[#e4e4e7] lg:col-start-1 lg:row-span-2 lg:row-start-1">
+        <Reveal stagger className="mt-10 grid grid-cols-1 gap-5 lg:grid-cols-3 lg:grid-rows-2">
+          <div data-reveal-item className="rounded-[5px] border border-[#e4e4e7] lg:col-start-1 lg:row-span-2 lg:row-start-1">
             <div className="relative flex h-[200px] items-center justify-center bg-green-accent-dark">
               <span className="absolute left-4 top-4 rounded-full bg-orange-500 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wide text-white">
                 À la une
@@ -77,6 +78,7 @@ export function ArticlesSection() {
           {articles.map((article, i) => (
             <div
               key={article.title}
+              data-reveal-item
               className={`rounded-[5px] border border-[#e4e4e7] p-5 ${
                 i === 0
                   ? "lg:col-start-2 lg:row-start-1"
@@ -98,7 +100,7 @@ export function ArticlesSection() {
               </div>
             </div>
           ))}
-        </div>
+        </Reveal>
       </Container>
     </section>
   );

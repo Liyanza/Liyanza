@@ -1,6 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
+import { Reveal } from "@/components/motion/Reveal";
 
 const challenges = [
   {
@@ -33,7 +34,7 @@ export function ChallengesSection() {
   return (
     <section className="border-t border-[#e4e4e7] bg-[#fafafa] py-24">
       <Container>
-        <div className="mx-auto max-w-2xl text-center">
+        <Reveal className="mx-auto max-w-2xl text-center">
           <SectionEyebrow variant="pill" tone="orange">Le contexte</SectionEyebrow>
           <h2 className="mt-5 text-4xl font-extrabold text-black sm:text-5xl">
             Des défis qui grandissent plus vite que les outils
@@ -42,12 +43,13 @@ export function ChallengesSection() {
             Les équipes marketing font face à une complexité croissante.
             KIYANZA répond à ces frictions concrètes.
           </p>
-        </div>
+        </Reveal>
 
-        <div className="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <Reveal stagger className="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2">
           {challenges.map((item) => (
             <div
               key={item.number}
+              data-reveal-item
               className="flex gap-5 rounded-[5px] border border-[#e4e4e7] bg-white p-7"
             >
               <div className="flex size-[50px] shrink-0 items-center justify-center rounded-full border border-green-accent-dark/20 bg-green-accent-dark/10">
@@ -63,7 +65,7 @@ export function ChallengesSection() {
               </div>
             </div>
           ))}
-        </div>
+        </Reveal>
 
         <div className="mt-8 flex flex-col items-start justify-between gap-6 rounded-[5px] bg-[#e7ebf2]/40 p-8 sm:flex-row sm:items-center">
           <div>

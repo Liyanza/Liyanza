@@ -2,6 +2,9 @@ import Image from "next/image";
 import { Check } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
+import { Reveal } from "@/components/motion/Reveal";
+import { LiveMockup } from "@/components/motion/LiveMockup";
+import { CountUp } from "@/components/motion/CountUp";
 
 const commitments = [
   "Unifier vos canaux marketing dans un seul cockpit",
@@ -23,7 +26,7 @@ export function MissionSection() {
     <section className="bg-green-accent-dark/[0.08] py-24">
       <Container>
         <div className="grid grid-cols-1 items-center gap-16 lg:grid-cols-2">
-          <div>
+          <Reveal>
             <SectionEyebrow variant="pill" tone="orange">Notre mission</SectionEyebrow>
             <h2 className="mt-5 text-4xl font-extrabold leading-tight text-black sm:text-5xl">
               Donner à chaque équipe une boussole, pas juste un tableau de
@@ -48,9 +51,9 @@ export function MissionSection() {
                 </li>
               ))}
             </ul>
-          </div>
+          </Reveal>
 
-          <div className="rounded-[5px] border border-black/20 bg-white p-8 shadow-[0_2px_6px_0_rgba(255,102,0,0.25)]">
+          <LiveMockup className="rounded-[5px] border border-black/20 bg-white p-8 shadow-[0_2px_6px_0_rgba(255,102,0,0.25)]">
             <Image
               src="/kiyanza-logo-mark.svg"
               alt="Logo KIYANZA"
@@ -62,10 +65,13 @@ export function MissionSection() {
               {stats.map((stat) => (
                 <div
                   key={stat.label}
+                  data-live="item"
                   className="rounded-[5px] border border-black/[0.07] bg-white p-3"
                 >
                   <p className="text-[10px] text-black/30">{stat.label}</p>
-                  <p className="mt-2 text-xl font-black text-black">{stat.value}</p>
+                  <p className="mt-2 text-xl font-black text-black">
+                    <CountUp value={stat.value} />
+                  </p>
                 </div>
               ))}
             </div>
@@ -75,13 +81,14 @@ export function MissionSection() {
                 {barHeights.map((h, i) => (
                   <div
                     key={i}
+                    data-live="grow"
                     className="flex-1 bg-blue-500"
                     style={{ height: `${h}px` }}
                   />
                 ))}
               </div>
             </div>
-          </div>
+          </LiveMockup>
         </div>
       </Container>
     </section>

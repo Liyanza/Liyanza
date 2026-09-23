@@ -5,6 +5,7 @@ import { Minus, Plus } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
 import { homeFaqs } from "@/data/faqs";
+import { Reveal } from "@/components/motion/Reveal";
 
 export function LandingFAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(homeFaqs.length - 1);
@@ -13,7 +14,7 @@ export function LandingFAQ() {
     <section className="bg-white py-16 sm:py-20 lg:py-24">
       <Container>
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_2fr] lg:gap-12">
-          <div className="lg:col-start-1 lg:row-start-1">
+          <Reveal className="lg:col-start-1 lg:row-start-1">
             <SectionEyebrow variant="pill" tone="orange">
               FAQ
             </SectionEyebrow>
@@ -24,13 +25,16 @@ export function LandingFAQ() {
               Tout ce que vous devez savoir sur KIYANZA. Vous ne trouvez pas votre
               réponse ?
             </p>
-          </div>
+          </Reveal>
 
-          <div className="order-2 divide-y divide-zinc-200 border-b border-zinc-200 lg:order-none lg:col-start-2 lg:row-start-1 lg:row-span-2">
+          <Reveal
+            stagger
+            className="order-2 divide-y divide-zinc-200 border-b border-zinc-200 lg:order-none lg:col-start-2 lg:row-start-1 lg:row-span-2"
+          >
             {homeFaqs.map((faq, i) => {
               const isOpen = openIndex === i;
               return (
-                <div key={faq.question}>
+                <div key={faq.question} data-reveal-item>
                   <button
                     type="button"
                     onClick={() => setOpenIndex(isOpen ? null : i)}
@@ -56,7 +60,7 @@ export function LandingFAQ() {
                 </div>
               );
             })}
-          </div>
+          </Reveal>
 
           <a
             href="/ressources"

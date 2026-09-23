@@ -1,6 +1,7 @@
 import { ArrowRight, BookOpen, FileText, HelpCircle, PlayCircle } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
+import { Reveal } from "@/components/motion/Reveal";
 
 const categories = [
   {
@@ -37,16 +38,16 @@ export function ResourceCategories() {
   return (
     <section className="bg-white py-20">
       <Container>
-        <div className="mx-auto max-w-2xl text-center">
+        <Reveal className="mx-auto max-w-2xl text-center">
           <SectionEyebrow variant="pill" tone="orange">Accès rapide</SectionEyebrow>
           <h2 className="mt-5 text-4xl font-extrabold text-black sm:text-5xl">
             Trouvez ce dont vous avez besoin
           </h2>
-        </div>
+        </Reveal>
 
-        <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <Reveal stagger className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {categories.map((cat) => (
-            <div key={cat.number} className="rounded-[5px] border border-[#e4e4e7] p-7">
+            <div key={cat.number} data-reveal-item className="rounded-[5px] border border-[#e4e4e7] p-7">
               <span className="text-[10px] font-black tracking-widest text-[#e4e4e7]">
                 {cat.number}
               </span>
@@ -66,7 +67,7 @@ export function ResourceCategories() {
               </button>
             </div>
           ))}
-        </div>
+        </Reveal>
       </Container>
     </section>
   );

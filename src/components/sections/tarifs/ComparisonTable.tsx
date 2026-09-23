@@ -1,6 +1,7 @@
 import { Check } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
+import { Reveal } from "@/components/motion/Reveal";
 
 type Cell = boolean | "limited";
 
@@ -59,7 +60,7 @@ export function ComparisonTable() {
   return (
     <section className="bg-white py-24">
       <Container>
-        <div className="mx-auto max-w-2xl text-center">
+        <Reveal className="mx-auto max-w-2xl text-center">
           <SectionEyebrow variant="pill" tone="orange">Comparaison</SectionEyebrow>
           <h2 className="mt-5 text-4xl font-extrabold text-black sm:text-5xl">
             Comparez les fonctionnalités
@@ -67,9 +68,9 @@ export function ComparisonTable() {
           <p className="mt-3 text-base text-gray-text">
             Un aperçu complet de ce qui est inclus dans chaque formule.
           </p>
-        </div>
+        </Reveal>
 
-        <div className="mt-14 overflow-x-auto">
+        <Reveal className="mt-14 overflow-x-auto">
           <table className="w-full min-w-[720px] border-collapse">
             <thead>
               <tr>
@@ -138,7 +139,7 @@ export function ComparisonTable() {
               </tr>
             </tbody>
           </table>
-        </div>
+        </Reveal>
       </Container>
     </section>
   );

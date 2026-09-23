@@ -1,3 +1,5 @@
+import { CountUp } from "@/components/motion/CountUp";
+
 const stats = [
   { label: "Impressions", value: "124 400" },
   { label: "Conversions", value: "1 384" },
@@ -18,7 +20,10 @@ export function ReportMockup() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <span className="rounded-full bg-blue-500 px-2.5 py-1 text-xs font-bold text-white">
+          <span
+            data-live="badge"
+            className="rounded-full bg-blue-500 px-2.5 py-1 text-xs font-bold text-white"
+          >
             +24%
           </span>
           <span className="rounded-full border-2 border-green-accent px-2.5 py-1 text-xs font-medium text-green-accent">
@@ -32,9 +37,12 @@ export function ReportMockup() {
           {stats.map((stat) => (
             <div
               key={stat.label}
+              data-live="item"
               className="rounded-xl border border-border-light bg-white p-2.5 text-center shadow-[0_2px_12px_-2px_rgba(0,0,0,0.07)]"
             >
-              <p className="text-sm font-bold text-navy">{stat.value}</p>
+              <p className="text-sm font-bold text-navy">
+                <CountUp value={stat.value} />
+              </p>
               <p className="mt-0.5 text-[8px] leading-tight text-gray-text-light">
                 {stat.label}
               </p>
@@ -50,11 +58,13 @@ export function ReportMockup() {
             aria-hidden="true"
           >
             <polygon
+              data-live="area"
               points="0,48 0,38 60,30 120,32 189,14 250,20 313,4 313,48"
               fill="#296bd6"
               opacity="0.15"
             />
             <polyline
+              data-live="draw"
               points="0,38 60,30 120,32 189,14 250,20 313,4"
               fill="none"
               stroke="#296bd6"

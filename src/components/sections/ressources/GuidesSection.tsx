@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ArrowRight, Clock } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
+import { Reveal } from "@/components/motion/Reveal";
 
 type GuideType = "Guide" | "Tutoriel";
 type Level = "Débutant" | "Intermédiaire" | "Avancé";
@@ -83,7 +84,7 @@ export function GuidesSection() {
   return (
     <section className="border-t border-[#e4e4e7] bg-blue-500/[0.09] py-20">
       <Container>
-        <div className="flex flex-wrap items-center justify-between gap-6">
+        <Reveal className="flex flex-wrap items-center justify-between gap-6">
           <div>
             <SectionEyebrow variant="pill" tone="orange">Guides &amp; Tutoriels</SectionEyebrow>
             <h2 className="mt-5 text-4xl font-extrabold text-black sm:text-5xl">
@@ -97,7 +98,7 @@ export function GuidesSection() {
             Voir tous les guides
             <ArrowRight className="size-3.5" aria-hidden="true" />
           </button>
-        </div>
+        </Reveal>
 
         <div className="mt-10 flex flex-wrap gap-2">
           {filters.map((filter) => {
@@ -119,10 +120,11 @@ export function GuidesSection() {
           })}
         </div>
 
-        <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <Reveal stagger className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {visible.map((guide) => (
             <div
               key={guide.title}
+              data-reveal-item
               className="flex flex-col rounded-[5px] border border-[#e4e4e7] bg-white p-6"
             >
               <div className="flex items-center justify-between gap-2">
@@ -159,7 +161,7 @@ export function GuidesSection() {
               Aucun contenu disponible pour ce filtre pour le moment.
             </p>
           )}
-        </div>
+        </Reveal>
       </Container>
     </section>
   );

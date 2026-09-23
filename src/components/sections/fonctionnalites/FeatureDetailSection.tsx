@@ -3,6 +3,8 @@ import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
 import { CheckItem } from "@/components/ui/CheckItem";
+import { Reveal } from "@/components/motion/Reveal";
+import { LiveMockup } from "@/components/motion/LiveMockup";
 
 const bgClasses: Record<"white" | "slate" | "green-tint" | "blue-tint", string> = {
   white: "bg-white",
@@ -37,35 +39,40 @@ export function FeatureDetailSection({
   extra?: ReactNode;
 }) {
   const textColumn = (
-    <div>
-      <SectionEyebrow variant="pill" tone="orange">
-        {eyebrowNumber} · {eyebrowLabel}
-      </SectionEyebrow>
-      <h2 className="mt-5 text-4xl font-bold leading-10 text-black">
+    <Reveal stagger>
+      <div data-reveal-item>
+        <SectionEyebrow variant="pill" tone="orange">
+          {eyebrowNumber} · {eyebrowLabel}
+        </SectionEyebrow>
+      </div>
+      <h2 data-reveal-item className="mt-5 text-4xl font-bold leading-10 text-black">
         {heading.map((line, i) => (
           <span key={i} className="block">
             {line}
           </span>
         ))}
       </h2>
-      <p className="mt-4 text-sm leading-relaxed text-gray-text">{description}</p>
+      <p data-reveal-item className="mt-4 text-sm leading-relaxed text-gray-text">
+        {description}
+      </p>
       <ul className="mt-6">
         {items.map((item) => (
           <CheckItem key={item} text={item} />
         ))}
       </ul>
-      {extra}
+      {extra && <div data-reveal-item>{extra}</div>}
       <a
+        data-reveal-item
         href="#"
         className="mt-8 inline-flex items-center gap-1.5 rounded-full border-2 border-green-accent px-6 py-2.5 text-sm font-semibold text-green-accent transition hover:opacity-80"
       >
         {ctaText}
         <ArrowRight className="size-3.5" aria-hidden="true" />
       </a>
-    </div>
+    </Reveal>
   );
 
-  const mockupColumn = <div className="flex justify-center">{mockup}</div>;
+  const mockupColumn = <LiveMockup className="flex justify-center">{mockup}</LiveMockup>;
 
   return (
     <section id={id} className={`scroll-mt-40 py-20 ${bgClasses[bg]}`}>

@@ -1,3 +1,4 @@
+import { CountUp } from "@/components/motion/CountUp";
 import { Check, ChevronDown } from "lucide-react";
 import { FaFacebook, FaInstagram } from "react-icons/fa6";
 
@@ -43,11 +44,16 @@ export function CampaignWizardMockup() {
       <div className="space-y-5 p-5">
         <div className="flex items-center">
           {steps.map((step, i) => (
-            <div key={step.label} className="flex flex-1 flex-col items-center gap-1 last:flex-none">
+            <div
+              key={step.label}
+              data-live="item"
+              className="flex flex-1 flex-col items-center gap-1 last:flex-none"
+            >
               <div className="flex w-full items-center">
                 <StepCircle state={step.state} number={i + 1} />
                 {i < steps.length - 1 && (
                   <span
+                    data-live={step.state === "done" ? "fill" : undefined}
                     className={`mx-1 h-px flex-1 ${
                       step.state === "done" ? "bg-green-accent-dark" : "bg-zinc-200"
                     }`}
@@ -61,7 +67,7 @@ export function CampaignWizardMockup() {
           ))}
         </div>
 
-        <div>
+        <div data-live="item">
           <p className="text-[9px] font-bold uppercase tracking-wide text-gray-text-light">
             Objectif
           </p>
@@ -72,15 +78,15 @@ export function CampaignWizardMockup() {
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <div>
+          <div data-live="item">
             <p className="text-[9px] font-bold uppercase tracking-wide text-gray-text-light">
               Budget
             </p>
             <div className="mt-1.5 rounded-[5px] border border-green-accent-dark bg-white px-3 py-2">
-              <span className="text-xs text-zinc-900">150 000 FCFA</span>
+              <CountUp value="150 000 FCFA" className="text-xs text-zinc-900" />
             </div>
           </div>
-          <div>
+          <div data-live="item">
             <p className="text-[9px] font-bold uppercase tracking-wide text-gray-text-light">
               Durée
             </p>
@@ -90,7 +96,7 @@ export function CampaignWizardMockup() {
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div data-live="item" className="flex flex-wrap items-center gap-2">
           <span className="flex items-center gap-1.5 rounded-[5px] border border-green-accent-dark/30 bg-green-accent-dark/[0.08] px-3 py-1.5 text-[10px] font-semibold text-green-accent-dark">
             <FaFacebook aria-hidden="true" />
             Facebook

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Minus, Plus } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
+import { Reveal } from "@/components/motion/Reveal";
 
 const faqs = [
   {
@@ -35,7 +36,7 @@ export function AboutFAQ() {
     <section className="border-t border-[#e4e4e7] bg-[#fafafa] py-24">
       <Container>
         <div className="grid grid-cols-1 gap-16 lg:grid-cols-[1fr_2fr]">
-          <div>
+          <Reveal>
             <SectionEyebrow variant="pill" tone="orange">FAQ</SectionEyebrow>
             <h2 className="mt-5 text-4xl font-extrabold text-black">
               Questions sur KIYANZA
@@ -44,13 +45,13 @@ export function AboutFAQ() {
               Des doutes sur qui nous sommes ou comment nous travaillons ?
               Voici les réponses.
             </p>
-          </div>
+          </Reveal>
 
-          <div className="divide-y divide-[#e4e4e7] border-t border-[#e4e4e7]">
+          <Reveal stagger className="divide-y divide-[#e4e4e7] border-t border-[#e4e4e7]">
             {faqs.map((faq, i) => {
               const isOpen = openIndex === i;
               return (
-                <div key={faq.question}>
+                <div key={faq.question} data-reveal-item>
                   <button
                     type="button"
                     onClick={() => setOpenIndex(isOpen ? null : i)}
@@ -76,7 +77,7 @@ export function AboutFAQ() {
                 </div>
               );
             })}
-          </div>
+          </Reveal>
         </div>
       </Container>
     </section>

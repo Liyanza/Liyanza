@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, type ElementType, type ReactNode } from "react";
-import { gsap, useMotion } from "@/lib/motion/gsap";
+import { gsap, ScrollTrigger, useMotion } from "@/lib/motion/gsap";
 import { duration, reveal, stagger as staggerTokens } from "@/lib/motion/tokens";
 
 /**
@@ -11,7 +11,7 @@ import { duration, reveal, stagger as staggerTokens } from "@/lib/motion/tokens"
  *
  * Only opacity/transform are animated, and opacity (not visibility) is used on
  * purpose: content stays in the accessibility tree before it is revealed.
- * Meant for below-the-fold content; hero intros use [data-motion-intro].
+ * Content already on screen at load is left untouched (heroes use HeroIntro).
  */
 export function Reveal({
   children,
@@ -31,16 +31,26 @@ export function Reveal({
   useMotion(
     () => {
       const el = ref.current;
-      if (!el) return;
-      const targets = stagger ? el.querySelectorAll("[data-reveal-item]") : el;
-      gsap.from(targets, {
-        opacity: 0,
-        y: reveal.distance,
-        duration: duration.base,
-        delay,
-        stagger: stagger === true ? staggerTokens.base : stagger || 0,
-        scrollTrigger: { trigger: el, start: reveal.start, once: true },
-      });
+      // Already on screen at load: never hide what the user has already seen.
+      if (!el || ScrollTrigger.isInViewport(el)) return;
+      const items = stagger ? el.querySelectorAll("[data-reveal-item]") : null;
+      const targets = items?.length ? items : el;
+      // Explicit end values: reading the "current" value (gsap.from) is unsafe
+      // when a CSS transition on the element is mid-flight. clearProps hands
+      // the final state back to the stylesheet (no leftover transform layer).
+      gsap.fromTo(
+        targets,
+        { opacity: 0, y: reveal.distance },
+        {
+          opacity: 1,
+          y: 0,
+          duration: duration.base,
+          delay,
+          stagger: stagger === true ? staggerTokens.base : stagger || 0,
+          clearProps: "opacity,transform",
+          scrollTrigger: { trigger: el, start: reveal.start, once: true },
+        },
+      );
     },
     { scope: ref },
   );

@@ -3,6 +3,9 @@ import { FaFacebook, FaInstagram, FaTiktok, FaWhatsapp } from "react-icons/fa6";
 import { FcGoogle } from "react-icons/fc";
 import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
+import { Reveal } from "@/components/motion/Reveal";
+import { LiveMockup } from "@/components/motion/LiveMockup";
+import { CountUp } from "@/components/motion/CountUp";
 
 interface Row {
   name: string;
@@ -67,18 +70,20 @@ export function CampaignsTableSection() {
   return (
     <section id="gestion-campagnes" className="scroll-mt-40 bg-white py-20">
       <Container>
-        <div>
-          <SectionEyebrow variant="pill" tone="orange">03 · Gestion des Campagnes</SectionEyebrow>
-          <h2 className="mt-5 text-4xl font-bold leading-10 text-black">
+        <Reveal stagger>
+          <div data-reveal-item>
+            <SectionEyebrow variant="pill" tone="orange">03 · Gestion des Campagnes</SectionEyebrow>
+          </div>
+          <h2 data-reveal-item className="mt-5 text-4xl font-bold leading-10 text-black">
             Centralisez toutes vos campagnes
           </h2>
-          <p className="mt-3 max-w-lg text-sm leading-5 text-gray-text">
+          <p data-reveal-item className="mt-3 max-w-lg text-sm leading-5 text-gray-text">
             Retrouvez toutes vos campagnes au même endroit et suivez leur
             statut, leur budget et leurs performances.
           </p>
-        </div>
+        </Reveal>
 
-        <div className="mt-10 overflow-hidden rounded-2xl border border-border-light bg-white shadow-[0_6px_15px_-4px_rgba(0,0,0,0.1)]">
+        <LiveMockup className="mt-10 overflow-hidden rounded-2xl border border-border-light bg-white shadow-[0_6px_15px_-4px_rgba(0,0,0,0.1)]">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border-light px-5 py-3.5">
             <div className="flex items-center gap-2 rounded-full border border-border bg-slate-50 px-3 py-2">
               <Search className="size-3.5 text-gray-text-light" aria-hidden="true" />
@@ -115,7 +120,7 @@ export function CampaignsTableSection() {
               </thead>
               <tbody>
                 {rows.map((row) => (
-                  <tr key={row.name} className="border-t border-slate-50">
+                  <tr key={row.name} data-live="item" className="border-t border-slate-50">
                     <td className="px-5 py-4">
                       <p className="text-sm font-semibold text-black">{row.name}</p>
                       <p className="text-xs text-gray-text-light">Campagne</p>
@@ -133,7 +138,7 @@ export function CampaignsTableSection() {
                       {row.budget}
                     </td>
                     <td className={`px-5 py-4 text-sm font-bold ${row.roiColor}`}>
-                      {row.roi}
+                      <CountUp value={row.roi} />
                     </td>
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-3 text-gray-text">
@@ -155,7 +160,7 @@ export function CampaignsTableSection() {
               Voir toutes les campagnes →
             </a>
           </div>
-        </div>
+        </LiveMockup>
       </Container>
     </section>
   );

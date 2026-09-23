@@ -9,14 +9,16 @@ import { duration } from "@/lib/motion/tokens";
  * separators so the animated value is formatted exactly like the original.
  */
 function parse(display: string) {
-  const match = display.match(/^(.*?)(\d[\d\s ]*(?:[.,]\d+)?)(.*)$/);
+  // A space only counts as a thousands separator when a digit follows it, so
+  // "65 %" or "150 000 FCFA" keep the space before their unit.
+  const match = display.match(/^(.*?)(\d(?:\d|[\s\u202f](?=\d))*(?:[.,]\d+)?)(.*)$/);
   if (!match) return null;
   const [, prefix, raw, suffix] = match;
   const decimalMatch = raw.match(/[.,](\d+)$/);
   const decimals = decimalMatch ? decimalMatch[1].length : 0;
   const decimalSep = decimalMatch ? raw[raw.length - decimals - 1] : ".";
-  const groupSep = raw.match(/[\s ]/)?.[0] ?? "";
-  const number = parseFloat(raw.replace(/[\s ]/g, "").replace(",", "."));
+  const groupSep = raw.match(/[\s\u202f]/)?.[0] ?? "";
+  const number = parseFloat(raw.replace(/[\s\u202f]/g, "").replace(",", "."));
   return { prefix, suffix, number, decimals, decimalSep, groupSep };
 }
 

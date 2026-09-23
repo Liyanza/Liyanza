@@ -1,5 +1,6 @@
 import { Check } from "lucide-react";
 import { Container } from "@/components/ui/Container";
+import { Reveal } from "@/components/motion/Reveal";
 
 interface Plan {
   tier: string;
@@ -85,6 +86,7 @@ const plans: Plan[] = [
 function PlanCard({ plan }: { plan: Plan }) {
   return (
     <div
+      data-reveal-item
       className={`relative flex h-full flex-col bg-white p-6 ${
         plan.featured
           ? "border-2 border-green-accent-dark shadow-[0_2px_12px_0_rgba(255,102,0,0.25)]"
@@ -153,11 +155,11 @@ export function PricingCards() {
   return (
     <section className="bg-green-600/10 pb-20">
       <Container>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <Reveal stagger className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {plans.map((plan) => (
             <PlanCard key={plan.tier} plan={plan} />
           ))}
-        </div>
+        </Reveal>
 
         <div className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 border-t border-black/[0.08] pt-8">
           {[

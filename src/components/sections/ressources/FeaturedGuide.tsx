@@ -1,5 +1,6 @@
 import { BookOpen, Clock, Download, Tag } from "lucide-react";
 import { Container } from "@/components/ui/Container";
+import { Reveal } from "@/components/motion/Reveal";
 
 const tags = ["Stratégie", "Budgets", "KPIs", "IA", "Multi-canaux"];
 
@@ -7,7 +8,7 @@ export function FeaturedGuide() {
   return (
     <section className="bg-[#f4f4f4] py-20">
       <Container>
-        <div className="grid grid-cols-1 overflow-hidden border border-black/5 lg:grid-cols-2">
+        <Reveal className="grid grid-cols-1 overflow-hidden border border-black/5 lg:grid-cols-2">
           <div className="flex items-center justify-center rounded-[5px] bg-white p-12">
             <div className="flex flex-col items-center text-center">
               <div className="flex size-20 items-center justify-center rounded-full bg-green-accent/20">
@@ -69,7 +70,7 @@ export function FeaturedGuide() {
               </button>
             </div>
           </div>
-        </div>
+        </Reveal>
       </Container>
     </section>
   );

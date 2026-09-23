@@ -1,6 +1,7 @@
 import { Eye, Target, Users, Zap } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
+import { Reveal } from "@/components/motion/Reveal";
 
 const values = [
   {
@@ -33,16 +34,16 @@ export function ValuesSection() {
   return (
     <section className="border-t border-[#e4e4e7] bg-white py-24">
       <Container>
-        <div className="mx-auto max-w-2xl text-center">
+        <Reveal className="mx-auto max-w-2xl text-center">
           <SectionEyebrow variant="pill" tone="orange">Nos valeurs</SectionEyebrow>
           <h2 className="mt-5 text-4xl font-extrabold text-black sm:text-5xl">
             Ce qui guide chaque décision
           </h2>
-        </div>
+        </Reveal>
 
-        <div className="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <Reveal stagger className="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {values.map((value) => (
-            <div key={value.title} className="rounded-[5px] border border-[#e4e4e7] p-7">
+            <div key={value.title} data-reveal-item className="rounded-[5px] border border-[#e4e4e7] p-7">
               <div className="flex size-10 items-center justify-center rounded-full border border-green-accent-dark/20 bg-green-accent/10">
                 <value.icon className="size-5 text-green-accent-dark" aria-hidden="true" />
               </div>
@@ -52,7 +53,7 @@ export function ValuesSection() {
               </p>
             </div>
           ))}
-        </div>
+        </Reveal>
       </Container>
     </section>
   );
