@@ -35,14 +35,17 @@ export function CountUp({
   value,
   className = "",
   durationMs = duration.count * 1000,
+  delayMs = 0,
 }: {
   value: string;
   className?: string;
   durationMs?: number;
+  /** Extra wait after entering the viewport (e.g. to sync with an intro). */
+  delayMs?: number;
 }) {
   const parsed = parse(value);
   const [ref, inView] = useInViewOnce<HTMLSpanElement>();
-  const current = useCountUp(parsed?.number ?? 0, inView, durationMs);
+  const current = useCountUp(parsed?.number ?? 0, inView, durationMs, delayMs);
 
   if (!parsed) return <span className={className}>{value}</span>;
 

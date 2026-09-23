@@ -58,7 +58,7 @@ const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
  * Server render and reduced motion both yield `target` directly, so the real
  * value is always what crawlers, no-JS visitors and reduced-motion users see.
  */
-export function useCountUp(target: number, start: boolean, durationMs: number) {
+export function useCountUp(target: number, start: boolean, durationMs: number, delayMs = 0) {
   const reduced = usePrefersReducedMotion();
   const hydrated = useHydrated();
   const [progress, setProgress] = useState(0);
@@ -66,15 +66,15 @@ export function useCountUp(target: number, start: boolean, durationMs: number) {
   useEffect(() => {
     if (reduced || !start) return;
     let frame = 0;
-    const t0 = performance.now();
+    const t0 = performance.now() + delayMs;
     const tick = (now: number) => {
-      const t = Math.min(1, (now - t0) / durationMs);
+      const t = Math.min(1, Math.max(0, now - t0) / durationMs);
       setProgress(t);
       if (t < 1) frame = requestAnimationFrame(tick);
     };
     frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
-  }, [start, durationMs, reduced]);
+  }, [start, durationMs, delayMs, reduced]);
 
   if (reduced || !hydrated) return target;
   return target * easeOut(progress);

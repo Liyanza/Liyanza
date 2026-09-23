@@ -75,59 +75,71 @@ export function Navbar() {
 
         <button
           type="button"
-          className="inline-flex items-center justify-center rounded-lg p-2 text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-accent lg:hidden"
+          className="relative inline-flex size-10 items-center justify-center rounded-lg text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-accent lg:hidden"
           aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
         >
-          {open ? (
-            <X className="size-6" aria-hidden="true" />
-          ) : (
-            <Menu className="size-6" aria-hidden="true" />
-          )}
+          <Menu
+            className={`absolute size-6 transition duration-300 ease-[var(--ease-out)] ${
+              open ? "rotate-90 opacity-0" : "rotate-0 opacity-100"
+            }`}
+            aria-hidden="true"
+          />
+          <X
+            className={`absolute size-6 transition duration-300 ease-[var(--ease-out)] ${
+              open ? "rotate-0 opacity-100" : "-rotate-90 opacity-0"
+            }`}
+            aria-hidden="true"
+          />
         </button>
       </Container>
 
-      {open && (
-        <div className="border-t border-border-light bg-white lg:hidden">
-          <Container className="flex flex-col gap-4 py-6">
-            <nav
-              className="flex flex-col gap-4"
-              aria-label="Navigation principale mobile"
+      {/* Always mounted so it can animate out; `invisible` keeps it out of the
+          tab order and accessibility tree while closed. */}
+      <div
+        className={`absolute inset-x-0 top-full border-y border-border-light bg-white shadow-lg transition-[opacity,transform,visibility] duration-300 ease-[var(--ease-out)] lg:hidden ${
+          open ? "visible translate-y-0 opacity-100" : "invisible -translate-y-2 opacity-0"
+        }`}
+      >
+        <Container className="flex flex-col gap-4 py-6">
+          <nav
+            className="flex flex-col gap-4"
+            aria-label="Navigation principale mobile"
+          >
+            {links.map((link, i) => {
+              const active = pathname === link.href;
+              return (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  aria-current={active ? "page" : undefined}
+                  style={{ transitionDelay: open ? `${80 + i * 40}ms` : "0ms" }}
+                  className={`text-sm font-semibold transition-[opacity,transform] duration-300 ease-[var(--ease-out)] ${
+                    active ? "text-green-600" : "text-black"
+                  } ${open ? "translate-y-0 opacity-100" : "-translate-y-1 opacity-0"}`}
+                  onClick={() => setOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
+          </nav>
+          <div className="flex flex-col gap-3 pt-2">
+            <Button variant="outline" size="sm" href="/connexion">
+              Se connecter
+            </Button>
+            <Button
+              variant="solid"
+              size="sm"
+              href="/inscription"
+              icon={<ArrowRight className="size-4" aria-hidden="true" />}
             >
-              {links.map((link) => {
-                const active = pathname === link.href;
-                return (
-                  <Link
-                    key={link.label}
-                    href={link.href}
-                    aria-current={active ? "page" : undefined}
-                    className={`text-sm font-semibold ${
-                      active ? "text-green-600" : "text-black"
-                    }`}
-                    onClick={() => setOpen(false)}
-                  >
-                    {link.label}
-                  </Link>
-                );
-              })}
-            </nav>
-            <div className="flex flex-col gap-3 pt-2">
-              <Button variant="outline" size="sm" href="/connexion">
-                Se connecter
-              </Button>
-              <Button
-                variant="solid"
-                size="sm"
-                href="/inscription"
-                icon={<ArrowRight className="size-4" aria-hidden="true" />}
-              >
-                Essayer gratuitement
-              </Button>
-            </div>
-          </Container>
-        </div>
-      )}
+              Essayer gratuitement
+            </Button>
+          </div>
+        </Container>
+      </div>
     </header>
   );
 }

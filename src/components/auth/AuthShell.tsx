@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { SecurityNote } from "@/components/auth/SecurityNote";
 import { BrandVisual } from "@/components/auth/BrandVisual";
+import { HeroIntro } from "@/components/motion/HeroIntro";
 
 export function AuthShell({
   brandHeading,
@@ -18,25 +19,27 @@ export function AuthShell({
 }) {
   return (
     <div className="flex min-h-screen w-full bg-white">
-      <div className="relative hidden w-1/2 max-w-[767px] shrink-0 flex-col overflow-hidden bg-gradient-to-b from-green-accent-dark to-green-600 px-12 pb-12 pt-[58px] lg:flex">
-        <div className="mx-auto w-full max-w-[514px]">
+      <HeroIntro className="relative hidden w-1/2 max-w-[767px] shrink-0 flex-col overflow-hidden bg-gradient-to-b from-green-accent-dark to-green-600 px-12 pb-12 pt-[58px] lg:flex">
+        <div data-intro="badge" className="mx-auto w-full max-w-[514px]">
           <Logo variant="white" className="h-14" />
         </div>
 
         <div className="flex flex-1 flex-col justify-center pt-[58px]">
           <div className="mx-auto w-full max-w-[486px]">
-            <h1 className="text-4xl font-bold leading-[1.15] tracking-[-0.03em] text-white">
+            <h1 data-intro="title" className="text-4xl font-bold leading-[1.15] tracking-[-0.03em] text-white">
               {brandHeading}
             </h1>
-            <p className="mt-5 text-base leading-[26px] text-white/70">
+            <p data-intro="text" className="mt-5 text-base leading-[26px] text-white/70">
               {brandParagraph}
             </p>
           </div>
           <BrandVisual />
         </div>
 
-        <SecurityNote />
-      </div>
+        <div data-intro="meta">
+          <SecurityNote />
+        </div>
+      </HeroIntro>
 
       <div className="relative flex w-full flex-1 items-center justify-center px-6 py-12 sm:px-12">
         {backVariant === "icon" ? (

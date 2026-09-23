@@ -37,6 +37,15 @@ export const reveal = {
   start: "top 85%",
 } as const;
 
+/**
+ * Hero "boot sequence" timing (seconds from mount). Shared by HeroIntro and
+ * FloatingStat so stat roll-ups start exactly when their card lands.
+ */
+export const intro = {
+  statsAt: 0.7,
+  statStagger: 0.12,
+} as const;
+
 export const MEDIA = {
   motionOk: "(prefers-reduced-motion: no-preference)",
   desktop: "(min-width: 1024px)",

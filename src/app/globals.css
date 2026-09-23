@@ -56,14 +56,50 @@ body {
 }
 
 /*
- * Hero intros: hidden before first paint only when JS will animate them
- * (data-motion="on" is set by an inline script in the root layout, and only
- * if the user accepts motion). The failsafe reveals them if JS never takes
- * over; takeOverIntro() cancels it once GSAP is in charge.
+ * Hero intros (see components/motion/HeroIntro.tsx). The text sequence runs
+ * in pure CSS so it starts at first paint instead of waiting for hydration —
+ * hero text is often the LCP element. It only applies when data-motion="on"
+ * (set by an inline script in the root layout if the user accepts motion),
+ * so no-JS and reduced-motion visitors get static, fully visible content.
  */
-[data-motion="on"] [data-motion-intro] {
+[data-motion="on"] [data-intro="badge"] {
+  animation: intro-rise var(--motion-fast) var(--ease-out) both;
+}
+[data-motion="on"] [data-intro="title"] {
+  animation: intro-surface var(--motion-slow) var(--ease-snap) 80ms both;
+}
+[data-motion="on"] [data-intro="text"] {
+  animation: intro-rise var(--motion-base) var(--ease-out) 350ms both;
+}
+[data-motion="on"] [data-intro="actions"] {
+  animation: intro-rise var(--motion-base) var(--ease-out) 500ms both;
+}
+[data-motion="on"] [data-intro="meta"] {
+  animation: intro-rise var(--motion-base) var(--ease-out) 650ms both;
+}
+
+/* Stat cards are landed by GSAP; the failsafe shows them if JS never runs. */
+[data-motion="on"] [data-intro="stat"] {
   opacity: 0;
   animation: motion-failsafe 0s linear 2.5s forwards;
+}
+
+@keyframes intro-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+/* Title is scanned in top to bottom while rising, like a readout coming up. */
+@keyframes intro-surface {
+  from {
+    clip-path: inset(-25% -10% 100% -10%);
+    transform: translateY(0.35em);
+  }
+  to {
+    clip-path: inset(-25% -10% -25% -10%);
+  }
 }
 
 @keyframes motion-failsafe {
