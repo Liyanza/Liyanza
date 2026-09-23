@@ -1,3 +1,4 @@
+import { CountUp } from "@/components/motion/CountUp";
 import { ArrowRight, CheckCircle2, Target } from "lucide-react";
 import { FaFacebook, FaWhatsapp } from "react-icons/fa6";
 
@@ -9,7 +10,7 @@ function Field({
   children: React.ReactNode;
 }) {
   return (
-    <div>
+    <div data-live="item">
       <p className="text-xs font-semibold text-gray-text">{label}</p>
       <div className="mt-1.5">{children}</div>
     </div>
@@ -30,13 +31,13 @@ export function CampaignFormMockup() {
               <Target className="size-3.5 text-red-500" aria-hidden="true" />
               Conversions
             </span>
-            <CheckCircle2 className="size-4 text-green-accent" aria-hidden="true" />
+            <CheckCircle2 data-live="badge" className="size-4 text-green-accent" aria-hidden="true" />
           </div>
         </Field>
 
         <Field label="Budget">
           <div className="flex items-center justify-between rounded-xl border border-border bg-slate-50 px-3.5 py-2.5">
-            <span className="text-sm font-bold text-navy">500 000 FCFA</span>
+            <CountUp value="500 000 FCFA" className="text-sm font-bold text-navy" />
             <span className="text-xs text-gray-text-light">/ campagne</span>
           </div>
         </Field>
@@ -75,6 +76,7 @@ export function CampaignFormMockup() {
 
         <button
           type="button"
+          data-live="item"
           className="flex w-full items-center justify-center gap-2 rounded-full bg-green-600 py-3 text-sm font-bold text-white"
         >
           Continuer

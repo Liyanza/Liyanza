@@ -9,6 +9,7 @@ import { PricingFAQ } from "@/components/sections/tarifs/PricingFAQ";
 import { PricingFinalCTA } from "@/components/sections/tarifs/PricingFinalCTA";
 import { pricingFaqs } from "@/data/faqs";
 import { faqPageJsonLd } from "@/lib/structured-data";
+import { PageTransition } from "@/components/motion/PageTransition";
 
 const title = "Tarifs";
 const description =
@@ -37,13 +38,15 @@ export default function TarifsPage() {
   return (
     <>
       <Navbar />
-      <main className="flex-1">
-        <PricingHero />
-        <PricingCards />
-        <ComparisonTable />
-        <PricingFAQ />
-        <PricingFinalCTA />
-      </main>
+      <PageTransition>
+        <main className="flex-1">
+          <PricingHero />
+          <PricingCards />
+          <ComparisonTable />
+          <PricingFAQ />
+          <PricingFinalCTA />
+        </main>
+      </PageTransition>
       <Footer />
       <ChatbotWidget />
       <script

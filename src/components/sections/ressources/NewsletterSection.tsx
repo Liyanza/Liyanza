@@ -3,12 +3,13 @@
 import { Check, Star } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
+import { Reveal } from "@/components/motion/Reveal";
 
 export function NewsletterSection() {
   return (
     <section className="border-t border-[#e4e4e7] bg-[#fafafa] py-20">
       <Container>
-        <div className="grid grid-cols-1 overflow-hidden border border-[#e4e4e7] lg:grid-cols-2">
+        <Reveal className="grid grid-cols-1 overflow-hidden border border-[#e4e4e7] lg:grid-cols-2">
           <div className="flex flex-col justify-center rounded-[5px] bg-white p-10 sm:p-12">
             <SectionEyebrow variant="pill" tone="orange" className="w-fit">Newsletter</SectionEyebrow>
             <h2 className="mt-6 text-3xl font-black leading-tight text-black">
@@ -25,7 +26,7 @@ export function NewsletterSection() {
               className="flex items-stretch border border-[#e4e4e7]"
               onSubmit={(e) => e.preventDefault()}
             >
-              <div className="flex-1 rounded-[5px] bg-white px-4 py-3.5">
+              <div className="flex-1 rounded-[5px] bg-white px-4 py-3.5 has-[input:focus-visible]:ring-2 has-[input:focus-visible]:ring-green-accent">
                 <input
                   type="email"
                   placeholder="Votre adresse email"
@@ -59,7 +60,7 @@ export function NewsletterSection() {
               </span>
             </div>
           </div>
-        </div>
+        </Reveal>
       </Container>
     </section>
   );

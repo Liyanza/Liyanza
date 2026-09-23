@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { DiffusionStatusPill } from "./DiffusionStatusPill";
 import { apiGetSchedule, ApiError } from "@/lib/api/client";
 import type { BroadcastRecord } from "@/lib/api/types";
+import { SkeletonRows } from "@/components/dashboard/ui/Skeleton";
 
 const PAGE_SIZE = 20;
 
@@ -80,7 +81,7 @@ export function DiffusionsTab({ campaignId }: { campaignId: string }) {
 
       <div className="mt-4 overflow-x-auto">
         {loading ? (
-          <p className="py-6 text-center text-sm text-dash-muted">Chargement...</p>
+          <SkeletonRows rows={4} label="Chargement des diffusions…" />
         ) : (
           <table className="w-full min-w-[560px] text-left text-sm">
             <thead>

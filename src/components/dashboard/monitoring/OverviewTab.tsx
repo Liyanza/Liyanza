@@ -6,6 +6,7 @@ import { KpiCard } from "@/components/dashboard/ui/KpiCard";
 import { DiffusionStatusPill } from "./DiffusionStatusPill";
 import { apiGetRapportConformite, ApiError } from "@/lib/api/client";
 import type { RapportConformite } from "@/lib/api/types";
+import { SkeletonKpis } from "@/components/dashboard/ui/Skeleton";
 
 function formatDateTime(iso: string): string {
   return new Date(iso).toLocaleString("fr-FR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
@@ -29,7 +30,7 @@ export function OverviewTab({ campaignId }: { campaignId: string }) {
     );
   }, [campaignId]);
 
-  if (loading) return <p className="text-sm text-dash-muted">Chargement...</p>;
+  if (loading) return <SkeletonKpis label="Chargement de la vue d'ensemble…" />;
   if (loadError) return <p className="rounded-lg bg-red-50 px-4 py-2.5 text-sm font-medium text-red-600">{loadError}</p>;
   if (!report) return null;
 

@@ -53,6 +53,8 @@ export function BudgetDonutChart({
               strokeWidth={strokeWidth}
               strokeDasharray={`${dash} ${circumference - dash}`}
               strokeDashoffset={offset}
+              className="dash-arc"
+              style={{ "--arc-circ": circumference } as React.CSSProperties}
               transform={`rotate(-90 ${size / 2} ${size / 2})`}
             >
               <title>{`${segment.label} : ${segment.percent}%`}</title>
@@ -97,7 +99,7 @@ export function WeeklySpendBarChart({
             </span>
             <div className="flex h-32 w-full items-end">
               <div
-                className="w-full rounded-t-md bg-blue-500"
+                className="dash-grow w-full rounded-t-md bg-blue-500"
                 style={{ height: `${heightPercent}%` }}
                 title={`Semaine ${point.weekIndex} : ${Math.round(point.budgetSpent).toLocaleString("fr-FR")} FCFA`}
               />
@@ -162,9 +164,17 @@ export function PerformanceLineChart({ points }: { points: PerformanceSeriesPoin
           const path = coords.map((c, i) => `${i === 0 ? "M" : "L"}${c.x},${c.y}`).join(" ");
           return (
             <g key={series.key}>
-              <path d={path} fill="none" stroke={series.color} strokeWidth={2} />
+              <path d={path} fill="none" stroke={series.color} strokeWidth={2} pathLength={1} className="dash-line" />
               {coords.map((c, i) => (
-                <circle key={i} cx={c.x} cy={c.y} r={3} fill={series.color}>
+                <circle
+                  key={i}
+                  cx={c.x}
+                  cy={c.y}
+                  r={3}
+                  fill={series.color}
+                  className="dash-pop"
+                  style={{ animationDelay: `${200 + (i / Math.max(coords.length - 1, 1)) * 800}ms` }}
+                >
                   <title>{`${series.label} — semaine ${points[i].weekIndex} : ${Math.round(c.value).toLocaleString("fr-FR")}`}</title>
                 </circle>
               ))}

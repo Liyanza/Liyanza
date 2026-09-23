@@ -1,6 +1,7 @@
 import { Check } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
+import { Reveal } from "@/components/motion/Reveal";
 
 interface Plan {
   tier: string;
@@ -76,6 +77,7 @@ const plans: Plan[] = [
 function PlanCard({ plan }: { plan: Plan }) {
   return (
     <div
+      data-reveal-item
       className={`relative flex h-full flex-col ${
         plan.featured
           ? "border border-green-accent-dark bg-green-accent-dark/10 shadow-[0_2px_4px_0_rgba(0,0,0,0.12)]"
@@ -154,7 +156,7 @@ export function LandingPricing() {
   return (
     <section id="tarifs" className="scroll-pt-20 bg-green-accent-dark/[0.02] py-16 sm:py-20 lg:py-24">
       <Container>
-        <div className="mx-auto max-w-4xl text-center">
+        <Reveal className="mx-auto max-w-4xl text-center">
           <SectionEyebrow variant="pill" tone="orange">
             Tarifs
           </SectionEyebrow>
@@ -164,13 +166,13 @@ export function LandingPricing() {
           <p className="mt-4 text-lg text-zinc-500">
             Commencez gratuitement. Évoluez selon vos besoins.
           </p>
-        </div>
+        </Reveal>
 
-        <div className="mt-14 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
+        <Reveal stagger className="mt-14 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
           {plans.map((plan) => (
             <PlanCard key={plan.tier} plan={plan} />
           ))}
-        </div>
+        </Reveal>
 
         <p className="mt-10 text-center">
           <a

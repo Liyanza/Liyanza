@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PageTransition } from "@/components/motion/PageTransition";
 import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
 import { ChatbotWidget } from "@/components/ChatbotWidget";
@@ -34,16 +35,18 @@ export default function ConditionsUtilisationPage() {
   return (
     <>
       <Navbar />
-      <main className="flex-1">
-        <LegalPageHeader
-          eyebrow="Cadre légal"
-          title="Conditions d'utilisation"
-          intro="Les règles qui encadrent l'accès et l'utilisation de KIYANZA, pour vous comme pour nous."
-          lastUpdated="17 septembre 2026"
-        />
-        <LegalTableOfContents items={termsOfServiceSections} />
-        <TermsOfServiceContent />
-      </main>
+      <PageTransition>
+        <main className="flex-1">
+          <LegalPageHeader
+            eyebrow="Cadre légal"
+            title="Conditions d'utilisation"
+            intro="Les règles qui encadrent l'accès et l'utilisation de KIYANZA, pour vous comme pour nous."
+            lastUpdated="17 septembre 2026"
+          />
+          <LegalTableOfContents items={termsOfServiceSections} />
+          <TermsOfServiceContent />
+        </main>
+      </PageTransition>
       <Footer />
       <ChatbotWidget />
     </>

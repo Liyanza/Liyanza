@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { ShieldAlert } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { ROLE_LABELS, type Role } from "@/lib/api/types";
+import { SkeletonKpis, SkeletonPanel } from "@/components/dashboard/ui/Skeleton";
 
 /**
  * Masque une section du dashboard aux rôles non autorisés. L'autorisation
@@ -16,8 +17,9 @@ export function RoleGate({ allow, children }: { allow: Role[]; children: ReactNo
 
   if (status === "loading") {
     return (
-      <div className="flex flex-1 items-center justify-center p-12 text-sm text-dash-muted">
-        Chargement…
+      <div className="flex flex-1 flex-col gap-6 px-8 py-6">
+        <SkeletonKpis label="Chargement…" />
+        <SkeletonPanel lines={4} />
       </div>
     );
   }

@@ -1,3 +1,5 @@
+import { CountUp } from "@/components/motion/CountUp";
+
 const stats = [
   { label: "Impressions", value: "124 400", change: "+18%", color: "text-green-accent" },
   { label: "Clics", value: "9 240", change: "+12%", color: "text-blue-500" },
@@ -18,7 +20,10 @@ export function MonitoringMockup() {
         <div>
           <p className="text-sm font-bold text-navy">Monitoring temps réel</p>
           <p className="mt-0.5 flex items-center gap-1.5 text-[10px] text-gray-text-light">
-            <span className="size-1.5 rounded-full bg-green-accent" />
+            <span className="relative flex size-1.5">
+              <span className="absolute inset-0 animate-ping rounded-full bg-green-accent opacity-75" />
+              <span className="relative size-1.5 rounded-full bg-green-accent" />
+            </span>
             En direct · 12–18 Mai 2025
           </p>
         </div>
@@ -30,8 +35,10 @@ export function MonitoringMockup() {
       <div className="p-5">
         <div className="grid grid-cols-5 gap-1.5">
           {stats.map((stat) => (
-            <div key={stat.label} className="text-center">
-              <p className="text-sm font-bold text-navy">{stat.value}</p>
+            <div key={stat.label} data-live="item" className="text-center">
+              <p className="text-sm font-bold text-navy">
+                <CountUp value={stat.value} />
+              </p>
               <p className="mt-0.5 text-[8px] text-gray-text-light">{stat.label}</p>
               <p className={`mt-0.5 text-[8px] font-bold ${stat.color}`}>
                 {stat.change}
@@ -48,6 +55,7 @@ export function MonitoringMockup() {
             aria-hidden="true"
           >
             <polyline
+              data-live="draw"
               points="0,50 60,42 120,44 189,20 250,26 378,6"
               fill="none"
               stroke="#00c853"
@@ -56,7 +64,7 @@ export function MonitoringMockup() {
               strokeLinejoin="round"
             />
             {[60, 120, 189, 250, 320].map((x, i) => (
-              <circle key={i} cx={x} cy={[42, 44, 20, 26, 12][i]} r="3" fill="#00c853" stroke="#fff" strokeWidth="1.5" />
+              <circle key={i} data-live="dot" cx={x} cy={[42, 44, 20, 26, 12][i]} r="3" fill="#00c853" stroke="#fff" strokeWidth="1.5" />
             ))}
           </svg>
         </div>
@@ -67,7 +75,7 @@ export function MonitoringMockup() {
           </p>
           <div className="mt-2 space-y-2">
             {alerts.map((alert) => (
-              <div key={alert.text} className="flex items-center gap-2">
+              <div key={alert.text} data-live="item" className="flex items-center gap-2">
                 <span className={`size-1.5 shrink-0 rounded-full ${alert.dot}`} />
                 <p className="flex-1 text-xs text-[#4a5565]">{alert.text}</p>
                 <p className="shrink-0 text-xs text-gray-text-light">{alert.time}</p>

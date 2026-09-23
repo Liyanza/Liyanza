@@ -2,6 +2,7 @@ import { ArrowRight, CheckCircle2, PlayCircle } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { SectionEyebrow } from "@/components/ui/Badge";
+import { Reveal } from "@/components/motion/Reveal";
 
 export function ResourcesFinalCTA() {
   return (
@@ -16,7 +17,7 @@ export function ResourcesFinalCTA() {
       />
 
       <Container className="relative flex flex-col items-start gap-10 lg:flex-row lg:items-center lg:justify-between">
-        <div className="max-w-xl">
+        <Reveal className="max-w-xl">
           <SectionEyebrow variant="line" className="text-orange-500">
             Commencez dès aujourd&apos;hui
           </SectionEyebrow>
@@ -27,9 +28,9 @@ export function ResourcesFinalCTA() {
             Rejoignez KIYANZA et transformez vos idées en résultats concrets.
             Gratuit pour commencer.
           </p>
-        </div>
+        </Reveal>
 
-        <div className="flex w-full flex-col items-start gap-4 lg:w-auto lg:items-center">
+        <Reveal delay={0.15} className="flex w-full flex-col items-start gap-4 lg:w-auto lg:items-center">
           <div className="flex w-full flex-wrap gap-3">
             <Button
               variant="cta"
@@ -60,7 +61,7 @@ export function ResourcesFinalCTA() {
               Support inclus
             </span>
           </div>
-        </div>
+        </Reveal>
       </Container>
     </section>
   );

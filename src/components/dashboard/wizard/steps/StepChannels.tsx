@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Check, Loader2 } from "lucide-react";
+import { Check } from "lucide-react";
 import { FaFacebook, FaInstagram, FaTiktok, FaWhatsapp, FaYoutube } from "react-icons/fa6";
 import { apiListSocialAccounts, ApiError } from "@/lib/api/client";
 import type { SocialAccountRecord, SocialPlatform } from "@/lib/api/types";
+import { SkeletonRows } from "@/components/dashboard/ui/Skeleton";
 
 interface ChannelDefinition {
   platform: SocialPlatform | "WHATSAPP" | "TIKTOK" | "YOUTUBE";
@@ -105,9 +106,8 @@ export function StepChannels({
       </div>
 
       {loading ? (
-        <div className="mt-6 flex items-center justify-center gap-2 rounded-2xl border border-border bg-white p-8 text-sm text-dash-muted">
-          <Loader2 className="size-4 animate-spin" aria-hidden="true" />
-          Chargement de vos comptes liés…
+        <div className="mt-6 rounded-2xl border border-border bg-white">
+          <SkeletonRows rows={3} label="Chargement de vos comptes liés…" />
         </div>
       ) : (
         <>

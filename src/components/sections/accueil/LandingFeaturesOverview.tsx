@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { FileBarChart, Megaphone, Radar, ShieldCheck, Sparkles, TrendingUp } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
+import { Reveal } from "@/components/motion/Reveal";
 
 interface Feature {
   icon: ReactNode;
@@ -52,7 +53,7 @@ export function LandingFeaturesOverview() {
   return (
     <section id="fonctionnalites" className="scroll-pt-20 bg-white py-16 sm:py-20 lg:py-24">
       <Container>
-        <div className="mx-auto max-w-2xl text-center">
+        <Reveal className="mx-auto max-w-2xl text-center">
           <SectionEyebrow variant="pill" tone="orange">
             Fonctionnalités
           </SectionEyebrow>
@@ -63,12 +64,13 @@ export function LandingFeaturesOverview() {
             De la planification à l&apos;optimisation, KIYANZA couvre l&apos;ensemble du
             cycle marketing.
           </p>
-        </div>
+        </Reveal>
 
-        <div className="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <Reveal stagger className="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {features.map((feature) => (
             <div
               key={feature.title}
+              data-reveal-item
               className="rounded-[5px] border border-zinc-200 bg-white p-7"
             >
               <span className="flex size-10 items-center justify-center rounded-full bg-green-accent-dark/[0.08]">
@@ -80,7 +82,7 @@ export function LandingFeaturesOverview() {
               </p>
             </div>
           ))}
-        </div>
+        </Reveal>
       </Container>
     </section>
   );

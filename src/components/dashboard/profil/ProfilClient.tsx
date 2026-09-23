@@ -5,6 +5,7 @@ import { Building2, Calendar, Mail, Phone, ShieldCheck, User as UserIcon } from 
 import { TopBar } from "@/components/dashboard/layout/TopBar";
 import { apiGetProfile, requestPasswordReset, ApiError } from "@/lib/api/client";
 import { ROLE_LABELS, type UserProfile } from "@/lib/api/types";
+import { SkeletonPanel } from "@/components/dashboard/ui/Skeleton";
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
@@ -44,7 +45,7 @@ export function ProfilClient() {
       <main className="flex-1 overflow-y-auto bg-dash-canvas">
         <div className="mx-auto flex max-w-[720px] flex-col gap-6 px-8 py-6">
           {loading ? (
-            <p className="text-sm text-dash-muted">Chargement...</p>
+            <SkeletonPanel lines={4} label="Chargement du profil…" />
           ) : loadError ? (
             <p className="rounded-lg bg-red-50 px-4 py-2.5 text-sm font-medium text-red-600">{loadError}</p>
           ) : profile ? (

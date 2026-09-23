@@ -1,7 +1,9 @@
+import { CountUp } from "@/components/motion/CountUp";
+
 const stats = [
-  { value: "-18.5%", label: "CPC estimé", color: "text-green-accent" },
-  { value: "87%", label: "Probabilité de succès", color: "text-blue-500" },
-  { value: "3–5j", label: "Délai de résultat", color: "text-orange-accent" },
+  { value: "-18.5%", label: "CPC estimé", color: "text-green-accent", count: true },
+  { value: "87%", label: "Probabilité de succès", color: "text-blue-500", count: true },
+  { value: "3–5j", label: "Délai de résultat", color: "text-orange-accent", count: false },
 ];
 
 export function RecommendationMockup() {
@@ -19,7 +21,10 @@ export function RecommendationMockup() {
             Priorité haute · Confiance 87%
           </p>
         </div>
-        <span className="shrink-0 rounded-full border-2 border-blue-500 px-2 py-1 text-[10px] font-bold text-white bg-blue-500">
+        <span
+          data-live="badge"
+          className="shrink-0 rounded-full border-2 border-blue-500 px-2 py-1 text-[10px] font-bold text-white bg-blue-500"
+        >
           Nouveau
         </span>
       </div>
@@ -38,9 +43,12 @@ export function RecommendationMockup() {
           {stats.map((stat) => (
             <div
               key={stat.label}
+              data-live="item"
               className="rounded-xl border border-border-light bg-white p-2.5 text-center shadow-[0_2px_12px_-2px_rgba(0,0,0,0.07)]"
             >
-              <p className={`text-base font-extrabold ${stat.color}`}>{stat.value}</p>
+              <p className={`text-base font-extrabold ${stat.color}`}>
+                {stat.count ? <CountUp value={stat.value} /> : stat.value}
+              </p>
               <p className="mt-1 text-[9px] leading-tight text-gray-text-light">
                 {stat.label}
               </p>
@@ -50,6 +58,7 @@ export function RecommendationMockup() {
 
         <button
           type="button"
+          data-live="item"
           className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-green-accent to-green-accent-dark py-3 text-sm font-bold text-white shadow-[0_4px_12px_-2px_rgba(0,200,83,0.3)]"
         >
           ✓ Appliquer cette recommandation

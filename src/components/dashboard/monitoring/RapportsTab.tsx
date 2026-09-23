@@ -11,6 +11,7 @@ import {
   ApiError,
 } from "@/lib/api/client";
 import type { CampagneRecord, CampaignRecommendation, RapportConformite } from "@/lib/api/types";
+import { SkeletonPanel } from "@/components/dashboard/ui/Skeleton";
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" });
@@ -64,7 +65,7 @@ export function RapportsTab({ campaignId }: { campaignId: string }) {
       .finally(() => setGenerating(false));
   }
 
-  if (loading) return <p className="text-sm text-dash-muted">Chargement...</p>;
+  if (loading) return <SkeletonPanel lines={4} label="Chargement du rapport…" />;
   if (loadError) return <p className="rounded-lg bg-red-50 px-4 py-2.5 text-sm font-medium text-red-600">{loadError}</p>;
   if (!campaign || !report) return null;
 

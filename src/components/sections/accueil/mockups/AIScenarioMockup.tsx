@@ -1,3 +1,5 @@
+import { CountUp } from "@/components/motion/CountUp";
+
 interface Scenario {
   name: string;
   score: number;
@@ -42,6 +44,7 @@ export function AIScenarioMockup() {
         {scenarios.map((s) => (
           <div
             key={s.name}
+            data-live="item"
             className={`rounded-[5px] p-4 ${
               s.recommended
                 ? "border-2 border-blue-500 bg-blue-500/[0.04]"
@@ -51,7 +54,10 @@ export function AIScenarioMockup() {
             <div className="flex items-center justify-between gap-3">
               <p className="text-[10px] font-bold text-zinc-900">{s.name}</p>
               {s.recommended && (
-                <span className="shrink-0 rounded-full bg-blue-500 px-2 py-0.5 text-[8px] font-black text-white">
+                <span
+                  data-live="badge"
+                  className="shrink-0 rounded-full bg-blue-500 px-2 py-0.5 text-[8px] font-black text-white"
+                >
                   RECOMMANDÉ IA
                 </span>
               )}
@@ -59,6 +65,7 @@ export function AIScenarioMockup() {
             <div className="mt-2 flex items-center gap-2">
               <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-zinc-200">
                 <div
+                  data-live="fill"
                   className="h-full rounded-full bg-blue-500"
                   style={{ width: `${s.score}%` }}
                 />
@@ -68,7 +75,7 @@ export function AIScenarioMockup() {
                   s.recommended ? "text-blue-500" : "text-gray-text"
                 }`}
               >
-                {s.score}/100
+                <CountUp value={`${s.score}/100`} />
               </span>
             </div>
             <div className="mt-2 flex items-center gap-6">
@@ -76,13 +83,17 @@ export function AIScenarioMockup() {
                 <p className="text-[7px] uppercase tracking-wide text-gray-text-light">
                   ROAS estimé
                 </p>
-                <p className="text-[11px] font-black text-zinc-900">{s.roas}</p>
+                <p className="text-[11px] font-black text-zinc-900">
+                  <CountUp value={s.roas} />
+                </p>
               </div>
               <div>
                 <p className="text-[7px] uppercase tracking-wide text-gray-text-light">
                   Conversions
                 </p>
-                <p className="text-[11px] font-black text-zinc-900">{s.conversions}</p>
+                <p className="text-[11px] font-black text-zinc-900">
+                  <CountUp value={s.conversions} />
+                </p>
               </div>
             </div>
           </div>

@@ -6,6 +6,7 @@ import { TopBar } from "@/components/dashboard/layout/TopBar";
 import { Pagination } from "@/components/dashboard/campagnes/Pagination";
 import { apiListNotifications, apiMarkNotificationRead, ApiError } from "@/lib/api/client";
 import type { NotificationReadStatus, NotificationRecord } from "@/lib/api/types";
+import { SkeletonRows } from "@/components/dashboard/ui/Skeleton";
 
 const PAGE_SIZE = 10;
 
@@ -118,7 +119,7 @@ export function NotificationsClient() {
 
           <div className="overflow-hidden rounded-[5px] border border-border bg-white">
             {loading ? (
-              <p className="px-5 py-10 text-center text-sm text-gray-text">Chargement...</p>
+              <SkeletonRows rows={5} label="Chargement des notifications…" />
             ) : items.length === 0 ? (
               <div className="flex flex-col items-center justify-center gap-2 px-6 py-16 text-center">
                 <Bell className="size-8 text-gray-text-light" aria-hidden="true" />

@@ -2,6 +2,8 @@ import { ReactNode } from "react";
 import { ArrowRight, Check } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
+import { Reveal } from "@/components/motion/Reveal";
+import { LiveMockup } from "@/components/motion/LiveMockup";
 
 const bgClasses = {
   white: "bg-white",
@@ -29,14 +31,16 @@ export function LandingFeatureDetail({
   reverse?: boolean;
 }) {
   const textColumn = (
-    <div>
-      <h2 className="text-3xl font-extrabold leading-tight text-zinc-950 sm:text-4xl">
+    <Reveal stagger>
+      <h2 data-reveal-item className="text-3xl font-extrabold leading-tight text-zinc-950 sm:text-4xl">
         {heading}
       </h2>
-      <p className="mt-4 text-base leading-relaxed text-gray-text">{description}</p>
+      <p data-reveal-item className="mt-4 text-base leading-relaxed text-gray-text">
+        {description}
+      </p>
       <ul className="mt-6 space-y-3">
         {items.map((item) => (
-          <li key={item} className="flex items-center gap-3">
+          <li key={item} data-reveal-item className="flex items-center gap-3">
             <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-green-accent-dark/10">
               <Check className="size-3 text-green-accent-dark" strokeWidth={3} aria-hidden="true" />
             </span>
@@ -44,19 +48,20 @@ export function LandingFeatureDetail({
           </li>
         ))}
       </ul>
-      <Button
-        variant="solid"
-        size="md"
-        href={ctaHref}
-        className="mt-8"
-        icon={<ArrowRight className="size-4" aria-hidden="true" />}
-      >
-        {ctaText}
-      </Button>
-    </div>
+      <div data-reveal-item className="mt-8">
+        <Button
+          variant="solid"
+          size="md"
+          href={ctaHref}
+          icon={<ArrowRight className="size-4" aria-hidden="true" />}
+        >
+          {ctaText}
+        </Button>
+      </div>
+    </Reveal>
   );
 
-  const mockupColumn = <div className="flex justify-center">{mockup}</div>;
+  const mockupColumn = <LiveMockup className="flex justify-center">{mockup}</LiveMockup>;
 
   return (
     <section className={`py-16 sm:py-20 lg:py-24 ${bgClasses[bg]}`}>

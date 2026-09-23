@@ -10,6 +10,7 @@ import { CampaignsTable } from "@/components/dashboard/campagnes/CampaignsTable"
 import { AiRecommendations } from "@/components/dashboard/home/AiRecommendations";
 import { apiGetDashboard, apiListCampagnes, ApiError } from "@/lib/api/client";
 import type { CampagneRecord, DashboardSummary } from "@/lib/api/types";
+import { SkeletonKpis, SkeletonPanel } from "@/components/dashboard/ui/Skeleton";
 
 export function DashboardHomeClient() {
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
@@ -42,7 +43,15 @@ export function DashboardHomeClient() {
         <div className="flex flex-col gap-6 px-8 py-6">
           <WelcomeBanner />
 
-          {loading && <p className="text-sm text-gray-text">Chargement du tableau de bord...</p>}
+          {loading && (
+            <div className="flex flex-col gap-6">
+              <SkeletonKpis label="Chargement du tableau de bord…" />
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_340px]">
+                <SkeletonPanel lines={4} />
+                <SkeletonPanel lines={4} />
+              </div>
+            </div>
+          )}
           {loadError && <p className="text-sm text-red-600">{loadError}</p>}
 
           {summary && (

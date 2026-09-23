@@ -199,6 +199,8 @@ function buildRadioCampagnePayload(state: WizardState): CreateCampagnePayload | 
 
 export function CampaignWizard() {
   const [stepIndex, setStepIndex] = useState(0);
+  // Direction of the last step change, so the new step slides in from it.
+  const [stepDir, setStepDir] = useState<"forward" | "back">("forward");
   const [state, setState] = useState<WizardState>(initialState);
   const [radioSubmitting, setRadioSubmitting] = useState(false);
   const [radioError, setRadioError] = useState<string | null>(null);
@@ -281,6 +283,7 @@ export function CampaignWizard() {
       setRadioCampaign(campaign);
       setRadioBroadcastCount(created.length);
       setRadioTruncated(truncated);
+      setStepDir("forward");
       setStepIndex(RADIO_STEP.CONFIRMATION);
     } catch (error) {
       setRadioError(error instanceof ApiError ? error.message : "Une erreur est survenue.");
@@ -294,10 +297,12 @@ export function CampaignWizard() {
       void submitRadioCampaign();
       return;
     }
+    setStepDir("forward");
     setStepIndex((index) => Math.min(lastStep, index + 1));
   }
 
   function goBack() {
+    setStepDir("back");
     setStepIndex((index) => Math.max(0, index - 1));
   }
 
@@ -342,69 +347,72 @@ export function CampaignWizard() {
               <WizardStepper stepIndex={stepIndex} />
             ) : null}
 
-            {stepIndex === 0 && <StepType value={state.type} onChange={(type) => setState((prev) => ({ ...prev, type }))} />}
+            {/* Keyed on the step so each one mounts fresh and plays its entrance. */}
+            <div key={stepIndex} className={stepDir === "back" ? "dash-step-back" : "dash-step-forward"}>
+              {stepIndex === 0 && <StepType value={state.type} onChange={(type) => setState((prev) => ({ ...prev, type }))} />}
 
-            {!isRadio && stepIndex === 1 && (
-              <StepDefinition
-                data={state.definition}
-                onChange={(definition) => setState((prev) => ({ ...prev, definition }))}
-              />
-            )}
-            {!isRadio && stepIndex === 2 && (
-              <StepObjective
-                value={state.objective}
-                onChange={(objective) => setState((prev) => ({ ...prev, objective }))}
-              />
-            )}
-            {!isRadio && stepIndex === 3 && (
-              <StepAudience data={state.audience} onChange={(audience) => setState((prev) => ({ ...prev, audience }))} />
-            )}
-            {!isRadio && stepIndex === 4 && (
-              <StepBudget data={state.budget} onChange={(budget) => setState((prev) => ({ ...prev, budget }))} />
-            )}
-            {!isRadio && stepIndex === 5 && <StepChannels value={state.channels} onToggle={toggleChannel} />}
-            {!isRadio && stepIndex === 6 && (
-              <StepSimulation
-                payload={payload}
-                digitalDetailsPayload={isDigital ? digitalDetailsPayload : null}
-                channelsPayload={isDigital ? channelsPayload : null}
-              />
-            )}
+              {!isRadio && stepIndex === 1 && (
+                <StepDefinition
+                  data={state.definition}
+                  onChange={(definition) => setState((prev) => ({ ...prev, definition }))}
+                />
+              )}
+              {!isRadio && stepIndex === 2 && (
+                <StepObjective
+                  value={state.objective}
+                  onChange={(objective) => setState((prev) => ({ ...prev, objective }))}
+                />
+              )}
+              {!isRadio && stepIndex === 3 && (
+                <StepAudience data={state.audience} onChange={(audience) => setState((prev) => ({ ...prev, audience }))} />
+              )}
+              {!isRadio && stepIndex === 4 && (
+                <StepBudget data={state.budget} onChange={(budget) => setState((prev) => ({ ...prev, budget }))} />
+              )}
+              {!isRadio && stepIndex === 5 && <StepChannels value={state.channels} onToggle={toggleChannel} />}
+              {!isRadio && stepIndex === 6 && (
+                <StepSimulation
+                  payload={payload}
+                  digitalDetailsPayload={isDigital ? digitalDetailsPayload : null}
+                  channelsPayload={isDigital ? channelsPayload : null}
+                />
+              )}
 
-            {isRadio && stepIndex === RADIO_STEP.STATION && (
-              <StepRadioStation
-                value={state.radioStation}
-                onChange={(radioStation) => setState((prev) => ({ ...prev, radioStation }))}
-              />
-            )}
-            {isRadio && stepIndex === RADIO_STEP.SPOT && (
-              <StepRadioSpot value={state.radioSpot} onChange={(radioSpot) => setState((prev) => ({ ...prev, radioSpot }))} />
-            )}
-            {isRadio && stepIndex === RADIO_STEP.FREQUENCY && (
-              <StepRadioFrequency
-                value={state.radioFrequency}
-                onChange={(radioFrequency) => setState((prev) => ({ ...prev, radioFrequency }))}
-              />
-            )}
-            {isRadio && stepIndex === RADIO_STEP.RECAP && (
-              <StepRadioRecap
-                station={state.radioStation}
-                spot={state.radioSpot}
-                frequency={state.radioFrequency}
-                error={radioError}
-              />
-            )}
-            {isRadio && stepIndex === RADIO_STEP.CONFIRMATION && radioCampaign && (
-              <RadioConfirmation
-                campaignName={radioCampaign.name}
-                stationName={selectedRadioStation?.name ?? ""}
-                budgetLabel={`${radioCampaign.plannedBudget.toLocaleString("fr-FR")} FCFA`}
-                periodLabel={`${radioCampaign.startDate} – ${radioCampaign.endDate}`}
-                startDateLabel={radioCampaign.startDate}
-                broadcastCount={radioBroadcastCount}
-                truncated={radioTruncated}
-              />
-            )}
+              {isRadio && stepIndex === RADIO_STEP.STATION && (
+                <StepRadioStation
+                  value={state.radioStation}
+                  onChange={(radioStation) => setState((prev) => ({ ...prev, radioStation }))}
+                />
+              )}
+              {isRadio && stepIndex === RADIO_STEP.SPOT && (
+                <StepRadioSpot value={state.radioSpot} onChange={(radioSpot) => setState((prev) => ({ ...prev, radioSpot }))} />
+              )}
+              {isRadio && stepIndex === RADIO_STEP.FREQUENCY && (
+                <StepRadioFrequency
+                  value={state.radioFrequency}
+                  onChange={(radioFrequency) => setState((prev) => ({ ...prev, radioFrequency }))}
+                />
+              )}
+              {isRadio && stepIndex === RADIO_STEP.RECAP && (
+                <StepRadioRecap
+                  station={state.radioStation}
+                  spot={state.radioSpot}
+                  frequency={state.radioFrequency}
+                  error={radioError}
+                />
+              )}
+              {isRadio && stepIndex === RADIO_STEP.CONFIRMATION && radioCampaign && (
+                <RadioConfirmation
+                  campaignName={radioCampaign.name}
+                  stationName={selectedRadioStation?.name ?? ""}
+                  budgetLabel={`${radioCampaign.plannedBudget.toLocaleString("fr-FR")} FCFA`}
+                  periodLabel={`${radioCampaign.startDate} – ${radioCampaign.endDate}`}
+                  startDateLabel={radioCampaign.startDate}
+                  broadcastCount={radioBroadcastCount}
+                  truncated={radioTruncated}
+                />
+              )}
+            </div>
 
             {stepIndex < lastStep && (
               <WizardFooterNav

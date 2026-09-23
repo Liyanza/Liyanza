@@ -1,6 +1,7 @@
 import { ArrowRight, CheckCircle2, PlayCircle } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
+import { Reveal } from "@/components/motion/Reveal";
 
 export function FeaturesFinalCTA() {
   return (
@@ -15,7 +16,7 @@ export function FeaturesFinalCTA() {
       />
 
       <Container className="relative flex flex-col items-start gap-10 lg:flex-row lg:items-center lg:justify-between">
-        <div className="max-w-xl">
+        <Reveal className="max-w-xl">
           <p className="text-xs font-bold uppercase leading-4 tracking-[0.1em] text-orange-500">
             Commencez dès aujourd&apos;hui
           </p>
@@ -26,9 +27,9 @@ export function FeaturesFinalCTA() {
             Rejoignez KIYANZA et transformez vos idées en résultats concrets.
             Gratuit pour commencer.
           </p>
-        </div>
+        </Reveal>
 
-        <div className="flex w-full flex-col items-start gap-4 lg:w-auto lg:items-center">
+        <Reveal delay={0.15} className="flex w-full flex-col items-start gap-4 lg:w-auto lg:items-center">
           <div className="flex w-full flex-wrap gap-3 lg:flex-nowrap">
             <Button
               variant="cta"
@@ -60,7 +61,7 @@ export function FeaturesFinalCTA() {
               Support inclus
             </span>
           </div>
-        </div>
+        </Reveal>
       </Container>
     </section>
   );

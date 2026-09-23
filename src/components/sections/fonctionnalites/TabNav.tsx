@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { MEDIA } from "@/lib/motion/tokens";
 
 const tabs = [
   { number: "01", label: "Campagnes", href: "#campagnes" },
@@ -14,6 +15,31 @@ const tabs = [
 export function TabNav() {
   const [active, setActive] = useState(tabs[0].href);
   const linkRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
+  const navRef = useRef<HTMLElement>(null);
+  const indicatorRef = useRef<HTMLSpanElement>(null);
+  const placedOnce = useRef(false);
+
+  // Slide the underline to the active tab (transform only). The first
+  // placement is instant; later ones glide. Until this runs (or without JS)
+  // the active tab keeps its own border as a fallback.
+  useLayoutEffect(() => {
+    const place = () => {
+      const link = linkRefs.current[active];
+      const bar = indicatorRef.current;
+      if (!link || !bar) return;
+      if (!placedOnce.current) bar.style.transition = "none";
+      bar.style.transform = `translateX(${link.offsetLeft}px) scaleX(${link.offsetWidth})`;
+      if (!placedOnce.current) {
+        void bar.offsetWidth; // commit the instant placement before re-enabling transitions
+        bar.style.transition = "";
+        placedOnce.current = true;
+        navRef.current?.setAttribute("data-ready", "");
+      }
+    };
+    place();
+    window.addEventListener("resize", place);
+    return () => window.removeEventListener("resize", place);
+  }, [active]);
 
   useEffect(() => {
     const sections = tabs
@@ -53,7 +79,7 @@ export function TabNav() {
 
   useEffect(() => {
     linkRefs.current[active]?.scrollIntoView({
-      behavior: "smooth",
+      behavior: window.matchMedia(MEDIA.motionOk).matches ? "smooth" : "auto",
       inline: "center",
       block: "nearest",
     });
@@ -61,10 +87,11 @@ export function TabNav() {
 
   return (
     <nav
+      ref={navRef}
       aria-label="Sections de fonctionnalités"
-      className="sticky top-20 z-30 border-b border-border-light bg-white shadow-[0_1px_2px_rgba(0,0,0,0.1),0_1px_3px_rgba(0,0,0,0.1)]"
+      className="group sticky top-20 z-30 border-b border-border-light bg-white shadow-[0_1px_2px_rgba(0,0,0,0.1),0_1px_3px_rgba(0,0,0,0.1)]"
     >
-      <div className="mx-auto flex max-w-[1280px] gap-2 overflow-x-auto px-6">
+      <div className="relative mx-auto flex max-w-[1280px] gap-2 overflow-x-auto px-6">
         {tabs.map((tab) => {
           const isActive = active === tab.href;
           return (
@@ -77,7 +104,7 @@ export function TabNav() {
               onClick={() => setActive(tab.href)}
               className={`flex shrink-0 items-center gap-2 whitespace-nowrap border-b-2 px-4 py-4 text-sm font-semibold transition-colors ${
                 isActive
-                  ? "border-green-600 text-green-accent-dark"
+                  ? "border-green-600 text-green-accent-dark group-data-[ready]:border-transparent"
                   : "border-transparent text-gray-text hover:border-border hover:text-black"
               }`}
             >
@@ -92,6 +119,11 @@ export function TabNav() {
             </a>
           );
         })}
+        <span
+          ref={indicatorRef}
+          aria-hidden="true"
+          className="pointer-events-none absolute bottom-0 left-0 hidden h-0.5 w-px origin-left bg-green-600 transition-transform duration-300 ease-[var(--ease-out)] group-data-[ready]:block"
+        />
       </div>
     </nav>
   );
