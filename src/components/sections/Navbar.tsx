@@ -21,7 +21,10 @@ export function Navbar() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border-light bg-white/90 backdrop-blur-md">
+    <header
+      className="sticky top-0 z-50 border-b border-border-light bg-white/90 backdrop-blur-md"
+      style={{ viewTransitionName: "site-header" }}
+    >
       <Container className="flex h-20 items-center justify-between">
         <Link href="/" className="shrink-0" aria-label="KIYANZA — Accueil">
           <Logo />

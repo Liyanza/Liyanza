@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PageTransition } from "@/components/motion/PageTransition";
 import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
 import { ChatbotWidget } from "@/components/ChatbotWidget";
@@ -34,16 +35,18 @@ export default function PolitiqueConfidentialitePage() {
   return (
     <>
       <Navbar />
-      <main className="flex-1">
-        <LegalPageHeader
-          eyebrow="Vos données"
-          title="Politique de confidentialité"
-          intro="Comment nous collectons, utilisons et protégeons vos données à caractère personnel sur KIYANZA."
-          lastUpdated="17 septembre 2026"
-        />
-        <LegalTableOfContents items={privacyPolicySections} />
-        <PrivacyPolicyContent />
-      </main>
+      <PageTransition>
+        <main className="flex-1">
+          <LegalPageHeader
+            eyebrow="Vos données"
+            title="Politique de confidentialité"
+            intro="Comment nous collectons, utilisons et protégeons vos données à caractère personnel sur KIYANZA."
+            lastUpdated="17 septembre 2026"
+          />
+          <LegalTableOfContents items={privacyPolicySections} />
+          <PrivacyPolicyContent />
+        </main>
+      </PageTransition>
       <Footer />
       <ChatbotWidget />
     </>

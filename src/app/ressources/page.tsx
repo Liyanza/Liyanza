@@ -13,6 +13,7 @@ import { NewsletterSection } from "@/components/sections/ressources/NewsletterSe
 import { ResourcesFinalCTA } from "@/components/sections/ressources/ResourcesFinalCTA";
 import { resourcesFaqs } from "@/data/faqs";
 import { faqPageJsonLd } from "@/lib/structured-data";
+import { PageTransition } from "@/components/motion/PageTransition";
 
 const title = "Ressources";
 const description =
@@ -41,17 +42,19 @@ export default function RessourcesPage() {
   return (
     <>
       <Navbar />
-      <main className="flex-1">
-        <ResourcesHero />
-        <ResourceCategories />
-        <GuidesSection />
-        <FeaturedGuide />
-        <ArticlesSection />
-        <VideosSection />
-        <ResourcesFAQ />
-        <NewsletterSection />
-        <ResourcesFinalCTA />
-      </main>
+      <PageTransition>
+        <main className="flex-1">
+          <ResourcesHero />
+          <ResourceCategories />
+          <GuidesSection />
+          <FeaturedGuide />
+          <ArticlesSection />
+          <VideosSection />
+          <ResourcesFAQ />
+          <NewsletterSection />
+          <ResourcesFinalCTA />
+        </main>
+      </PageTransition>
       <Footer />
       <ChatbotWidget />
       <script
