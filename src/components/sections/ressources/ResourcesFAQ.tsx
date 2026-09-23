@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { ArrowRight, Minus, Plus } from "lucide-react";
+import { useId, useState } from "react";
+import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
 import { Reveal } from "@/components/motion/Reveal";
+import { Collapse, ToggleIcon } from "@/components/motion/Disclosure";
 
 const faqs = [
   {
@@ -41,6 +42,7 @@ const faqs = [
 
 export function ResourcesFAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const baseId = useId();
 
   return (
     <section className="border-t border-[#e4e4e7] bg-white py-20">
@@ -74,23 +76,20 @@ export function ResourcesFAQ() {
                     onClick={() => setOpenIndex(isOpen ? null : i)}
                     className="flex w-full items-center justify-between gap-6 py-5 text-left"
                     aria-expanded={isOpen}
+                    aria-controls={`${baseId}-${i}`}
                   >
                     <span className="text-base font-semibold text-black">
                       {faq.question}
                     </span>
                     <span className="flex size-7 shrink-0 items-center justify-center rounded-full border border-[#d4d4d8] text-[#71717a]">
-                      {isOpen ? (
-                        <Minus className="size-4 text-orange-500" aria-hidden="true" />
-                      ) : (
-                        <Plus className="size-4" aria-hidden="true" />
-                      )}
+                      <ToggleIcon open={isOpen} openClassName="text-orange-500" />
                     </span>
                   </button>
-                  {isOpen && (
+                  <Collapse open={isOpen} id={`${baseId}-${i}`}>
                     <p className="pb-5 text-sm leading-relaxed text-[#71717a]">
                       {faq.answer}
                     </p>
-                  )}
+                  </Collapse>
                 </div>
               );
             })}

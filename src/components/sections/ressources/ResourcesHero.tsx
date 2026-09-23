@@ -33,7 +33,7 @@ export function ResourcesHero() {
 
           <form
             data-intro="actions"
-            className="mt-10 flex items-center gap-2 rounded-full border border-[#e8f5e9] bg-white py-1.5 pl-5 pr-1.5"
+            className="mt-10 flex items-center gap-2 rounded-full border border-[#e8f5e9] bg-white py-1.5 pl-5 pr-1.5 has-[input:focus-visible]:ring-2 has-[input:focus-visible]:ring-green-accent"
             onSubmit={(e) => e.preventDefault()}
           >
             <Search className="size-[18px] shrink-0 text-black/40" aria-hidden="true" />

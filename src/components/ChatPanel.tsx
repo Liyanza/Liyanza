@@ -104,7 +104,7 @@ export function ChatPanel() {
           sendMessage(input);
         }}
       >
-        <div className="flex items-center gap-2 rounded-full border border-border bg-slate-50 py-2 pl-4 pr-2">
+        <div className="flex items-center gap-2 rounded-full border border-border bg-slate-50 py-2 pl-4 pr-2 has-[input:focus-visible]:ring-2 has-[input:focus-visible]:ring-green-accent">
           <label htmlFor="chat-input" className="sr-only">
             Votre question marketing
           </label>

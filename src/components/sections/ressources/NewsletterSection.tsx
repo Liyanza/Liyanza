@@ -26,7 +26,7 @@ export function NewsletterSection() {
               className="flex items-stretch border border-[#e4e4e7]"
               onSubmit={(e) => e.preventDefault()}
             >
-              <div className="flex-1 rounded-[5px] bg-white px-4 py-3.5">
+              <div className="flex-1 rounded-[5px] bg-white px-4 py-3.5 has-[input:focus-visible]:ring-2 has-[input:focus-visible]:ring-green-accent">
                 <input
                   type="email"
                   placeholder="Votre adresse email"

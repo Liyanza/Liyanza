@@ -122,3 +122,26 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/*
+ * Site-wide interaction baseline (base layer: any utility on an element
+ * still wins).
+ * - Pill buttons (all CTAs in the design are rounded-full) give a small
+ *   press feedback on click and touch — no hover dependency. Large
+ *   clickable rows/cards are deliberately excluded.
+ * - Every interactive element gets a visible keyboard focus ring unless it
+ *   already defines its own.
+ */
+@layer base {
+  :where(a, button).rounded-full {
+    transition: scale 150ms var(--ease-out);
+  }
+  :where(a, button).rounded-full:active:not(:disabled) {
+    scale: 0.97;
+  }
+
+  :where(a, button, input, select, textarea, summary, [tabindex]:not([tabindex="-1"])):focus-visible {
+    outline: 2px solid var(--color-green-accent-dark);
+    outline-offset: 2px;
+  }
+}

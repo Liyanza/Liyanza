@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { Check } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
@@ -8,6 +8,28 @@ import { HeroIntro } from "@/components/motion/HeroIntro";
 
 export function PricingHero() {
   const [annual, setAnnual] = useState(false);
+  const toggleRef = useRef<HTMLDivElement>(null);
+  const pillRef = useRef<HTMLSpanElement>(null);
+  const placedOnce = useRef(false);
+
+  // Slide the green pill under the selected option. Absolute element, so
+  // animating its width doesn't reflow anything else. Until this runs (or
+  // without JS) the selected button keeps its own background.
+  useLayoutEffect(() => {
+    const toggle = toggleRef.current;
+    const pill = pillRef.current;
+    const button = toggle?.querySelectorAll("button")[annual ? 1 : 0];
+    if (!toggle || !pill || !button) return;
+    if (!placedOnce.current) pill.style.transition = "none";
+    pill.style.width = `${button.offsetWidth}px`;
+    pill.style.transform = `translateX(${button.offsetLeft}px)`;
+    if (!placedOnce.current) {
+      void pill.offsetWidth;
+      pill.style.transition = "";
+      placedOnce.current = true;
+      toggle.setAttribute("data-ready", "");
+    }
+  }, [annual]);
 
   return (
     <section className="bg-white py-20">
@@ -25,12 +47,22 @@ export function PricingHero() {
             utilisation de KIYANZA avec votre activité.
           </p>
 
-          <div data-intro="actions" className="mt-10 inline-flex items-center rounded-full bg-[#e8f5e9] p-1">
+          <div
+            ref={toggleRef}
+            data-intro="actions"
+            className="group relative mt-10 inline-flex items-center rounded-full bg-[#e8f5e9] p-1"
+          >
+            <span
+              ref={pillRef}
+              aria-hidden="true"
+              className="absolute inset-y-1 left-0 hidden rounded-full bg-green-600 transition-[transform,width] duration-300 ease-[var(--ease-out)] group-data-[ready]:block"
+            />
             <button
               type="button"
               onClick={() => setAnnual(false)}
-              className={`rounded-full px-6 py-2 text-sm font-semibold transition ${
-                !annual ? "bg-green-600 text-white" : "text-black"
+              aria-pressed={!annual}
+              className={`relative rounded-full px-6 py-2 text-sm font-semibold transition ${
+                !annual ? "bg-green-600 text-white group-data-[ready]:bg-transparent" : "text-black"
               }`}
             >
               Mensuel
@@ -38,8 +70,9 @@ export function PricingHero() {
             <button
               type="button"
               onClick={() => setAnnual(true)}
-              className={`rounded-full px-6 py-2 text-sm font-semibold transition ${
-                annual ? "bg-green-600 text-white" : "text-black"
+              aria-pressed={annual}
+              className={`relative rounded-full px-6 py-2 text-sm font-semibold transition ${
+                annual ? "bg-green-600 text-white group-data-[ready]:bg-transparent" : "text-black"
               }`}
             >
               Annuel

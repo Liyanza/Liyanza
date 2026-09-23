@@ -1,14 +1,15 @@
 "use client";
 
-import { useState } from "react";
-import { Minus, Plus } from "lucide-react";
+import { useId, useState } from "react";
 import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
 import { homeFaqs } from "@/data/faqs";
 import { Reveal } from "@/components/motion/Reveal";
+import { Collapse, ToggleIcon } from "@/components/motion/Disclosure";
 
 export function LandingFAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(homeFaqs.length - 1);
+  const baseId = useId();
 
   return (
     <section className="bg-white py-16 sm:py-20 lg:py-24">
@@ -40,23 +41,20 @@ export function LandingFAQ() {
                     onClick={() => setOpenIndex(isOpen ? null : i)}
                     className="flex w-full items-center justify-between gap-6 py-5 text-left"
                     aria-expanded={isOpen}
+                    aria-controls={`${baseId}-${i}`}
                   >
                     <span className="text-base font-semibold text-zinc-950">
                       {faq.question}
                     </span>
                     <span className="flex size-6 shrink-0 items-center justify-center border-2 border-zinc-300 text-zinc-500">
-                      {isOpen ? (
-                        <Minus className="size-3.5" strokeWidth={2.5} aria-hidden="true" />
-                      ) : (
-                        <Plus className="size-3.5" strokeWidth={2.5} aria-hidden="true" />
-                      )}
+                      <ToggleIcon open={isOpen} className="size-3.5" strokeWidth={2.5} />
                     </span>
                   </button>
-                  {isOpen && (
+                  <Collapse open={isOpen} id={`${baseId}-${i}`}>
                     <p className="pb-5 text-sm leading-[1.625] text-zinc-500">
                       {faq.answer}
                     </p>
-                  )}
+                  </Collapse>
                 </div>
               );
             })}
