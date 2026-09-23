@@ -42,3 +42,47 @@ body {
   background: var(--background);
   color: var(--foreground);
 }
+
+/* ---------------------------------------------------------------------------
+ * Motion — CSS side of src/lib/motion/tokens.ts (keep both in sync).
+ * ------------------------------------------------------------------------- */
+:root {
+  --motion-fast: 300ms;
+  --motion-base: 600ms;
+  --motion-slow: 900ms;
+  --ease-out: cubic-bezier(0.215, 0.61, 0.355, 1); /* ≈ GSAP power3.out */
+  --ease-in-out: cubic-bezier(0.455, 0.03, 0.515, 0.955); /* ≈ power2.inOut */
+  --ease-snap: cubic-bezier(0.16, 1, 0.3, 1); /* ≈ expo.out */
+}
+
+/*
+ * Hero intros: hidden before first paint only when JS will animate them
+ * (data-motion="on" is set by an inline script in the root layout, and only
+ * if the user accepts motion). The failsafe reveals them if JS never takes
+ * over; takeOverIntro() cancels it once GSAP is in charge.
+ */
+[data-motion="on"] [data-motion-intro] {
+  opacity: 0;
+  animation: motion-failsafe 0s linear 2.5s forwards;
+}
+
+@keyframes motion-failsafe {
+  to {
+    opacity: 1;
+  }
+}
+
+/*
+ * Reduced motion: neutralise CSS animations and transitions site-wide.
+ * Loading spinners are exempt — they convey state, not decoration.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *:not(.animate-spin),
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

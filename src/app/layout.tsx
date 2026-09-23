@@ -64,14 +64,22 @@ export const metadata: Metadata = {
   category: "technology",
 };
 
+const motionFlagScript =
+  "try{if(matchMedia('(prefers-reduced-motion: no-preference)').matches)document.documentElement.dataset.motion='on'}catch(e){}";
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   const jsonLd = [organizationJsonLd(), websiteJsonLd()];
 
   return (
     <html
       lang="fr"
-      className={`${poppins.variable} h-full scroll-smooth scroll-pt-20 antialiased`}
+      className={`${poppins.variable} h-full scroll-pt-20 antialiased motion-safe:scroll-smooth`}
+      suppressHydrationWarning
     >
+      <head>
+        {/* Before first paint: lets CSS pre-hide hero intros only when they will animate. */}
+        <script dangerouslySetInnerHTML={{ __html: motionFlagScript }} />
+      </head>
       <body className="min-h-full flex flex-col font-sans">
         {children}
         {jsonLd.map((data, index) => (
