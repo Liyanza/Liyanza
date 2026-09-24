@@ -3,6 +3,7 @@
 import { localizePath, parsePath } from "@/i18n/paths";
 import type {
   AdvertisingChannelRecord,
+  AiConversationRecord,
   AssociateChannelsPayload,
   AuthUser,
   BroadcastRecord,
@@ -34,6 +35,7 @@ import type {
   RapportConformite,
   RegisterPayload,
   Role,
+  SendChatMessageResult,
   ScheduleQueryParams,
   SelectDigitalChannelsPayload,
   SocialAccountRecord,
@@ -444,6 +446,28 @@ export function apiGenerateRecommendations(campaignId: string) {
   return authenticatedRequest<CampaignRecommendation[]>(
     `/api/backend/campagnes/${campaignId}/recommandations/generer`,
     { method: "POST" }
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Assistant IA — chatbot
+//
+// `request` et non `authenticatedRequest` : le widget de chat est aussi
+// affiché sur les pages publiques, où un visiteur non connecté ne doit pas
+// être renvoyé d'office vers /connexion. Le 401/403 est traité par le widget.
+// ---------------------------------------------------------------------------
+
+export function apiCreateConversation(topic: string) {
+  return request<AiConversationRecord>("/api/backend/conversations", {
+    method: "POST",
+    body: JSON.stringify({ topic }),
+  });
+}
+
+export function apiSendChatMessage(conversationId: string, content: string) {
+  return request<SendChatMessageResult>(
+    `/api/backend/conversations/${conversationId}/messages`,
+    { method: "POST", body: JSON.stringify({ content }) }
   );
 }
 

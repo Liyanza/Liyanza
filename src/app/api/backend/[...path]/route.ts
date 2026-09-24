@@ -11,7 +11,7 @@ import { authenticatedBackendRequest } from "@/lib/api/proxy";
  * devenir un tunnel ouvert vers n'importe quelle route backend (ex: /auth/*,
  * qui a son propre traitement dédié sous /api/auth/*).
  */
-const ALLOWED_PREFIXES = ["campagnes", "social-accounts", "entreprises", "dashboard", "notifications", "users", "prestations"];
+const ALLOWED_PREFIXES = ["campagnes", "social-accounts", "entreprises", "dashboard", "notifications", "users", "prestations", "conversations"];
 
 // Statuts "null body" au sens de la spec Fetch (204/205/304) : construire une
 // Response avec un corps (même `null` sérialisé en la chaîne "null") lève une

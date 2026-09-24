@@ -294,6 +294,31 @@ export interface CampaignRecommendation {
 }
 
 // ---------------------------------------------------------------------------
+// Assistant IA — chatbot (POST /conversations, POST /conversations/:id/messages)
+// ---------------------------------------------------------------------------
+
+export interface AiConversationRecord {
+  id: string;
+  startedAt: string;
+  topic: string;
+  companyId: string | null;
+  createdById: string | null;
+}
+
+export interface AiMessageRecord {
+  id: string;
+  content: string;
+  sender: "USER" | "AI";
+  sentAt: string;
+  conversationId: string;
+}
+
+export interface SendChatMessageResult {
+  userMessage: AiMessageRecord;
+  iaMessage: AiMessageRecord;
+}
+
+// ---------------------------------------------------------------------------
 // Canaux / Diffusions — pipeline historique Radio/Affichage (AdvertisingChannel
 // /Broadcast), antérieur au flux Digital et réutilisé pour connecter le
 // wizard Radio et Monitoring à de vraies données.
