@@ -47,6 +47,52 @@ export const splashConfig = {
   /** Taille de départ du colibri par rapport à sa taille finale. */
   birdStartScale: 0.6,
 
+  /**
+   * VOL VIVANT — un colibri fonce, s'arrête net en vol stationnaire, repart.
+   * `hovers` : arrêts le long du tracé (`at` = position de 0 à 1 sur le
+   * parcours, `duration` en s). Pendant l'arrêt l'oiseau se redresse, flotte
+   * et bat des ailes plus vite. Tableau vide = vol continu.
+   */
+  life: {
+    hovers: [
+      { at: 0.3, duration: 0.45 },
+      { at: 0.7, duration: 0.4 },
+    ],
+    /** Effet de profondeur : l'oiseau grossit/rapetisse en vol (0 = aucun). */
+    depth: 0.18,
+    /** Amplitude du flottement pendant un arrêt, en px. */
+    hoverBob: 5,
+    /** Battement d'ailes pendant un arrêt : × plus rapide. */
+    hoverWingSpeed: 1.8,
+  },
+
+  /**
+   * TRAÎNÉE — sillage aux couleurs du logo qui suit l'oiseau et s'efface.
+   * Trois rubans, de la tête vers la queue : `length` = longueur (fraction du
+   * parcours), `width` en px, `opacity`.
+   */
+  trail: {
+    enabled: true,
+    ribbons: [
+      { color: "#19A546", length: 0.035, width: 3, opacity: 0.9 },
+      { color: "#00AAFF", length: 0.05, width: 2.5, opacity: 0.7 },
+      { color: "#FF6600", length: 0.065, width: 2, opacity: 0.5 },
+    ],
+  },
+
+  /**
+   * PORTAIL — à la fin, le logo rejoint sa place dans la barre de navigation
+   * pendant que l'écran blanc s'ouvre en cercle depuis le centre.
+   * Désactivé : simple fondu + zoom (exitZoom).
+   */
+  portal: {
+    enabled: true,
+    /** Durée du déplacement du logo et de l'ouverture, en s. */
+    duration: 1.1,
+    /** Flou du bord du cercle, en px. */
+    feather: 60,
+  },
+
   /** Durées et délais, en secondes. */
   timing: {
     /** Attente avant le décollage. */

@@ -327,6 +327,12 @@ html[data-splash="on"] .splash {
 .splash-logo {
   height: var(--splash-h);
 }
+/* Voile blanc : un cercle transparent s'y ouvre pendant le « portail ». */
+.splash-veil {
+  --portal: calc(var(--portal-feather) * -1);
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, transparent var(--portal), #000 calc(var(--portal) + var(--portal-feather)));
+  mask-image: radial-gradient(circle at 50% 50%, transparent var(--portal), #000 calc(var(--portal) + var(--portal-feather)));
+}
 html[data-splash="on"] {
   overflow: hidden;
 }
