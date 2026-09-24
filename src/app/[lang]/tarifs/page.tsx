@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
 import { ChatbotWidget } from "@/components/ChatbotWidget";
@@ -7,34 +6,20 @@ import { PricingCards } from "@/components/sections/tarifs/PricingCards";
 import { ComparisonTable } from "@/components/sections/tarifs/ComparisonTable";
 import { PricingFAQ } from "@/components/sections/tarifs/PricingFAQ";
 import { PricingFinalCTA } from "@/components/sections/tarifs/PricingFinalCTA";
-import { pricingFaqs } from "@/data/faqs";
 import { faqPageJsonLd } from "@/lib/structured-data";
 import { PageTransition } from "@/components/motion/PageTransition";
 import { SplashScreen } from "@/components/motion/SplashScreen";
+import { getMessages, href } from "@/i18n/server";
+import { localizedMetadata } from "@/i18n/metadata";
 
-const title = "Tarifs";
-const description =
-  "Des tarifs simples pour des campagnes plus intelligentes. Comparez les formules FREE, PRO, BUSINESS et ENTERPRISE de KIYANZA.";
+export async function generateMetadata() {
+  const { meta } = await getMessages("pricing");
+  return localizedMetadata({ path: "/tarifs", title: meta.title, description: meta.description });
+}
 
-export const metadata: Metadata = {
-  title,
-  description,
-  alternates: {
-    canonical: "/tarifs",
-  },
-  openGraph: {
-    title,
-    description,
-    url: "/tarifs",
-  },
-  twitter: {
-    title,
-    description,
-  },
-};
-
-export default function TarifsPage() {
-  const jsonLd = faqPageJsonLd(pricingFaqs, "/tarifs");
+export default async function TarifsPage() {
+  const t = await getMessages("pricing");
+  const jsonLd = faqPageJsonLd(t.faq.items, await href("/tarifs"));
 
   return (
     <>
@@ -42,10 +27,10 @@ export default function TarifsPage() {
       <Navbar />
       <PageTransition>
         <main className="flex-1">
-          <PricingHero />
+          <PricingHero t={t.hero} />
           <PricingCards />
           <ComparisonTable />
-          <PricingFAQ />
+          <PricingFAQ t={t.faq} />
           <PricingFinalCTA />
         </main>
       </PageTransition>

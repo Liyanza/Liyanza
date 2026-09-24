@@ -5,8 +5,9 @@ import { Check } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
 import { HeroIntro } from "@/components/motion/HeroIntro";
+import type { Messages } from "@/i18n/dictionaries";
 
-export function PricingHero() {
+export function PricingHero({ t }: { t: Messages["pricing"]["hero"] }) {
   const [annual, setAnnual] = useState(false);
   const toggleRef = useRef<HTMLDivElement>(null);
   const pillRef = useRef<HTMLSpanElement>(null);
@@ -36,15 +37,14 @@ export function PricingHero() {
       <Container className="mx-auto max-w-3xl text-center">
         <HeroIntro>
           <div data-intro="badge">
-            <SectionEyebrow variant="pill" tone="orange">Tarifs</SectionEyebrow>
+            <SectionEyebrow variant="pill" tone="orange">{t.eyebrow}</SectionEyebrow>
           </div>
           <h1 data-intro="title" className="mt-6 text-5xl font-black leading-tight tracking-tight text-black sm:text-6xl">
-            Des tarifs simples pour des campagnes{" "}
-            <span className="text-orange-500">plus intelligentes</span>
+            {t.titleStart}{" "}
+            <span className="text-orange-500">{t.titleHighlight}</span>
           </h1>
           <p data-intro="text" className="mx-auto mt-4 max-w-xl text-lg font-medium text-black/50">
-            Choisissez la formule adaptée à vos besoins et faites évoluer votre
-            utilisation de KIYANZA avec votre activité.
+            {t.text}
           </p>
 
           <div
@@ -65,7 +65,7 @@ export function PricingHero() {
                 !annual ? "bg-green-600 text-white group-data-[ready]:bg-transparent" : "text-black"
               }`}
             >
-              Mensuel
+              {t.monthly}
             </button>
             <button
               type="button"
@@ -75,13 +75,13 @@ export function PricingHero() {
                 annual ? "bg-green-600 text-white group-data-[ready]:bg-transparent" : "text-black"
               }`}
             >
-              Annuel
+              {t.annual}
             </button>
           </div>
 
           <p data-intro="meta" className="mt-4 flex items-center justify-center gap-2 text-sm text-black/35">
             <Check className="size-3.5 text-green-accent" aria-hidden="true" />
-            Économisez avec la facturation annuelle
+            {t.annualHint}
           </p>
         </HeroIntro>
       </Container>

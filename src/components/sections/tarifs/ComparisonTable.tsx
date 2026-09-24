@@ -2,68 +2,81 @@ import { CircleCheck } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
 import { Reveal } from "@/components/motion/Reveal";
+import { getMessages } from "@/i18n/server";
 
 type Cell = boolean | "limited";
 
+/** Disponibilité par formule (libellés des lignes : pricing.comparison.features). */
 interface Row {
-  feature: string;
   free: Cell;
   pro: Cell;
   business: Cell;
   enterprise: Cell;
 }
 
-const rows: Row[] = [
-  { feature: "Gestion des campagnes", free: true, pro: true, business: true, enterprise: true },
-  { feature: "Dashboard", free: true, pro: true, business: true, enterprise: true },
-  { feature: "Suivi des performances", free: true, pro: true, business: true, enterprise: true },
-  { feature: "Rapports", free: true, pro: true, business: true, enterprise: true },
-  { feature: "Scénarios IA", free: false, pro: true, business: true, enterprise: true },
-  { feature: "Recommandations IA", free: "limited", pro: true, business: true, enterprise: true },
-  { feature: "Monitoring avancé", free: false, pro: true, business: true, enterprise: true },
-  { feature: "Multi-campagnes", free: false, pro: true, business: true, enterprise: true },
-  { feature: "Collaboration d'équipe", free: false, pro: false, business: true, enterprise: true },
-  { feature: "Gestion des accès", free: false, pro: false, business: true, enterprise: true },
-  { feature: "Analyse approfondie", free: false, pro: true, business: true, enterprise: true },
-  { feature: "Support prioritaire", free: false, pro: false, business: true, enterprise: true },
-  { feature: "Personnalisation complète", free: false, pro: false, business: false, enterprise: true },
-  { feature: "Accompagnement dédié", free: false, pro: false, business: false, enterprise: true },
+const availability: Row[] = [
+  { free: true, pro: true, business: true, enterprise: true },
+  { free: true, pro: true, business: true, enterprise: true },
+  { free: true, pro: true, business: true, enterprise: true },
+  { free: true, pro: true, business: true, enterprise: true },
+  { free: false, pro: true, business: true, enterprise: true },
+  { free: "limited", pro: true, business: true, enterprise: true },
+  { free: false, pro: true, business: true, enterprise: true },
+  { free: false, pro: true, business: true, enterprise: true },
+  { free: false, pro: false, business: true, enterprise: true },
+  { free: false, pro: false, business: true, enterprise: true },
+  { free: false, pro: true, business: true, enterprise: true },
+  { free: false, pro: false, business: true, enterprise: true },
+  { free: false, pro: false, business: false, enterprise: true },
+  { free: false, pro: false, business: false, enterprise: true },
 ];
 
-const columns: { key: keyof Omit<Row, "feature">; label: string; sub?: string }[] = [
+const columns: { key: keyof Row; label: string; recommended?: boolean }[] = [
   { key: "free", label: "FREE" },
-  { key: "pro", label: "PRO", sub: "Recommandé" },
+  { key: "pro", label: "PRO", recommended: true },
   { key: "business", label: "BUSINESS" },
   { key: "enterprise", label: "ENTERPRISE" },
 ];
 
-function Cell({ value }: { value: Cell }) {
+function Cell({ value, labels }: { value: Cell; labels: { limited: string; included: string; notIncluded: string } }) {
   if (value === "limited") {
     return (
       <span className="border border-[#e4e4e7] bg-zinc-100 px-2.5 py-1 text-[10px] font-semibold text-gray-text">
-        Limité
+        {labels.limited}
       </span>
     );
   }
+  // Icône décorative : le libellé reste lisible par les lecteurs d'écran.
   if (value) {
     return (
-      <CircleCheck className="mx-auto size-4 text-green-accent-dark" aria-hidden="true" />
+      <>
+        <CircleCheck className="mx-auto size-4 text-green-accent-dark" aria-hidden="true" />
+        <span className="sr-only">{labels.included}</span>
+      </>
     );
   }
-  return <span className="mx-auto block h-px w-1.5 bg-[#d4d4d8]" aria-hidden="true" />;
+  return (
+    <>
+      <span className="mx-auto block h-px w-1.5 bg-[#d4d4d8]" aria-hidden="true" />
+      <span className="sr-only">{labels.notIncluded}</span>
+    </>
+  );
 }
 
-export function ComparisonTable() {
+export async function ComparisonTable() {
+  const t = (await getMessages("pricing")).comparison;
+  const rows = availability.map((row, i) => ({ ...row, feature: t.features[i] }));
+
   return (
     <section className="bg-white py-24">
       <Container>
         <Reveal className="mx-auto max-w-2xl text-center">
-          <SectionEyebrow variant="pill" tone="orange">Comparaison</SectionEyebrow>
+          <SectionEyebrow variant="pill" tone="orange">{t.eyebrow}</SectionEyebrow>
           <h2 className="mt-5 text-4xl font-extrabold text-black sm:text-5xl">
-            Comparez les fonctionnalités
+            {t.title}
           </h2>
           <p className="mt-3 text-base text-gray-text">
-            Un aperçu complet de ce qui est inclus dans chaque formule.
+            {t.text}
           </p>
         </Reveal>
 
@@ -72,7 +85,7 @@ export function ComparisonTable() {
             <thead>
               <tr>
                 <th className="border-b border-black p-4 text-left text-sm font-bold text-black">
-                  Fonctionnalité
+                  {t.featureColumn}
                 </th>
                 {columns.map((col) => (
                   <th
@@ -84,9 +97,9 @@ export function ComparisonTable() {
                     }`}
                   >
                     {col.label}
-                    {col.sub && (
+                    {col.recommended && (
                       <span className="mt-0.5 block text-[9px] font-semibold uppercase tracking-wide text-green-600">
-                        {col.sub}
+                        {t.recommended}
                       </span>
                     )}
                   </th>
@@ -107,19 +120,14 @@ export function ComparisonTable() {
                       key={col.key}
                       className={`p-4 text-center ${col.key === "pro" ? "bg-[#f0fdf4]" : ""}`}
                     >
-                      <Cell value={row[col.key]} />
+                      <Cell value={row[col.key]} labels={t} />
                     </td>
                   ))}
                 </tr>
               ))}
               <tr>
                 <td className="p-5" />
-                {[
-                  { label: "Commencer", variant: "outline" },
-                  { label: "Choisir PRO", variant: "solid" },
-                  { label: "Business", variant: "outline" },
-                  { label: "Contacter", variant: "outline" },
-                ].map((btn, i) => (
+                {t.buttons.map((label, i) => ({ label, variant: i === 1 ? "solid" : "outline" })).map((btn, i) => (
                   <td key={i} className={`p-5 text-center ${i === 1 ? "bg-[#f0fdf4]" : ""}`}>
                     <button
                       type="button"
