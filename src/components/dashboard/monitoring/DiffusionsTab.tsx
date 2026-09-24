@@ -6,14 +6,17 @@ import { DiffusionStatusPill } from "./DiffusionStatusPill";
 import { apiGetSchedule, ApiError } from "@/lib/api/client";
 import type { BroadcastRecord } from "@/lib/api/types";
 import { SkeletonRows } from "@/components/dashboard/ui/Skeleton";
+import { useFormat, useT } from "@/i18n/client";
+import { fill } from "@/i18n/format";
 
 const PAGE_SIZE = 20;
 
-function formatDateTime(iso: string): string {
-  return new Date(iso).toLocaleString("fr-FR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
-}
-
 export function DiffusionsTab({ campaignId }: { campaignId: string }) {
+  const ti = useT("dashInsights");
+  const t = ti.monitoring.diffusions;
+  const headers = ti.monitoring.headers;
+  const f = useFormat();
+  const dateTime = (iso: string) => f.date(iso, { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [page, setPage] = useState(1);
@@ -37,19 +40,20 @@ export function DiffusionsTab({ campaignId }: { campaignId: string }) {
         setLoading(false);
       },
       (error: unknown) => {
-        setLoadError(error instanceof ApiError ? error.message : "Impossible de charger les diffusions.");
+        setLoadError(error instanceof ApiError ? error.message : t.loadError);
         setLoading(false);
       }
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- messages stables, rechargement sur l'identifiant seulement
   }, [campaignId, dateFrom, dateTo, page]);
 
   return (
     <div className="rounded-2xl border border-border bg-white p-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-base font-semibold text-dash-heading">Diffusions</h2>
+        <h2 className="text-base font-semibold text-dash-heading">{t.title}</h2>
         <div className="flex flex-wrap items-center gap-2">
           <label className="flex items-center gap-1.5 text-xs text-dash-muted">
-            Du
+            {t.from}
             <input
               type="date"
               value={dateFrom}
@@ -61,7 +65,7 @@ export function DiffusionsTab({ campaignId }: { campaignId: string }) {
             />
           </label>
           <label className="flex items-center gap-1.5 text-xs text-dash-muted">
-            Au
+            {t.to}
             <input
               type="date"
               value={dateTo}
@@ -81,24 +85,24 @@ export function DiffusionsTab({ campaignId }: { campaignId: string }) {
 
       <div className="mt-4 overflow-x-auto">
         {loading ? (
-          <SkeletonRows rows={4} label="Chargement des diffusions…" />
+          <SkeletonRows rows={4} label={t.loading} />
         ) : (
           <table className="w-full min-w-[560px] text-left text-sm">
             <thead>
               <tr className="text-[11px] font-semibold uppercase tracking-[0.3px] text-dash-muted">
-                <th className="pb-2 pr-3">Prévue</th>
-                <th className="pb-2 pr-3">Durée</th>
-                <th className="pb-2 pr-3">Constatée</th>
-                <th className="pb-2">Statut</th>
+                <th className="pb-2 pr-3">{headers.scheduled}</th>
+                <th className="pb-2 pr-3">{headers.duration}</th>
+                <th className="pb-2 pr-3">{headers.actual}</th>
+                <th className="pb-2">{headers.status}</th>
               </tr>
             </thead>
             <tbody>
               {items.map((broadcast) => (
                 <tr key={broadcast.id} className="border-t border-border-light">
-                  <td className="py-3 pr-3 font-semibold text-dash-heading">{formatDateTime(broadcast.scheduledAt)}</td>
-                  <td className="py-3 pr-3 text-dash-body">{broadcast.duration} sec</td>
+                  <td className="py-3 pr-3 font-semibold text-dash-heading">{dateTime(broadcast.scheduledAt)}</td>
+                  <td className="py-3 pr-3 text-dash-body">{fill(ti.units.seconds, { count: broadcast.duration })}</td>
                   <td className="py-3 pr-3 text-dash-body">
-                    {broadcast.actualBroadcastAt ? formatDateTime(broadcast.actualBroadcastAt) : "—"}
+                    {broadcast.actualBroadcastAt ? dateTime(broadcast.actualBroadcastAt) : "—"}
                   </td>
                   <td className="py-3">
                     <DiffusionStatusPill status={broadcast.status} />
@@ -108,7 +112,7 @@ export function DiffusionsTab({ campaignId }: { campaignId: string }) {
               {items.length === 0 && (
                 <tr>
                   <td colSpan={4} className="py-6 text-center text-dash-muted">
-                    Aucune diffusion pour cette période.
+                    {t.empty}
                   </td>
                 </tr>
               )}
@@ -123,15 +127,17 @@ export function DiffusionsTab({ campaignId }: { campaignId: string }) {
             type="button"
             disabled={page <= 1}
             onClick={() => setPage((p) => Math.max(1, p - 1))}
+            aria-label={t.previous}
             className="flex size-7 items-center justify-center rounded-full border border-border-light disabled:opacity-40"
           >
             <ChevronLeft className="size-3.5" aria-hidden="true" />
           </button>
-          Page {page} / {totalPages}
+          {fill(t.page, { page, total: totalPages })}
           <button
             type="button"
             disabled={page >= totalPages}
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            aria-label={t.next}
             className="flex size-7 items-center justify-center rounded-full border border-border-light disabled:opacity-40"
           >
             <ChevronRight className="size-3.5" aria-hidden="true" />

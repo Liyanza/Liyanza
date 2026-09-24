@@ -7,12 +7,15 @@ import { DiffusionStatusPill } from "./DiffusionStatusPill";
 import { apiGetRapportConformite, ApiError } from "@/lib/api/client";
 import type { RapportConformite } from "@/lib/api/types";
 import { SkeletonKpis } from "@/components/dashboard/ui/Skeleton";
-
-function formatDateTime(iso: string): string {
-  return new Date(iso).toLocaleString("fr-FR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
-}
+import { useFormat, useT } from "@/i18n/client";
+import { fill } from "@/i18n/format";
 
 export function OverviewTab({ campaignId }: { campaignId: string }) {
+  const ti = useT("dashInsights");
+  const t = ti.monitoring.overview;
+  const headers = ti.monitoring.headers;
+  const f = useFormat();
+  const dateTime = (iso: string) => f.date(iso, { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
   const [report, setReport] = useState<RapportConformite | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -24,13 +27,14 @@ export function OverviewTab({ campaignId }: { campaignId: string }) {
         setLoading(false);
       },
       (error: unknown) => {
-        setLoadError(error instanceof ApiError ? error.message : "Impossible de charger le rapport de conformité.");
+        setLoadError(error instanceof ApiError ? error.message : t.loadError);
         setLoading(false);
       }
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- messages stables, rechargement sur l'identifiant seulement
   }, [campaignId]);
 
-  if (loading) return <SkeletonKpis label="Chargement de la vue d'ensemble…" />;
+  if (loading) return <SkeletonKpis label={t.loading} />;
   if (loadError) return <p className="rounded-lg bg-red-50 px-4 py-2.5 text-sm font-medium text-red-600">{loadError}</p>;
   if (!report) return null;
 
@@ -39,12 +43,12 @@ export function OverviewTab({ campaignId }: { campaignId: string }) {
   // pas de tendance "vs période précédente" affichable honnêtement, même
   // décision que CampaignKpiRow (dashboard Accueil).
   const kpis = [
-    { label: "Spots prévus", value: String(report.totalDiffusions), icon: Megaphone, iconBg: "bg-green-accent-dark/10", iconColor: "text-green-accent-dark" },
-    { label: "Spots diffusés", value: String(report.diffusionsDiffusees), icon: CheckCircle2, iconBg: "bg-green-accent-dark/10", iconColor: "text-green-accent-dark" },
-    { label: "Spots manqués", value: String(report.diffusionsManquees), icon: AlertTriangle, iconBg: "bg-orange-500/10", iconColor: "text-orange-500" },
-    { label: "En attente", value: String(report.diffusionsEnAttente), icon: Clock, iconBg: "bg-blue-500/10", iconColor: "text-blue-500" },
+    { label: t.planned, value: String(report.totalDiffusions), icon: Megaphone, iconBg: "bg-green-accent-dark/10", iconColor: "text-green-accent-dark" },
+    { label: t.broadcasted, value: String(report.diffusionsDiffusees), icon: CheckCircle2, iconBg: "bg-green-accent-dark/10", iconColor: "text-green-accent-dark" },
+    { label: t.missed, value: String(report.diffusionsManquees), icon: AlertTriangle, iconBg: "bg-orange-500/10", iconColor: "text-orange-500" },
+    { label: t.pending, value: String(report.diffusionsEnAttente), icon: Clock, iconBg: "bg-blue-500/10", iconColor: "text-blue-500" },
     {
-      label: "Taux de conformité",
+      label: t.compliance,
       value: report.tauxConformite !== null ? `${Math.round(report.tauxConformite * 100)}%` : "—",
       icon: TrendingUp,
       iconBg: "bg-green-accent-dark/10",
@@ -74,17 +78,17 @@ export function OverviewTab({ campaignId }: { campaignId: string }) {
             </span>
             <div>
               <p className="text-sm font-bold text-dash-heading">
-                {missed.length} diffusion{missed.length > 1 ? "s" : ""} manquée{missed.length > 1 ? "s" : ""}
+                {fill(missed.length > 1 ? t.missedMany : t.missedOne, { count: missed.length })}
               </p>
               <p className="mt-0.5 text-xs text-dash-muted">
-                Aucun constat n&apos;a été enregistré après l&apos;heure prévue pour ces diffusions.
+                {t.missedText}
               </p>
             </div>
           </div>
           <div className="mt-3 flex flex-col gap-1.5">
             {missed.slice(0, 5).map((item) => (
               <div key={item.diffusionId} className="rounded-lg bg-white px-3.5 py-2 text-xs text-dash-body">
-                Diffusion prévue le {formatDateTime(item.scheduledAt)}
+                {fill(t.missedItem, { date: dateTime(item.scheduledAt) })}
               </div>
             ))}
           </div>
@@ -92,26 +96,26 @@ export function OverviewTab({ campaignId }: { campaignId: string }) {
       )}
 
       <div className="rounded-2xl border border-border bg-white p-5">
-        <h2 className="text-sm font-semibold text-dash-heading">Diffusions</h2>
+        <h2 className="text-sm font-semibold text-dash-heading">{t.diffusions}</h2>
         <div className="mt-4 overflow-x-auto">
           <table className="w-full min-w-[520px] text-left text-sm">
             <thead>
               <tr className="text-[11px] font-semibold uppercase tracking-[0.3px] text-dash-muted">
-                <th className="pb-2 pr-3">Prévue</th>
-                <th className="pb-2 pr-3">Constatée</th>
-                <th className="pb-2 pr-3">Écart</th>
-                <th className="pb-2">Statut</th>
+                <th className="pb-2 pr-3">{headers.scheduled}</th>
+                <th className="pb-2 pr-3">{headers.actual}</th>
+                <th className="pb-2 pr-3">{headers.gap}</th>
+                <th className="pb-2">{headers.status}</th>
               </tr>
             </thead>
             <tbody>
               {report.diffusions.map((item) => (
                 <tr key={item.diffusionId} className="border-t border-border-light">
-                  <td className="py-3 pr-3 font-semibold text-dash-heading">{formatDateTime(item.scheduledAt)}</td>
+                  <td className="py-3 pr-3 font-semibold text-dash-heading">{dateTime(item.scheduledAt)}</td>
                   <td className="py-3 pr-3 text-dash-body">
-                    {item.actualBroadcastAt ? formatDateTime(item.actualBroadcastAt) : "—"}
+                    {item.actualBroadcastAt ? dateTime(item.actualBroadcastAt) : "—"}
                   </td>
                   <td className="py-3 pr-3 text-dash-body">
-                    {item.ecartMinutes !== null ? `${item.ecartMinutes} min` : "—"}
+                    {item.ecartMinutes !== null ? fill(ti.units.minutes, { count: item.ecartMinutes }) : "—"}
                   </td>
                   <td className="py-3">
                     <DiffusionStatusPill status={item.status as "PLANNED" | "BROADCASTED" | "MISSED" | "CANCELLED" | "PENDING"} />
@@ -121,7 +125,7 @@ export function OverviewTab({ campaignId }: { campaignId: string }) {
               {report.diffusions.length === 0 && (
                 <tr>
                   <td colSpan={4} className="py-6 text-center text-dash-muted">
-                    Aucune diffusion planifiée.
+                    {t.empty}
                   </td>
                 </tr>
               )}

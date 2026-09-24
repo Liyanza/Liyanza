@@ -6,6 +6,8 @@ import { DiffusionStatusPill } from "./DiffusionStatusPill";
 import { apiGetSchedule, ApiError } from "@/lib/api/client";
 import type { BroadcastRecord } from "@/lib/api/types";
 import { SkeletonRows } from "@/components/dashboard/ui/Skeleton";
+import { useFormat, useT } from "@/i18n/client";
+import { fill } from "@/i18n/format";
 
 function startOfWeek(date: Date): Date {
   const result = new Date(date);
@@ -20,15 +22,13 @@ function toDateKey(date: Date): string {
   return date.toISOString().slice(0, 10);
 }
 
-function formatDayLabel(date: Date): string {
-  return date.toLocaleDateString("fr-FR", { weekday: "short", day: "numeric", month: "short" });
-}
-
-function formatTime(iso: string): string {
-  return new Date(iso).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
-}
-
 export function PlanningTab({ campaignId }: { campaignId: string }) {
+  const ti = useT("dashInsights");
+  const t = ti.monitoring.planning;
+  const headers = ti.monitoring.headers;
+  const f = useFormat();
+  const formatDayLabel = (date: Date) => f.date(date, { weekday: "short", day: "numeric", month: "short" });
+  const formatTime = (iso: string) => f.date(iso, { hour: "2-digit", minute: "2-digit" });
   const [weekStart, setWeekStart] = useState(() => startOfWeek(new Date()));
   const [broadcasts, setBroadcasts] = useState<BroadcastRecord[]>([]);
   const [loading, setLoading] = useState(true);
@@ -53,7 +53,7 @@ export function PlanningTab({ campaignId }: { campaignId: string }) {
         setLoading(false);
       },
       (error: unknown) => {
-        setLoadError(error instanceof ApiError ? error.message : "Impossible de charger le planning.");
+        setLoadError(error instanceof ApiError ? error.message : t.loadError);
         setLoading(false);
       }
     );
@@ -83,13 +83,13 @@ export function PlanningTab({ campaignId }: { campaignId: string }) {
     <div className="flex flex-col gap-5">
       <div className="rounded-2xl border border-border bg-white p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-base font-semibold text-dash-heading">Calendrier des diffusions</h2>
+          <h2 className="text-base font-semibold text-dash-heading">{t.title}</h2>
           <div className="flex items-center gap-2 rounded-full border border-border-light px-3 py-1.5 text-xs font-medium text-dash-body">
-            <button type="button" onClick={() => setWeekStart((d) => new Date(d.getTime() - 7 * 86_400_000))}>
+            <button type="button" aria-label={t.previousWeek} onClick={() => setWeekStart((d) => new Date(d.getTime() - 7 * 86_400_000))}>
               <ChevronLeft className="size-3.5" aria-hidden="true" />
             </button>
             {formatDayLabel(weekStart)} → {formatDayLabel(weekEnd)}
-            <button type="button" onClick={() => setWeekStart((d) => new Date(d.getTime() + 7 * 86_400_000))}>
+            <button type="button" aria-label={t.nextWeek} onClick={() => setWeekStart((d) => new Date(d.getTime() + 7 * 86_400_000))}>
               <ChevronRight className="size-3.5" aria-hidden="true" />
             </button>
           </div>
@@ -130,25 +130,25 @@ export function PlanningTab({ campaignId }: { campaignId: string }) {
 
       <div className="rounded-2xl border border-border bg-white p-5">
         <h2 className="text-base font-semibold text-dash-heading">
-          Détail du {new Date(activeDay).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}
+          {fill(t.detail, { date: f.date(activeDay, { weekday: "long", day: "numeric", month: "long" }) })}
         </h2>
         <div className="mt-4 overflow-x-auto">
           {loading ? (
-            <SkeletonRows rows={4} label="Chargement du planning…" />
+            <SkeletonRows rows={4} label={t.loading} />
           ) : (
             <table className="w-full min-w-[480px] text-left text-sm">
               <thead>
                 <tr className="text-[11px] font-semibold uppercase tracking-[0.3px] text-dash-muted">
-                  <th className="pb-2 pr-3">Heure</th>
-                  <th className="pb-2 pr-3">Durée</th>
-                  <th className="pb-2">Statut</th>
+                  <th className="pb-2 pr-3">{headers.time}</th>
+                  <th className="pb-2 pr-3">{headers.duration}</th>
+                  <th className="pb-2">{headers.status}</th>
                 </tr>
               </thead>
               <tbody>
                 {activeDayBroadcasts.map((broadcast) => (
                   <tr key={broadcast.id} className="border-t border-border-light">
                     <td className="py-3 pr-3 font-semibold text-dash-heading">{formatTime(broadcast.scheduledAt)}</td>
-                    <td className="py-3 pr-3 text-dash-body">{broadcast.duration} sec</td>
+                    <td className="py-3 pr-3 text-dash-body">{fill(ti.units.seconds, { count: broadcast.duration })}</td>
                     <td className="py-3">
                       <DiffusionStatusPill status={broadcast.status} />
                     </td>
@@ -157,7 +157,7 @@ export function PlanningTab({ campaignId }: { campaignId: string }) {
                 {activeDayBroadcasts.length === 0 && (
                   <tr>
                     <td colSpan={3} className="py-6 text-center text-dash-muted">
-                      Aucune diffusion ce jour-là.
+                      {t.empty}
                     </td>
                   </tr>
                 )}

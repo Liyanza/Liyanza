@@ -12,10 +12,8 @@ import {
 } from "@/lib/api/client";
 import type { CampagneRecord, CampaignRecommendation, RapportConformite } from "@/lib/api/types";
 import { SkeletonPanel } from "@/components/dashboard/ui/Skeleton";
-
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" });
-}
+import { useFormat, useT } from "@/i18n/client";
+import { fill } from "@/i18n/format";
 
 const PRIORITY_CLASS: Record<string, string> = {
   high: "bg-red-600/10 text-red-600",
@@ -24,6 +22,11 @@ const PRIORITY_CLASS: Record<string, string> = {
 };
 
 export function RapportsTab({ campaignId }: { campaignId: string }) {
+  const ti = useT("dashInsights");
+  const t = ti.monitoring.report;
+  const dash = useT("dash");
+  const f = useFormat();
+  const formatDate = (iso: string) => f.date(iso, { day: "numeric", month: "short", year: "numeric" });
   const [campaign, setCampaign] = useState<CampagneRecord | null>(null);
   const [report, setReport] = useState<RapportConformite | null>(null);
   const [loading, setLoading] = useState(true);
@@ -41,10 +44,11 @@ export function RapportsTab({ campaignId }: { campaignId: string }) {
         setLoading(false);
       },
       (error: unknown) => {
-        setLoadError(error instanceof ApiError ? error.message : "Impossible de charger le rapport.");
+        setLoadError(error instanceof ApiError ? error.message : t.loadError);
         setLoading(false);
       }
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- messages stables, rechargement sur l'identifiant seulement
   }, [campaignId]);
 
   useEffect(() => {
@@ -65,7 +69,7 @@ export function RapportsTab({ campaignId }: { campaignId: string }) {
       .finally(() => setGenerating(false));
   }
 
-  if (loading) return <SkeletonPanel lines={4} label="Chargement du rapport…" />;
+  if (loading) return <SkeletonPanel lines={4} label={t.loading} />;
   if (loadError) return <p className="rounded-lg bg-red-50 px-4 py-2.5 text-sm font-medium text-red-600">{loadError}</p>;
   if (!campaign || !report) return null;
 
@@ -73,14 +77,14 @@ export function RapportsTab({ campaignId }: { campaignId: string }) {
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 className="text-lg font-semibold text-dash-heading">Rapport de campagne</h2>
-          <p className="mt-0.5 text-sm text-dash-muted">Résumé complet de la campagne avec les résultats et recommandations.</p>
+          <h2 className="text-lg font-semibold text-dash-heading">{t.title}</h2>
+          <p className="mt-0.5 text-sm text-dash-muted">{t.subtitle}</p>
         </div>
         <Link
           href="/dashboard/rapports"
           className="flex items-center gap-1.5 rounded-full border border-border px-4 py-2.5 text-xs font-semibold text-dash-heading"
         >
-          Export CSV/PDF détaillé
+          {t.export}
           <ArrowRight className="size-3.5" aria-hidden="true" />
         </Link>
       </div>
@@ -95,18 +99,18 @@ export function RapportsTab({ campaignId }: { campaignId: string }) {
           </div>
           <dl className="flex flex-col gap-2.5 text-sm">
             <div className="flex items-center justify-between gap-2">
-              <dt className="text-dash-muted">Objectif :</dt>
+              <dt className="text-dash-muted">{t.objective}</dt>
               <dd className="text-right font-semibold text-dash-heading">{campaign.objective}</dd>
             </div>
             <div className="flex items-center justify-between">
-              <dt className="text-dash-muted">Période :</dt>
+              <dt className="text-dash-muted">{t.period}</dt>
               <dd className="font-semibold text-dash-heading">
                 {formatDate(campaign.startDate)} – {formatDate(campaign.endDate)}
               </dd>
             </div>
             <div className="flex items-center justify-between">
-              <dt className="text-dash-muted">Budget :</dt>
-              <dd className="font-semibold text-dash-heading">{campaign.plannedBudget.toLocaleString("fr-FR")} FCFA</dd>
+              <dt className="text-dash-muted">{t.budget}</dt>
+              <dd className="font-semibold text-dash-heading">{f.money(campaign.plannedBudget)}</dd>
             </div>
           </dl>
         </div>
@@ -114,23 +118,23 @@ export function RapportsTab({ campaignId }: { campaignId: string }) {
         <div className="flex flex-col gap-3 rounded-2xl border border-border bg-white p-5">
           <h3 className="flex items-center gap-1.5 text-sm font-semibold text-dash-heading">
             <Activity className="size-4 text-green-accent-dark" aria-hidden="true" />
-            Résultats de diffusion
+            {t.results}
           </h3>
           <dl className="flex flex-col gap-2.5 text-sm">
             <div className="flex items-center justify-between">
-              <dt className="text-dash-muted">Diffusions prévues</dt>
+              <dt className="text-dash-muted">{t.planned}</dt>
               <dd className="font-bold text-dash-heading">{report.totalDiffusions}</dd>
             </div>
             <div className="flex items-center justify-between">
-              <dt className="text-dash-muted">Diffusées</dt>
+              <dt className="text-dash-muted">{t.broadcasted}</dt>
               <dd className="font-bold text-dash-heading">{report.diffusionsDiffusees}</dd>
             </div>
             <div className="flex items-center justify-between">
-              <dt className="text-dash-muted">Manquées</dt>
+              <dt className="text-dash-muted">{t.missed}</dt>
               <dd className="font-bold text-orange-600">{report.diffusionsManquees}</dd>
             </div>
             <div className="flex items-center justify-between">
-              <dt className="text-dash-muted">Taux de conformité</dt>
+              <dt className="text-dash-muted">{t.compliance}</dt>
               <dd className="font-bold text-green-accent-dark">
                 {report.tauxConformite !== null ? `${Math.round(report.tauxConformite * 100)}%` : "—"}
               </dd>
@@ -141,12 +145,12 @@ export function RapportsTab({ campaignId }: { campaignId: string }) {
         <div className="flex flex-col gap-3 rounded-2xl border border-border bg-white p-5">
           <h3 className="flex items-center gap-1.5 text-sm font-semibold text-dash-heading">
             <Sparkles className="size-4 text-blue-500" aria-hidden="true" />
-            Recommandations IA
+            {t.recommendations}
           </h3>
           {recoLoading ? (
-            <p className="text-xs text-dash-muted">Chargement...</p>
+            <p className="text-xs text-dash-muted">{t.loadingReco}</p>
           ) : recommendations.length === 0 ? (
-            <p className="text-xs text-dash-muted">Aucune recommandation générée pour cette campagne.</p>
+            <p className="text-xs text-dash-muted">{t.noReco}</p>
           ) : (
             <div className="flex flex-col gap-2">
               {recommendations.slice(0, 3).map((reco) => (
@@ -162,10 +166,10 @@ export function RapportsTab({ campaignId }: { campaignId: string }) {
             disabled={generating}
             className="mt-1 flex items-center justify-center gap-1.5 rounded-full bg-green-accent px-4 py-2 text-xs font-semibold text-white disabled:opacity-50"
           >
-            {generating ? "Génération..." : "Générer des recommandations"}
+            {generating ? ti.generating : ti.generate}
           </button>
           <Link href="/dashboard/recommandations" className="text-center text-xs font-semibold text-green-accent-dark">
-            Voir toutes les recommandations →
+            {t.seeAll}
           </Link>
         </div>
       </div>
@@ -173,12 +177,11 @@ export function RapportsTab({ campaignId }: { campaignId: string }) {
       <div className="flex flex-wrap items-center gap-4 rounded-xl bg-dash-canvas p-4 text-xs text-dash-muted">
         <span className="flex items-center gap-1.5">
           <Target className="size-3.5" aria-hidden="true" />
-          {campaign.type}
+          {dash.campaignTypes[campaign.type]}
         </span>
         <span className="flex items-center gap-1.5">
           <Users className="size-3.5" aria-hidden="true" />
-          {report.diffusionsAnnulees} diffusion{report.diffusionsAnnulees > 1 ? "s" : ""} annulée
-          {report.diffusionsAnnulees > 1 ? "s" : ""}
+          {fill(report.diffusionsAnnulees > 1 ? t.cancelledMany : t.cancelledOne, { count: report.diffusionsAnnulees })}
         </span>
       </div>
     </div>

@@ -8,10 +8,7 @@ import { StatusPill } from "@/components/dashboard/ui/StatusPill";
 import { apiGetDashboard, ApiError } from "@/lib/api/client";
 import type { DashboardSummary } from "@/lib/api/types";
 import { SkeletonKpis } from "@/components/dashboard/ui/Skeleton";
-
-function formatBudget(amount: number) {
-  return `${Math.round(amount).toLocaleString("fr-FR")} FCFA`;
-}
+import { useFormat, useT } from "@/i18n/client";
 
 function formatPercent(ratio: number) {
   return `${Math.round(ratio * 100)}%`;
@@ -26,6 +23,10 @@ function formatPercent(ratio: number) {
  * 0% sur des entreprises 100% digitales.
  */
 export function RapportsClient() {
+  const t = useT("dashInsights").reports;
+  const dash = useT("dash");
+  const f = useFormat();
+  const formatBudget = f.money;
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -37,11 +38,11 @@ export function RapportsClient() {
         setLoading(false);
       },
       (error: unknown) => {
-        setLoadError(error instanceof ApiError ? error.message : "Impossible de charger les rapports.");
+        setLoadError(error instanceof ApiError ? error.message : t.loadError);
         setLoading(false);
       }
     );
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     void fetchSummary();
@@ -49,11 +50,11 @@ export function RapportsClient() {
 
   return (
     <>
-      <TopBar title="Rapports" />
+      <TopBar title={dash.titles.reports} />
       <main className="flex-1 overflow-y-auto bg-dash-canvas">
         <div className="flex flex-col gap-6 px-8 py-6">
           {loading && (
-            <SkeletonKpis count={3} className="grid grid-cols-1 gap-3 sm:grid-cols-3" label="Chargement des rapports…" />
+            <SkeletonKpis count={3} className="grid grid-cols-1 gap-3 sm:grid-cols-3" label={t.loading} />
           )}
           {loadError && <p className="text-sm text-red-600">{loadError}</p>}
 
@@ -61,30 +62,30 @@ export function RapportsClient() {
             <>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                 <KpiCard
-                  label="Écart budgétaire"
+                  label={t.budgetGap}
                   value={formatBudget(summary.budgetDeviation)}
                   iconBg="bg-green-accent-dark/10"
                   icon={<FileText className="size-4 text-green-accent-dark" aria-hidden="true" />}
-                  footer={<span className="text-[11px] text-gray-text-light">Budget prévu − budget réel, cumulé</span>}
+                  footer={<span className="text-[11px] text-gray-text-light">{t.budgetGapHint}</span>}
                 />
                 <KpiCard
-                  label="Taux de conformité"
+                  label={t.compliance}
                   value={formatPercent(summary.complianceRate)}
                   iconBg="bg-blue-500/10"
                   icon={<FileText className="size-4 text-blue-500" aria-hidden="true" />}
                   footer={
                     <span className="text-[11px] text-gray-text-light">
-                      Diffusions réalisées / planifiées (Radio, Affichage)
+                      {t.complianceHint}
                     </span>
                   }
                 />
                 <KpiCard
-                  label="Taux d'installation"
+                  label={t.installation}
                   value={formatPercent(summary.installationRate)}
                   iconBg="bg-blue-500/10"
                   icon={<FileText className="size-4 text-blue-500" aria-hidden="true" />}
                   footer={
-                    <span className="text-[11px] text-gray-text-light">Installations terrain confirmées / prévues</span>
+                    <span className="text-[11px] text-gray-text-light">{t.installationHint}</span>
                   }
                 />
               </div>
@@ -92,9 +93,9 @@ export function RapportsClient() {
               <div className="rounded-[5px] border border-border bg-white p-5">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
-                    <h2 className="text-sm font-bold text-black">Exporter un rapport</h2>
+                    <h2 className="text-sm font-bold text-black">{t.exportTitle}</h2>
                     <p className="mt-0.5 text-[11px] text-gray-text">
-                      Toutes les campagnes de l&apos;entreprise, budgets et conformité inclus.
+                      {t.exportText}
                     </p>
                   </div>
                   {/*
@@ -126,22 +127,22 @@ export function RapportsClient() {
 
               <div className="overflow-hidden rounded-[5px] border border-border bg-white">
                 <div className="border-b border-border px-5 py-4">
-                  <h2 className="text-sm font-bold text-black">Détail par campagne</h2>
-                  <p className="text-[11px] text-gray-text">Diffusions et installations terrain, campagne par campagne.</p>
+                  <h2 className="text-sm font-bold text-black">{t.detailTitle}</h2>
+                  <p className="text-[11px] text-gray-text">{t.detailText}</p>
                 </div>
                 {summary.campaignsSummary.length === 0 ? (
-                  <p className="px-5 py-10 text-center text-sm text-gray-text">Aucune campagne pour l&apos;instant.</p>
+                  <p className="px-5 py-10 text-center text-sm text-gray-text">{t.empty}</p>
                 ) : (
                   <div className="overflow-x-auto">
                     <table className="w-full min-w-[760px] text-left">
                       <thead>
                         <tr className="bg-slate-50 text-[11px] font-semibold text-gray-text">
-                          <th className="px-5 py-2.5">Campagne</th>
-                          <th className="px-5 py-2.5">Statut</th>
-                          <th className="px-5 py-2.5">Budget prévu</th>
-                          <th className="px-5 py-2.5">Budget réel</th>
-                          <th className="px-5 py-2.5">Diffusions</th>
-                          <th className="px-5 py-2.5">Installations</th>
+                          <th className="px-5 py-2.5">{t.headers.campaign}</th>
+                          <th className="px-5 py-2.5">{t.headers.status}</th>
+                          <th className="px-5 py-2.5">{t.headers.planned}</th>
+                          <th className="px-5 py-2.5">{t.headers.actual}</th>
+                          <th className="px-5 py-2.5">{t.headers.broadcasts}</th>
+                          <th className="px-5 py-2.5">{t.headers.installations}</th>
                         </tr>
                       </thead>
                       <tbody>
