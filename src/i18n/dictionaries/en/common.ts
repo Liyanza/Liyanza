@@ -80,8 +80,11 @@ const common: typeof fr = {
     status: "AI marketing expert · Online",
     welcome:
       "Hello! 👋 I'm your KIYANZA marketing assistant. Ask me anything about your campaigns, budgets, audiences or marketing strategies!",
-    reply:
-      "Thanks for your question! A KIYANZA expert will look into it and get back to you with personalised recommendations.",
+    thinking: "The assistant is writing a reply…",
+    loginRequired: "Sign in to your KIYANZA workspace to chat with the assistant.",
+    loginCta: "Sign in",
+    forbidden: "The assistant is available to your company's admins and marketing managers.",
+    error: "The assistant is temporarily unavailable. Please try again in a moment.",
     quickActions: ["Improve my ROI", "Social media strategy?", "How can I optimise my budget?"],
     inputLabel: "Your marketing question",
     placeholder: "Ask your marketing question…",

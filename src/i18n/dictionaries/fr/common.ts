@@ -85,8 +85,11 @@ const common = {
     status: "Expert Marketing IA · En ligne",
     welcome:
       "Bonjour ! 👋 Je suis votre assistant marketing KIYANZA. Posez-moi toutes vos questions sur vos campagnes, budgets, audiences ou stratégies marketing !",
-    reply:
-      "Merci pour votre question ! Un expert KIYANZA analysera votre demande et reviendra vers vous avec des recommandations personnalisées.",
+    thinking: "L'assistant rédige sa réponse…",
+    loginRequired: "Connectez-vous à votre espace KIYANZA pour discuter avec l'assistant.",
+    loginCta: "Se connecter",
+    forbidden: "L'assistant est réservé aux administrateurs et responsables marketing de votre entreprise.",
+    error: "L'assistant est momentanément indisponible. Réessayez dans quelques instants.",
     quickActions: ["Améliorer mon ROI", "Stratégie réseaux sociaux ?", "Comment optimiser mon budget ?"],
     inputLabel: "Votre question marketing",
     placeholder: "Posez votre question marketing…",
