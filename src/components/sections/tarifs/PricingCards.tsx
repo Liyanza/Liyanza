@@ -1,4 +1,4 @@
-import { Check } from "lucide-react";
+import { Check, CircleCheck } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/motion/Reveal";
 
@@ -133,16 +133,11 @@ function PlanCard({ plan }: { plan: Plan }) {
         <p className="text-[9px] font-bold uppercase tracking-wide text-black/25">
           Inclus
         </p>
-        <ul className="mt-3 space-y-3">
+        <ul className="mt-4 space-y-4">
           {plan.items.map((item) => (
-            <li key={item} className="flex items-start gap-2.5">
-              <Check
-                className={`mt-0.5 size-3.5 shrink-0 ${
-                  plan.featured ? "text-green-accent" : "text-black/30"
-                }`}
-                aria-hidden="true"
-              />
-              <span className="text-sm text-black/60">{item}</span>
+            <li key={item} className="flex items-start gap-3">
+              <CircleCheck className="mt-0.5 size-4 shrink-0 text-green-accent-dark" aria-hidden="true" />
+              <span className="text-sm leading-5 text-black/60">{item}</span>
             </li>
           ))}
         </ul>
