@@ -1,7 +1,9 @@
 import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
+import { getMessages } from "@/i18n/server";
+import { fill } from "@/i18n/format";
 
-export function LegalPageHeader({
+export async function LegalPageHeader({
   eyebrow,
   title,
   intro,
@@ -12,6 +14,8 @@ export function LegalPageHeader({
   intro: string;
   lastUpdated: string;
 }) {
+  const t = await getMessages("legal");
+
   return (
     <section className="bg-green-accent-dark/[0.08] py-20">
       <Container>
@@ -26,7 +30,7 @@ export function LegalPageHeader({
             {intro}
           </p>
           <p className="mt-4 text-xs font-semibold uppercase tracking-[0.08em] text-black/40">
-            Dernière mise à jour : {lastUpdated}
+            {fill(t.lastUpdated, { date: lastUpdated })}
           </p>
         </div>
       </Container>

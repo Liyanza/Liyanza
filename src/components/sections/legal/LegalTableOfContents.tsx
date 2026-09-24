@@ -1,15 +1,18 @@
 import { Container } from "@/components/ui/Container";
+import { getMessages } from "@/i18n/server";
 
-export function LegalTableOfContents({
+export async function LegalTableOfContents({
   items,
 }: {
   items: { id: string; title: string }[];
 }) {
+  const t = await getMessages("legal");
+
   return (
     <section className="border-b border-black/[0.06] py-10">
       <Container>
         <p className="text-xs font-bold uppercase tracking-[0.1em] text-green-accent-dark">
-          Sommaire
+          {t.toc}
         </p>
         <ol className="mt-4 grid grid-cols-1 gap-x-8 gap-y-2 sm:grid-cols-2">
           {items.map((item, index) => (
