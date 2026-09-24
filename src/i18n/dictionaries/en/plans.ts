@@ -58,6 +58,8 @@ const plans: typeof fr = {
       price: "Custom quote",
       priceNote: "",
       cta: "Contact the team",
+      /** Le bouton ouvre un email plutôt que l'inscription. */
+      contact: true,
       featured: false,
       features: [
         "Tailored solution",

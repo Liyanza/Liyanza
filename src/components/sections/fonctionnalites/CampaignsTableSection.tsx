@@ -1,3 +1,4 @@
+import { Link } from "@/i18n/navigation";
 import { Eye, Search, Trash2 } from "lucide-react";
 import { FaFacebook, FaInstagram, FaTiktok, FaWhatsapp } from "react-icons/fa6";
 import { FcGoogle } from "react-icons/fc";
@@ -90,13 +91,13 @@ export async function CampaignsTableSection() {
             <div className="flex flex-wrap gap-2">
               {t.actions.map(
                 (label) => (
-                  <button
+                  <Link
+                    href="/connexion"
                     key={label}
-                    type="button"
-                    className="rounded-full border border-border px-3 py-1.5 text-xs font-medium text-gray-text hover:bg-slate-50"
+                    className="inline-block rounded-full border border-border px-3 py-1.5 text-xs font-medium text-gray-text hover:bg-slate-50"
                   >
                     {label}
-                  </button>
+                  </Link>
                 )
               )}
             </div>
@@ -151,9 +152,10 @@ export async function CampaignsTableSection() {
             <p className="text-xs text-gray-text-light">
               {t.footer}
             </p>
-            <a href="#" className="text-xs font-semibold text-green-accent">
+            <Link
+              href="/connexion" className="text-xs font-semibold text-green-accent">
               {t.seeAll}
-            </a>
+            </Link>
           </div>
         </LiveMockup>
       </Container>

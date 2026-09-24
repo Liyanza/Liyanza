@@ -15,7 +15,10 @@ import type {
   CreateEntreprisePayload,
   CreatePrestationPayload,
   CreateSchedulePayload,
+  AcceptInvitationResult,
   CreateSubAccountPayload,
+  CreateSubAccountResult,
+  ReviewProofPayload,
   DashboardSummary,
   DigitalSimulationRecord,
   EntrepriseRecord,
@@ -331,6 +334,21 @@ export function apiGenerateProofLink(installationId: string) {
   );
 }
 
+/** L'entreprise valide ou refuse la preuve reçue pour une installation. */
+export function apiReviewProof(installationId: string, payload: ReviewProofPayload) {
+  return authenticatedRequest<unknown>(`/api/backend/prestations/${installationId}/preuve/validation`, {
+    method: "PATCH",
+    body: JSON.stringify(payload),
+  });
+}
+
+/** Page publique /invitation : accepte l'invitation d'un compte existant. */
+export function apiAcceptInvitation(token: string) {
+  return request<AcceptInvitationResult>(`/api/public/invitations/${encodeURIComponent(token)}`, {
+    method: "POST",
+  });
+}
+
 export function apiListInstallations() {
   return authenticatedRequest<InstallationRecord[]>("/api/backend/prestations");
 }
@@ -389,7 +407,7 @@ export function apiListUsers() {
 }
 
 export function apiCreateSubAccount(payload: CreateSubAccountPayload) {
-  return authenticatedRequest<CompanyMember>("/api/backend/users", {
+  return authenticatedRequest<CreateSubAccountResult>("/api/backend/users", {
     method: "POST",
     body: JSON.stringify(payload),
   });

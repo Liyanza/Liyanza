@@ -29,6 +29,9 @@ const dashAccount: typeof fr = {
     deactivated: "Deactivated",
     active: "Active",
     deactivate: "Deactivate",
+    invitedTitle: "Invitation sent to {name}",
+    invitedText:
+      "This person already has a Liyanza account: they received an email with no password and will join the team as soon as they click the link.",
   },
   createCompany: {
     error: "Unable to create your company.",

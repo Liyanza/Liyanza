@@ -1,3 +1,4 @@
+import { Link } from "@/i18n/navigation";
 import { ArrowRight, BookOpen, FileText, HelpCircle, PlayCircle } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
@@ -22,7 +23,7 @@ export async function ResourceCategories() {
         </Reveal>
 
         <Reveal stagger className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {categories.map((cat) => (
+          {categories.map((cat, index) => (
             <div key={cat.number} data-reveal-item className="rounded-[5px] border border-[#e4e4e7] p-7">
               <span className="text-[10px] font-black tracking-widest text-[#e4e4e7]">
                 {cat.number}
@@ -34,13 +35,13 @@ export async function ResourceCategories() {
               <p className="mt-2 text-sm leading-relaxed text-[#71717a]">
                 {cat.description}
               </p>
-              <button
-                type="button"
+              <Link
+                href={index === 0 ? "/connexion" : "/inscription"}
                 className="mt-4 flex items-center gap-1.5 text-sm font-semibold text-green-accent-dark"
               >
                 {cat.cta}
                 <ArrowRight className="size-3.5" aria-hidden="true" />
-              </button>
+              </Link>
             </div>
           ))}
         </Reveal>

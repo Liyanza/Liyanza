@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { Copy, MapPin, Plus, Check, X } from "lucide-react";
+import { Plus, X } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import { InstallationCard } from "./InstallationCard";
 import { TopBar } from "@/components/dashboard/layout/TopBar";
 import {
   apiCreatePrestation,
@@ -41,6 +43,8 @@ const EMPTY_FORM: NewPrestationForm = { location: "", campaignId: "", providerId
 export function TerrainClient() {
   const t = useT("dashField").terrain;
   const dash = useT("dash");
+  const { user } = useAuth();
+  const canReview = user?.role === "ADMIN" || user?.role === "MARKETING_MANAGER";
   const [installations, setInstallations] = useState<InstallationRecord[]>([]);
   const [campaigns, setCampaigns] = useState<CampagneRecord[]>([]);
   const [providers, setProviders] = useState<CompanyMember[]>([]);
@@ -259,57 +263,19 @@ export function TerrainClient() {
                   <p className="text-sm text-dash-muted">{t.empty}</p>
                 ) : (
                   <div className="flex max-h-[380px] flex-col gap-2 overflow-y-auto">
-                    {installations.map((installation) => {
-                      const link = linkByInstallation[installation.id];
-                      return (
-                        <div key={installation.id} className="rounded-xl border border-border-light p-3">
-                          <div className="flex items-start justify-between gap-2">
-                            <p className="flex items-center gap-1.5 text-xs font-semibold text-dash-heading">
-                              <MapPin className="size-3.5 shrink-0 text-dash-muted" aria-hidden="true" />
-                              {installation.location}
-                            </p>
-                            <span
-                              className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold ${
-                                !installation.proof
-                                  ? "bg-slate-100 text-slate-500"
-                                  : installation.locationMatch
-                                    ? "bg-green-accent-dark/10 text-green-accent-dark"
-                                    : "bg-orange-500/10 text-orange-500"
-                              }`}
-                            >
-                              {!installation.proof ? t.pending : installation.locationMatch ? t.confirmed : t.gap}
-                            </span>
-                          </div>
-                          <p className="mt-0.5 text-[11px] text-dash-muted">{installation.campaignName}</p>
-
-                          {!installation.proof && (
-                            <div className="mt-2">
-                              {link ? (
-                                <div className="flex items-center gap-1.5 rounded-lg bg-dash-canvas px-2 py-1.5">
-                                  <span className="min-w-0 flex-1 truncate text-[10px] text-dash-muted">{link}</span>
-                                  <button type="button" onClick={() => handleCopy(installation.id, link)} aria-label={t.copyLink} className="shrink-0 text-dash-muted">
-                                    {copiedId === installation.id ? (
-                                      <Check className="size-3.5 text-green-accent-dark" aria-hidden="true" />
-                                    ) : (
-                                      <Copy className="size-3.5" aria-hidden="true" />
-                                    )}
-                                  </button>
-                                </div>
-                              ) : (
-                                <button
-                                  type="button"
-                                  disabled={generatingId === installation.id}
-                                  onClick={() => handleGenerateLink(installation.id)}
-                                  className="text-[11px] font-semibold text-green-accent-dark disabled:opacity-50"
-                                >
-                                  {generatingId === installation.id ? t.generating : t.generateLink}
-                                </button>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
+                    {installations.map((installation) => (
+                      <InstallationCard
+                        key={installation.id}
+                        installation={installation}
+                        canReview={canReview}
+                        link={linkByInstallation[installation.id]}
+                        generating={generatingId === installation.id}
+                        copied={copiedId === installation.id}
+                        onGenerateLink={() => handleGenerateLink(installation.id)}
+                        onCopy={(link) => handleCopy(installation.id, link)}
+                        onReviewed={refreshInstallations}
+                      />
+                    ))}
                   </div>
                 )}
               </div>

@@ -20,7 +20,7 @@ export function FooterColumn({
           const href = typeof link === "string" ? "#" : link.href;
           return (
             <li key={label}>
-              {href === "#" ? (
+              {href.startsWith("mailto:") ? (
                 <a href={href} className="text-xs text-[#6b8ab0] transition hover:text-white">
                   {label}
                 </a>

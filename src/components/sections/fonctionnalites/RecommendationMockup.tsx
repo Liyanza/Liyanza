@@ -1,3 +1,4 @@
+import { Link } from "@/i18n/navigation";
 import { CountUp } from "@/components/motion/CountUp";
 import { getMessages } from "@/i18n/server";
 
@@ -59,19 +60,19 @@ export async function RecommendationMockup() {
           ))}
         </div>
 
-        <button
-          type="button"
+        <Link
+          href="/inscription"
           data-live="item"
           className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-green-accent to-green-accent-dark py-3 text-sm font-bold text-white shadow-[0_4px_12px_-2px_rgba(0,200,83,0.3)]"
         >
           {t.apply}
-        </button>
-        <a
-          href="#"
+        </Link>
+        <Link
+          href="/connexion"
           className="mt-3 block text-center text-xs font-semibold text-gray-text"
         >
           {t.details}
-        </a>
+        </Link>
       </div>
     </div>
   );

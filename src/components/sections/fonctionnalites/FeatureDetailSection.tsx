@@ -1,3 +1,4 @@
+import { Link } from "@/i18n/navigation";
 import { ReactNode } from "react";
 import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/Container";
@@ -61,14 +62,14 @@ export function FeatureDetailSection({
         ))}
       </ul>
       {extra && <div data-reveal-item>{extra}</div>}
-      <a
+      <Link
+        href="/inscription"
         data-reveal-item
-        href="#"
         className="mt-8 inline-flex items-center gap-1.5 rounded-full border-2 border-green-accent px-6 py-2.5 text-sm font-semibold text-green-accent transition hover:opacity-80"
       >
         {ctaText}
         <ArrowRight className="size-3.5" aria-hidden="true" />
-      </a>
+      </Link>
     </Reveal>
   );
 

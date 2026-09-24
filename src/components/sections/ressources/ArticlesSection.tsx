@@ -1,3 +1,4 @@
+import { Link } from "@/i18n/navigation";
 import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
@@ -20,13 +21,13 @@ export async function ArticlesSection() {
               {t.title}
             </h2>
           </div>
-          <button
-            type="button"
+          <Link
+            href="/inscription"
             className="flex items-center gap-2 rounded-full border border-[#e4e4e7] px-5 py-3 text-sm font-semibold text-[#3f3f46] transition hover:bg-[#fafafa]"
           >
             {t.seeAll}
             <ArrowRight className="size-3.5" aria-hidden="true" />
-          </button>
+          </Link>
         </Reveal>
 
         <Reveal stagger className="mt-10 grid grid-cols-1 gap-5 lg:grid-cols-3 lg:grid-rows-2">
@@ -52,13 +53,13 @@ export async function ArticlesSection() {
               </h3>
               <div className="mt-4 flex items-center justify-between border-t border-[#f4f4f5] pt-4">
                 <span className="text-xs text-[#a1a1aa]">{featuredArticle.date}</span>
-                <button
-                  type="button"
+                <Link
+                  href="/inscription"
                   className="flex items-center gap-1 text-sm font-semibold text-green-accent-dark"
                 >
                   {t.read}
                   <ArrowRight className="size-3.5" aria-hidden="true" />
-                </button>
+                </Link>
               </div>
             </div>
           </div>

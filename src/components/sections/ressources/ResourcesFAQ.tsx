@@ -37,13 +37,13 @@ export function ResourcesFAQ() {
             <p className="mt-4 text-sm leading-relaxed text-[#71717a]">
               {t.text}
             </p>
-            <button
-              type="button"
+            <a
+              href="mailto:contact@kiyanza.com"
               className="mt-6 flex items-center gap-2 rounded-full border border-[#e4e4e7] px-5 py-3 text-sm font-semibold text-[#3f3f46] transition hover:bg-[#fafafa]"
             >
               {t.cta}
               <ArrowRight className="size-3.5" aria-hidden="true" />
-            </button>
+            </a>
           </Reveal>
 
           <Reveal stagger className="divide-y divide-[#e4e4e7] border-t border-[#e4e4e7]">

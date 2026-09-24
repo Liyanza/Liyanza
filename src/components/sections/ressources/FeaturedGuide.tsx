@@ -1,3 +1,4 @@
+import { Link } from "@/i18n/navigation";
 import { BookOpen, Clock, Download, Tag } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/motion/Reveal";
@@ -56,19 +57,19 @@ export async function FeaturedGuide() {
               ))}
             </div>
             <div className="mt-8 flex flex-wrap gap-3">
-              <button
-                type="button"
+              <Link
+                href="/inscription"
                 className="flex items-center gap-2 rounded-full bg-green-accent-dark px-6 py-3 text-sm font-bold text-white transition hover:brightness-110"
               >
                 <Download className="size-3.5" aria-hidden="true" />
                 {featuredGuide.download}
-              </button>
-              <button
-                type="button"
+              </Link>
+              <Link
+                href="/inscription"
                 className="rounded-full border border-green-accent-dark px-6 py-3 text-sm font-semibold text-green-accent-dark transition hover:bg-green-accent-dark/5"
               >
                 {featuredGuide.readOnline}
-              </button>
+              </Link>
             </div>
           </div>
         </Reveal>

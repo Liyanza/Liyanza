@@ -1,3 +1,4 @@
+import { Link } from "@/i18n/navigation";
 import { CountUp } from "@/components/motion/CountUp";
 import { ArrowRight, CheckCircle2, Target } from "lucide-react";
 import { FaFacebook, FaWhatsapp } from "react-icons/fa6";
@@ -77,14 +78,14 @@ export async function CampaignFormMockup() {
           </div>
         </Field>
 
-        <button
-          type="button"
+        <Link
+          href="/inscription"
           data-live="item"
           className="flex w-full items-center justify-center gap-2 rounded-full bg-green-600 py-3 text-sm font-bold text-white"
         >
           {t.continue}
           <ArrowRight className="size-3.5" aria-hidden="true" />
-        </button>
+        </Link>
       </div>
     </div>
   );

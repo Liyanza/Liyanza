@@ -17,7 +17,7 @@ import { hasTranslatedSlug, localizePath, parsePath } from "@/i18n/paths";
  *    jamais redirigés.
  * 3 bis. Adresses sans préfixe qui ne disent rien de la langue voulue : les
  *    liens produits par le backend (retours OAuth de connexion et de liaison
- *    Meta, lien de preuve d'installation) et le dashboard (favori, lien
+ *    Meta, lien de preuve d'installation, invitation) et le dashboard (favori, lien
  *    tapé). On suit la langue mémorisée, sinon celle du navigateur.
  * 3 ter. La langue de chaque page ouverte est mémorisée (cookie), même sans
  *    passer par le sélecteur : arriver sur /en suffit pour que la connexion
@@ -85,6 +85,7 @@ function redirect(request: NextRequest, pathname: string, status = 308) {
 function isExternalEntry(canonical: string) {
   return (
     canonical === "/connexion/oauth-callback" ||
+    canonical === "/invitation" ||
     canonical === "/social-accounts/callback" ||
     canonical.startsWith("/preuve-installation/") ||
     canonical === "/dashboard" ||
@@ -101,7 +102,7 @@ function shouldRememberLocale(request: NextRequest, canonical: string, locale: L
   const isDocument = request.headers.get("sec-fetch-mode") === "navigate";
   const isPrefetch = Boolean(request.headers.get("sec-purpose") ?? request.headers.get("next-router-prefetch"));
   if (!isDocument || isPrefetch) return false;
-  if (canonical === "/connexion/oauth-callback" || canonical === "/social-accounts/callback") return false;
+  if (["/connexion/oauth-callback", "/social-accounts/callback", "/invitation"].includes(canonical)) return false;
   return request.cookies.get(LOCALE_COOKIE)?.value !== locale;
 }
 

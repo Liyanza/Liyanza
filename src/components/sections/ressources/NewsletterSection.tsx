@@ -4,10 +4,14 @@ import { Check, Star } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
 import { Reveal } from "@/components/motion/Reveal";
+import { useState } from "react";
 import { useT } from "@/i18n/client";
+import { useRouter } from "@/i18n/navigation";
 
 export function NewsletterSection() {
   const t = useT("resources").newsletter;
+  const router = useRouter();
+  const [email, setEmail] = useState("");
 
   return (
     <section className="border-t border-[#e4e4e7] bg-[#fafafa] py-20">
@@ -26,11 +30,17 @@ export function NewsletterSection() {
           <div className="flex flex-col justify-center bg-[#fafafa] p-10 sm:p-12">
             <form
               className="flex items-stretch border border-[#e4e4e7]"
-              onSubmit={(e) => e.preventDefault()}
+              onSubmit={(e) => {
+                e.preventDefault();
+                router.push(`/inscription?email=${encodeURIComponent(email.trim())}`);
+              }}
             >
               <div className="flex-1 rounded-[5px] bg-white px-4 py-3.5 has-[input:focus-visible]:ring-2 has-[input:focus-visible]:ring-green-accent">
                 <input
                   type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder={t.placeholder}
                   aria-label={t.placeholder}
                   className="w-full text-sm text-black placeholder:text-black/50 focus:outline-none"

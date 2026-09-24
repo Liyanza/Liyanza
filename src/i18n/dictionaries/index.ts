@@ -1,5 +1,6 @@
 import type { Locale } from "../config";
 import type frCommon from "./fr/common";
+import type frInvitation from "./fr/invitation";
 import type frDashField from "./fr/dashField";
 import type frDashAccount from "./fr/dashAccount";
 import type frDashInsights from "./fr/dashInsights";
@@ -25,6 +26,7 @@ import type frPlans from "./fr/plans";
 const loaders = {
   fr: {
     common: () => import("./fr/common").then((m) => m.default),
+    invitation: () => import("./fr/invitation").then((m) => m.default),
     dashField: () => import("./fr/dashField").then((m) => m.default),
     dashAccount: () => import("./fr/dashAccount").then((m) => m.default),
     dashInsights: () => import("./fr/dashInsights").then((m) => m.default),
@@ -43,6 +45,7 @@ const loaders = {
   },
   en: {
     common: () => import("./en/common").then((m) => m.default),
+    invitation: () => import("./en/invitation").then((m) => m.default),
     dashField: () => import("./en/dashField").then((m) => m.default),
     dashAccount: () => import("./en/dashAccount").then((m) => m.default),
     dashInsights: () => import("./en/dashInsights").then((m) => m.default),
@@ -65,6 +68,7 @@ export type Namespace = keyof (typeof loaders)["fr"];
 
 export type Messages = {
   common: typeof frCommon;
+  invitation: typeof frInvitation;
   dashField: typeof frDashField;
   dashAccount: typeof frDashAccount;
   dashInsights: typeof frDashInsights;

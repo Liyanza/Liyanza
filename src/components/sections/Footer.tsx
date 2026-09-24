@@ -2,32 +2,48 @@ import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Logo } from "@/components/Logo";
 import { FooterColumn } from "@/components/ui/FooterColumn";
-import { getMessages } from "@/i18n/server";
+import { getMessages, href } from "@/i18n/server";
 import { fill } from "@/i18n/format";
 
 export async function Footer() {
   const t = (await getMessages("common")).footer;
   const l = t.links;
+  const signupHref = await href("/inscription");
   const columns = [
     {
       title: t.columns.product,
       links: [
         { label: l.features, href: "/fonctionnalites" },
         { label: l.pricing, href: "/tarifs" },
-        l.aiScenarios,
-        l.updates,
+        { label: l.aiScenarios, href: "/fonctionnalites#scenarios-ia" },
+        { label: l.updates, href: "/ressources" },
       ],
     },
-    { title: t.columns.resources, links: [l.blog, l.guides, l.caseStudies, l.helpCenter] },
-    { title: t.columns.company, links: [{ label: l.about, href: "/a-propos" }, l.contact] },
+    {
+      title: t.columns.resources,
+      links: [
+        { label: l.blog, href: "/ressources" },
+        { label: l.guides, href: "/ressources" },
+        { label: l.caseStudies, href: "/ressources" },
+        // Le centre d'aide vit dans le dashboard (/dashboard/aide).
+        { label: l.helpCenter, href: "/connexion" },
+      ],
+    },
+    {
+      title: t.columns.company,
+      links: [
+        { label: l.about, href: "/a-propos" },
+        { label: l.contact, href: "mailto:contact@kiyanza.com" },
+      ],
+    },
     {
       title: t.columns.legal,
       links: [
         { label: l.terms, href: "/conditions-utilisation" },
         { label: l.privacy, href: "/politique-confidentialite" },
         { label: l.dataDeletion, href: "/suppression-des-donnees" },
-        l.legalNotice,
-        l.cookies,
+        { label: l.legalNotice, href: "/conditions-utilisation" },
+        { label: l.cookies, href: "/politique-confidentialite#cookies" },
       ],
     },
   ];
@@ -50,13 +66,16 @@ export async function Footer() {
           <div className="w-full max-w-sm">
             <p className="text-xs text-[#3d5a80]">{t.newsletter.title}</p>
             <p className="mt-1 text-xs text-[#3d5a80]">{t.newsletter.text}</p>
-            <form className="mt-3 flex items-center gap-2" action="#">
+            {/* Newsletter : on propose de créer un compte, l'email est prérempli. */}
+            <form className="mt-3 flex items-center gap-2" action={signupHref} method="get">
               <label htmlFor="newsletter-email" className="sr-only">
                 {t.newsletter.emailLabel}
               </label>
               <input
                 id="newsletter-email"
+                name="email"
                 type="email"
+                required
                 placeholder={t.newsletter.placeholder}
                 className="w-full max-w-[254px] rounded-full border-2 border-[#1a3460] bg-navy px-5 py-2 text-xs text-white placeholder:text-[#3d5a80] focus:outline-none focus-visible:ring-2 focus-visible:ring-green-accent"
               />
