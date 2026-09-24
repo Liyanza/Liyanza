@@ -3,11 +3,12 @@
 import NextLink from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useId, useRef, useState, type MouseEvent } from "react";
-import { Check, ChevronDown, Globe } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 import { LOCALE_COOKIE, localeMeta, locales, type Locale } from "@/i18n/config";
 import { switchLocalePath } from "@/i18n/paths";
 import { useLocale, useT } from "@/i18n/client";
 import { fill } from "@/i18n/format";
+import { Flag } from "./Flag";
 
 const SCROLL_KEY = "kiyanza-locale-scroll";
 
@@ -58,8 +59,23 @@ function useRestoreScroll() {
   }, []);
 }
 
-/** Menu déroulant de l'en-tête (desktop ; monté aussi sur mobile, masqué). */
-export function LanguageSwitcher({ className = "" }: { className?: string }) {
+const TRIGGER_STYLE = {
+  site: "rounded-full px-4 py-2 text-sm font-semibold text-black transition hover:bg-black/5",
+  dashboard:
+    "h-12 rounded-full border border-border bg-dash-canvas px-3.5 text-xs font-semibold text-dash-body transition hover:bg-white",
+};
+
+/**
+ * Menu déroulant de langue : en-tête du site (desktop ; monté aussi sur
+ * mobile, masqué) et barre du haut du dashboard (`variant="dashboard"`).
+ */
+export function LanguageSwitcher({
+  className = "",
+  variant = "site",
+}: {
+  className?: string;
+  variant?: keyof typeof TRIGGER_STYLE;
+}) {
   useRestoreScroll();
   const locale = useLocale();
   const t = useT("common").language;
@@ -96,9 +112,9 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
         aria-expanded={open}
         aria-controls={menuId}
         aria-label={fill(t.switcher, { current: localeMeta[locale].name })}
-        className="flex items-center gap-1 rounded-full px-4 py-2 text-sm font-semibold text-black transition hover:bg-black/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-accent"
+        className={`flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-accent ${TRIGGER_STYLE[variant]}`}
       >
-        <Globe className="size-4" aria-hidden="true" />
+        <Flag locale={locale} />
         {localeMeta[locale].label}
         <ChevronDown
           className={`size-4 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
@@ -133,8 +149,8 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
                 active ? "font-semibold text-green-600" : "text-black"
               }`}
             >
-              <span>
-                <span className="mr-2 text-xs font-bold text-black/40">{localeMeta[l].label}</span>
+              <span className="flex items-center gap-2.5">
+                <Flag locale={l} />
                 {localeMeta[l].name}
               </span>
               {active && <Check className="size-4" aria-hidden="true" />}
@@ -153,7 +169,6 @@ export function LanguageToggle({ className = "" }: { className?: string }) {
   const { hrefFor, go } = useSwitchTo();
   return (
     <div role="group" aria-label={t.menu} className={`flex items-center gap-2 ${className}`}>
-      <Globe className="size-4 text-black/40" aria-hidden="true" />
       {locales.map((l) => {
         const active = l === locale;
         return (
@@ -164,10 +179,11 @@ export function LanguageToggle({ className = "" }: { className?: string }) {
             lang={localeMeta[l].htmlLang}
             aria-current={active ? "true" : undefined}
             onClick={(e) => (active ? e.preventDefault() : go(e, l))}
-            className={`rounded-full px-3 py-1.5 text-sm font-semibold transition ${
+            className={`flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-semibold transition ${
               active ? "bg-green-600 text-white" : "text-black hover:bg-black/5"
             }`}
           >
+            <Flag locale={l} />
             {localeMeta[l].name}
           </NextLink>
         );

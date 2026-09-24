@@ -15,9 +15,13 @@ import { hasTranslatedSlug, localizePath, parsePath } from "@/i18n/paths";
  * 3. Première visite sur « / » sans choix mémorisé : un navigateur qui
  *    préfère l'anglais est envoyé vers /en. Les liens profonds ne sont
  *    jamais redirigés.
- * 3 bis. Pages ouvertes depuis un lien produit par le backend (retour OAuth,
- *    lien de preuve d'installation), qui ne connaît pas la langue : sans
- *    préfixe, on suit le choix mémorisé, sinon la langue du navigateur.
+ * 3 bis. Adresses sans préfixe qui ne disent rien de la langue voulue : les
+ *    liens produits par le backend (retours OAuth de connexion et de liaison
+ *    Meta, lien de preuve d'installation) et le dashboard (favori, lien
+ *    tapé). On suit la langue mémorisée, sinon celle du navigateur.
+ * 3 ter. La langue de chaque page ouverte est mémorisée (cookie), même sans
+ *    passer par le sélecteur : arriver sur /en suffit pour que la connexion
+ *    Google/Facebook ramène ensuite au dashboard en anglais.
  * 4. Garde-fou grossier sur le dashboard : sans cookie de session, renvoi
  *    vers la page de connexion (dans la langue courante). Il ne valide PAS
  *    le token (impossible sans le secret JWT) ; l'autorisation réelle est
@@ -65,7 +69,11 @@ export function proxy(request: NextRequest) {
 
   const internal = url.clone();
   internal.pathname = `/${locale}${canonical === "/" ? "" : canonical}`;
-  return NextResponse.rewrite(internal);
+  const response = NextResponse.rewrite(internal);
+  if (shouldRememberLocale(request, canonical, locale)) {
+    response.cookies.set(LOCALE_COOKIE, locale, { path: "/", maxAge: 60 * 60 * 24 * 365, sameSite: "lax" });
+  }
+  return response;
 }
 
 function redirect(request: NextRequest, pathname: string, status = 308) {
@@ -75,7 +83,26 @@ function redirect(request: NextRequest, pathname: string, status = 308) {
 }
 
 function isExternalEntry(canonical: string) {
-  return canonical === "/social-accounts/callback" || canonical.startsWith("/preuve-installation/");
+  return (
+    canonical === "/connexion/oauth-callback" ||
+    canonical === "/social-accounts/callback" ||
+    canonical.startsWith("/preuve-installation/") ||
+    canonical === "/dashboard" ||
+    canonical.startsWith("/dashboard/")
+  );
+}
+
+/**
+ * Seulement pour une vraie ouverture de page (pas les préchargements de liens
+ * ni les navigations internes : le sélecteur pose lui-même le cookie), et
+ * jamais pour les pages sans langue propre, qui la suivent au lieu de la fixer.
+ */
+function shouldRememberLocale(request: NextRequest, canonical: string, locale: Locale) {
+  const isDocument = request.headers.get("sec-fetch-mode") === "navigate";
+  const isPrefetch = Boolean(request.headers.get("sec-purpose") ?? request.headers.get("next-router-prefetch"));
+  if (!isDocument || isPrefetch) return false;
+  if (canonical === "/connexion/oauth-callback" || canonical === "/social-accounts/callback") return false;
+  return request.cookies.get(LOCALE_COOKIE)?.value !== locale;
 }
 
 /** Langue préférée du navigateur parmi celles du site (en-tête Accept-Language). */

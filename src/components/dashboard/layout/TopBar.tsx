@@ -7,6 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 import { apiListNotifications } from "@/lib/api/client";
 import { useT } from "@/i18n/client";
 import { fill } from "@/i18n/format";
+import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
 
 export function TopBar({
   title,
@@ -62,6 +63,7 @@ export function TopBar({
             <ChevronDown className="size-3.5" aria-hidden="true" />
           </button>
         )}
+        <LanguageSwitcher variant="dashboard" />
         <Link
           href="/dashboard/notifications"
           aria-label={unreadCount > 0 ? fill(t.notificationsUnread, { count: unreadCount }) : t.notifications}
