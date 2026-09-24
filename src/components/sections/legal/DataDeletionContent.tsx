@@ -1,4 +1,5 @@
 import { Container } from "@/components/ui/Container";
+import { Link } from "@/i18n/navigation";
 import { LegalSection } from "./LegalSection";
 
 export function DataDeletionContent() {
@@ -10,9 +11,9 @@ export function DataDeletionContent() {
             Cette page explique comment demander la suppression de vos
             données à caractère personnel de la plateforme KIYANZA,
             conformément à notre{" "}
-            <a href="/politique-confidentialite">
+            <Link href="/politique-confidentialite">
               Politique de confidentialité
-            </a>
+            </Link>
             , y compris lorsque votre compte a été créé via Google ou
             Facebook.
           </p>
@@ -64,9 +65,9 @@ export function DataDeletionContent() {
             Pour toute question sur ce processus, contactez-nous à
             l&apos;adresse&nbsp;:{" "}
             <strong>contact@kiyanza.com</strong>. Voir
-            aussi nos <a href="/politique-confidentialite">
+            aussi nos <Link href="/politique-confidentialite">
               droits en matière de données
-            </a>{" "}
+            </Link>{" "}
             pour les autres actions possibles (accès, rectification,
             portabilité).
           </p>

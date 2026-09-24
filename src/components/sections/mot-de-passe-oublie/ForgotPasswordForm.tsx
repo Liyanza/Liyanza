@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import {
   ArrowLeft,
   ArrowRight,
@@ -13,8 +13,10 @@ import {
 } from "lucide-react";
 import { FormField } from "@/components/auth/FormField";
 import { requestPasswordReset, ApiError } from "@/lib/api/client";
+import { useT } from "@/i18n/client";
 
 export function ForgotPasswordForm() {
+  const t = useT("auth");
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -27,9 +29,9 @@ export function ForgotPasswordForm() {
           <div className="flex size-16 items-center justify-center rounded-full bg-green-accent-dark">
             <CheckCircle2 className="size-7 text-white" aria-hidden="true" />
           </div>
-          <h2 className="mt-6 text-2xl font-extrabold text-black">Email envoyé !</h2>
+          <h2 className="mt-6 text-2xl font-extrabold text-black">{t.forgot.sentTitle}</h2>
           <p className="mt-2 text-sm text-[#71717a]">
-            Un lien de réinitialisation a été envoyé à
+            {t.forgot.sentText}
           </p>
           <div className="mt-4 w-full rounded-md border border-[#e4e4e7] bg-[#fafafa] px-4 py-2.5">
             <p className="text-center text-sm font-semibold text-black">{email}</p>
@@ -39,15 +41,15 @@ export function ForgotPasswordForm() {
         <div className="mt-6 flex flex-col gap-2.5 text-xs text-[#71717a]">
           <span className="flex items-center gap-2">
             <ShieldAlert className="size-3.5 shrink-0 text-orange-500" aria-hidden="true" />
-            Vérifiez vos spams si vous ne trouvez pas l&apos;email.
+            {t.forgot.tips[0]}
           </span>
           <span className="flex items-center gap-2">
             <ShieldCheck className="size-3.5 shrink-0 text-green-accent-dark" aria-hidden="true" />
-            Le lien expire dans 30 minutes.
+            {t.forgot.tips[1]}
           </span>
           <span className="flex items-center gap-2">
             <ShieldCheck className="size-3.5 shrink-0 text-green-accent-dark" aria-hidden="true" />
-            Ne partagez jamais ce lien avec quelqu&apos;un d&apos;autre.
+            {t.forgot.tips[2]}
           </span>
         </div>
 
@@ -57,11 +59,11 @@ export function ForgotPasswordForm() {
             onClick={() => setSent(false)}
             className="font-medium text-[#71717a] transition hover:text-black"
           >
-            ← Renvoyer l&apos;email
+            {t.forgot.resend}
           </button>
           <span className="text-[#e4e4e7]">|</span>
           <Link href="/connexion" className="font-semibold text-green-600">
-            Retour à la connexion
+            {t.common.backToLogin}
           </Link>
         </div>
       </div>
@@ -75,13 +77,12 @@ export function ForgotPasswordForm() {
         className="flex items-center gap-1.5 text-sm font-medium text-[#71717a] transition hover:text-black"
       >
         <ArrowLeft className="size-3.5" aria-hidden="true" />
-        Retour à la connexion
+        {t.common.backToLogin}
       </Link>
 
-      <h2 className="mt-8 text-3xl font-extrabold text-black">Mot de passe oublié ?</h2>
+      <h2 className="mt-8 text-3xl font-extrabold text-black">{t.forgot.title}</h2>
       <p className="mt-2 text-sm leading-relaxed text-[#71717a]">
-        Saisissez votre adresse email. Nous vous enverrons un lien pour
-        réinitialiser votre mot de passe.
+        {t.forgot.text}
       </p>
 
       <form
@@ -95,7 +96,7 @@ export function ForgotPasswordForm() {
             await requestPasswordReset(email);
             setSent(true);
           } catch (error) {
-            setFormError(error instanceof ApiError ? error.message : "Une erreur est survenue.");
+            setFormError(error instanceof ApiError ? error.message : t.common.genericError);
           } finally {
             setSubmitting(false);
           }
@@ -109,9 +110,9 @@ export function ForgotPasswordForm() {
 
         <FormField
           id="email"
-          label="Adresse email"
+          label={t.common.email}
           type="email"
-          placeholder="votre@email.com"
+          placeholder={t.common.emailPlaceholder}
           icon={<Mail className="size-4" aria-hidden="true" />}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -127,7 +128,7 @@ export function ForgotPasswordForm() {
             <Loader2 className="size-4 animate-spin" aria-hidden="true" />
           ) : (
             <>
-              Recevoir le lien de réinitialisation
+              {t.forgot.submit}
               <ArrowRight className="size-4" aria-hidden="true" />
             </>
           )}
@@ -136,16 +137,15 @@ export function ForgotPasswordForm() {
         <div className="mt-2 flex items-start gap-3 border border-[#e4e4e7] bg-[#fafafa] p-4">
           <ShieldAlert className="mt-0.5 size-4 shrink-0 text-orange-500" aria-hidden="true" />
           <p className="text-xs leading-relaxed text-[#71717a]">
-            Pour des raisons de sécurité, nous ne confirmons pas si
-            l&apos;adresse email est associée à un compte existant.
+            {t.forgot.privacyNote}
           </p>
         </div>
       </form>
 
       <p className="mt-8 border-t border-[#f4f4f5] pt-6 text-center text-sm text-[#71717a]">
-        Vous vous souvenez de votre mot de passe ?{" "}
+        {t.forgot.remember}{" "}
         <Link href="/connexion" className="font-semibold text-green-600">
-          Se connecter
+          {t.common.login}
         </Link>
       </p>
     </div>

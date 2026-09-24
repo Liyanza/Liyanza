@@ -6,80 +6,76 @@ import { SectionEyebrow } from "@/components/ui/Badge";
 import { Reveal } from "@/components/motion/Reveal";
 import { LiveMockup } from "@/components/motion/LiveMockup";
 import { CountUp } from "@/components/motion/CountUp";
+import { getMessages } from "@/i18n/server";
 
+type Status = "running" | "planned" | "done";
+
+/** Données visuelles de chaque ligne (noms et budgets : features.table.rows). */
 interface Row {
-  name: string;
-  status: "En cours" | "Planifiée" | "Terminée";
+  status: Status;
   channels: React.ReactNode;
-  budget: string;
   roi: string;
   roiColor: string;
 }
 
-const statusStyles: Record<Row["status"], string> = {
-  "En cours": "bg-green-accent text-white",
-  "Planifiée": "bg-blue-500 text-white",
-  "Terminée": "bg-slate-400 text-white",
+const statusStyles: Record<Status, string> = {
+  running: "bg-green-accent text-white",
+  planned: "bg-blue-500 text-white",
+  done: "bg-slate-400 text-white",
 };
 
-const rows: Row[] = [
+const rowStyles: Row[] = [
   {
-    name: "Promo Orange Money",
-    status: "En cours",
+    status: "running",
     channels: (
       <span className="flex size-4 items-center justify-center rounded-full bg-black text-white">
         <FaTiktok className="size-2.5" aria-hidden="true" />
       </span>
     ),
-    budget: "500 000 FCFA",
     roi: "+38%",
     roiColor: "text-green-accent",
   },
   {
-    name: "Vente spéciale",
-    status: "Planifiée",
+    status: "planned",
     channels: <FaFacebook className="size-4 text-[#1877f2]" aria-hidden="true" />,
-    budget: "75 000 FCFA",
     roi: "+23%",
     roiColor: "text-blue-500",
   },
   {
-    name: "Lancement produit",
-    status: "En cours",
+    status: "running",
     channels: <FaInstagram className="size-4 text-[#E4405F]" aria-hidden="true" />,
-    budget: "70 000 FCFA",
     roi: "+27%",
     roiColor: "text-green-accent",
   },
   {
-    name: "Fidélisation clients",
-    status: "Terminée",
+    status: "done",
     channels: (
       <span className="flex items-center gap-1.5">
         <FcGoogle className="size-4" aria-hidden="true" />
         <FaWhatsapp className="size-4 text-[#25d366]" aria-hidden="true" />
       </span>
     ),
-    budget: "50 000 FCFA",
     roi: "+18%",
     roiColor: "text-gray-text-light",
   },
 ];
 
-export function CampaignsTableSection() {
+export async function CampaignsTableSection() {
+  const t = (await getMessages("features")).table;
+  const rows = rowStyles.map((row, i) => ({ ...row, ...t.rows[i] }));
+
   return (
     <section id="gestion-campagnes" className="scroll-mt-40 bg-white py-20">
       <Container>
         <Reveal stagger>
           <div data-reveal-item>
-            <SectionEyebrow variant="pill" tone="orange">03 · Gestion des Campagnes</SectionEyebrow>
+            <SectionEyebrow variant="pill" tone="orange">{t.eyebrow}</SectionEyebrow>
           </div>
           <h2 data-reveal-item className="mt-5 text-4xl font-bold leading-10 text-black">
-            Centralisez toutes vos campagnes
+            {t.title}
           </h2>
           <p data-reveal-item className="mt-3 max-w-lg text-sm leading-5 text-gray-text">
-            Retrouvez toutes vos campagnes au même endroit et suivez leur
-            statut, leur budget et leurs performances.
+            {t.text}
           </p>
         </Reveal>
 
@@ -88,11 +84,11 @@ export function CampaignsTableSection() {
             <div className="flex items-center gap-2 rounded-full border border-border bg-slate-50 px-3 py-2">
               <Search className="size-3.5 text-gray-text-light" aria-hidden="true" />
               <span className="text-sm text-gray-text">
-                Rechercher une campagne…
+                {t.search}
               </span>
             </div>
             <div className="flex flex-wrap gap-2">
-              {["Filtre avancée", "Export CSV", "Monitoring complet", "Comparer périodes"].map(
+              {t.actions.map(
                 (label) => (
                   <button
                     key={label}
@@ -110,12 +106,11 @@ export function CampaignsTableSection() {
             <table className="w-full min-w-[720px] text-left">
               <thead>
                 <tr className="bg-slate-50 text-[11px] font-bold uppercase tracking-wide text-gray-text-light">
-                  <th className="px-5 py-3">Campagne</th>
-                  <th className="px-5 py-3">Statut</th>
-                  <th className="px-5 py-3">Canaux</th>
-                  <th className="px-5 py-3">Budget</th>
-                  <th className="px-5 py-3">ROI</th>
-                  <th className="px-5 py-3">Actions</th>
+                  {t.columns.map((col) => (
+                    <th key={col} className="px-5 py-3">
+                      {col}
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
@@ -123,14 +118,14 @@ export function CampaignsTableSection() {
                   <tr key={row.name} data-live="item" className="border-t border-slate-50">
                     <td className="px-5 py-4">
                       <p className="text-sm font-semibold text-black">{row.name}</p>
-                      <p className="text-xs text-gray-text-light">Campagne</p>
+                      <p className="text-xs text-gray-text-light">{t.campaignLabel}</p>
                     </td>
                     <td className="px-5 py-4">
                       <span
                         className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${statusStyles[row.status]}`}
                       >
                         <span className="size-1.5 rounded-full bg-white/80" />
-                        {row.status}
+                        {t.status[row.status]}
                       </span>
                     </td>
                     <td className="px-5 py-4">{row.channels}</td>
@@ -154,10 +149,10 @@ export function CampaignsTableSection() {
 
           <div className="flex items-center justify-between border-t border-border-light px-5 py-3.5">
             <p className="text-xs text-gray-text-light">
-              4 campagnes · Mise à jour il y a 2 min
+              {t.footer}
             </p>
             <a href="#" className="text-xs font-semibold text-green-accent">
-              Voir toutes les campagnes →
+              {t.seeAll}
             </a>
           </div>
         </LiveMockup>

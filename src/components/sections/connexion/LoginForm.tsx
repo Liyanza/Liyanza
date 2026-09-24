@@ -1,16 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { ArrowLeft, ArrowRight, Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
 import { FormField } from "@/components/auth/FormField";
 import { Checkbox } from "@/components/auth/Checkbox";
 import { SocialButtons } from "@/components/auth/SocialButtons";
 import { OrDivider } from "@/components/auth/OrDivider";
 import { apiLogin, ApiError } from "@/lib/api/client";
+import { useT } from "@/i18n/client";
 
 export function LoginForm() {
+  const t = useT("auth");
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -27,7 +28,7 @@ export function LoginForm() {
       await apiLogin(email, password);
       router.push("/dashboard");
     } catch (error) {
-      setFormError(error instanceof ApiError ? error.message : "Une erreur est survenue.");
+      setFormError(error instanceof ApiError ? error.message : t.common.genericError);
       setSubmitting(false);
     }
   }
@@ -35,11 +36,11 @@ export function LoginForm() {
   return (
     <div>
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 className="text-3xl font-extrabold text-black">Connexion</h2>
+        <h2 className="text-3xl font-extrabold text-black">{t.login.title}</h2>
         <p className="text-sm text-[#71717a]">
-          Pas encore de compte ?{" "}
+          {t.login.noAccount}{" "}
           <Link href="/inscription" className="font-semibold text-green-600">
-            Créer un compte
+            {t.login.createAccount}
           </Link>
         </p>
       </div>
@@ -57,9 +58,9 @@ export function LoginForm() {
 
           <FormField
             id="email"
-            label="Adresse email"
+            label={t.common.email}
             type="email"
-            placeholder="votre@email.com"
+            placeholder={t.common.emailPlaceholder}
             icon={<Mail className="size-4" aria-hidden="true" />}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -68,9 +69,9 @@ export function LoginForm() {
 
           <FormField
             id="password"
-            label="Mot de passe"
+            label={t.common.password}
             type={showPassword ? "text" : "password"}
-            placeholder="Votre mot de passe"
+            placeholder={t.login.passwordPlaceholder}
             icon={<Lock className="size-4" aria-hidden="true" />}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -79,7 +80,7 @@ export function LoginForm() {
               <button
                 type="button"
                 onClick={() => setShowPassword((v) => !v)}
-                aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                aria-label={showPassword ? t.common.hidePassword : t.common.showPassword}
                 className="text-[#a1a1aa] transition hover:text-[#3f3f46]"
               >
                 {showPassword ? (
@@ -93,13 +94,13 @@ export function LoginForm() {
 
           <div className="flex items-center justify-between">
             <Checkbox checked={remember} onChange={setRemember}>
-              Se souvenir de moi
+              {t.login.remember}
             </Checkbox>
             <Link
               href="/mot-de-passe-oublie"
               className="text-xs font-semibold text-green-600"
             >
-              Mot de passe oublié ?
+              {t.login.forgot}
             </Link>
           </div>
 
@@ -112,7 +113,7 @@ export function LoginForm() {
               <Loader2 className="size-4 animate-spin" aria-hidden="true" />
             ) : (
               <>
-                Se connecter
+                {t.common.login}
                 <ArrowRight className="size-4" aria-hidden="true" />
               </>
             )}
@@ -122,13 +123,13 @@ export function LoginForm() {
 
       <div className="mt-6 flex flex-col items-center gap-6 border-t border-[#f4f4f5] pt-6">
         <p className="text-center text-xs leading-relaxed text-[#a1a1aa]">
-          En vous connectant, vous acceptez nos{" "}
+          {t.login.legalStart}{" "}
           <Link href="/conditions-utilisation" className="font-semibold text-black underline">
-            Conditions d&apos;utilisation
+            {t.common.terms}
           </Link>{" "}
-          et notre{" "}
+          {t.login.legalAnd}{" "}
           <Link href="/politique-confidentialite" className="font-semibold text-black underline">
-            Politique de confidentialité
+            {t.common.privacy}
           </Link>
           .
         </p>
@@ -137,7 +138,7 @@ export function LoginForm() {
           className="flex items-center gap-2 text-xs font-semibold text-black"
         >
           <ArrowLeft className="size-3.5 text-green-accent" aria-hidden="true" />
-          Retour à l&apos;accueil
+          {t.shell.backHome}
         </Link>
       </div>
     </div>

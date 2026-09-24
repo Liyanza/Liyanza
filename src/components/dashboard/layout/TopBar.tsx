@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { ChevronDown, LogOut, Search } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { apiListNotifications } from "@/lib/api/client";

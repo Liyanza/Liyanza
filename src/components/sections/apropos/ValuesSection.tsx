@@ -2,42 +2,22 @@ import { Eye, Target, Users, Zap } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
 import { Reveal } from "@/components/motion/Reveal";
+import { getMessages } from "@/i18n/server";
 
-const values = [
-  {
-    icon: Eye,
-    title: "Clarté",
-    description:
-      "Rendre les données lisibles par tous, sans jargon ni surcharge cognitive. La simplicité est un acte de respect envers les équipes.",
-  },
-  {
-    icon: Zap,
-    title: "Intelligence",
-    description:
-      "Transformer la donnée brute en recommandations actionnables. L'IA doit servir la décision humaine, pas la remplacer.",
-  },
-  {
-    icon: Target,
-    title: "Impact",
-    description:
-      "Concentrer les efforts sur ce qui produit de vrais résultats mesurables. Chaque fonctionnalité doit justifier son existence par la valeur créée.",
-  },
-  {
-    icon: Users,
-    title: "Accessibilité",
-    description:
-      "Démocratiser les outils de pilotage marketing pour les équipes de toutes tailles, pas seulement les grandes entreprises.",
-  },
-];
+/** Icônes des valeurs, dans l'ordre de about.values.items. */
+const valueIcons = [Eye, Zap, Target, Users];
 
-export function ValuesSection() {
+export async function ValuesSection() {
+  const t = (await getMessages("about")).values;
+  const values = t.items.map((item, i) => ({ ...item, icon: valueIcons[i] }));
+
   return (
     <section className="border-t border-[#e4e4e7] bg-white py-24">
       <Container>
         <Reveal className="mx-auto max-w-2xl text-center">
-          <SectionEyebrow variant="pill" tone="orange">Nos valeurs</SectionEyebrow>
+          <SectionEyebrow variant="pill" tone="orange">{t.eyebrow}</SectionEyebrow>
           <h2 className="mt-5 text-4xl font-extrabold text-black sm:text-5xl">
-            Ce qui guide chaque décision
+            {t.title}
           </h2>
         </Reveal>
 

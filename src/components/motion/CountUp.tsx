@@ -9,6 +9,20 @@ import { duration } from "@/lib/motion/tokens";
  * separators so the animated value is formatted exactly like the original.
  */
 function parse(display: string) {
+  // English grouping first: "1,450" / "150,000.5" (comma + groups of three
+  // digits). French never groups with a comma, so "4,2" stays a decimal.
+  const en = display.match(/^(.*?)(\d{1,3}(?:,\d{3})+)(\.\d+)?(.*)$/);
+  if (en) {
+    const [, prefix, int, frac = "", suffix] = en;
+    return {
+      prefix,
+      suffix,
+      number: parseFloat(int.replace(/,/g, "") + frac),
+      decimals: frac ? frac.length - 1 : 0,
+      decimalSep: ".",
+      groupSep: ",",
+    };
+  }
   // A space only counts as a thousands separator when a digit follows it, so
   // "65 %" or "150 000 FCFA" keep the space before their unit.
   const match = display.match(/^(.*?)(\d(?:\d|[\s\u202f](?=\d))*(?:[.,]\d+)?)(.*)$/);

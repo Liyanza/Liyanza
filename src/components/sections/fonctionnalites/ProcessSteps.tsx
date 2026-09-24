@@ -3,30 +3,27 @@ import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
 import { PinnedSteps } from "@/components/motion/PinnedSteps";
 import { Reveal } from "@/components/motion/Reveal";
+import { getMessages } from "@/i18n/server";
 
-const steps = [
-  { icon: BarChart3, label: "Créer" },
-  { icon: Sparkles, label: "Simuler" },
-  { icon: Play, label: "Lancer" },
-  { icon: Cloud, label: "Monitorer" },
-  { icon: TrendingUp, label: "Optimiser" },
-  { icon: Download, label: "Exporter" },
-];
+/** Icônes des étapes, dans l'ordre de features.process.steps. */
+const stepIcons = [BarChart3, Sparkles, Play, Cloud, TrendingUp, Download];
 
-export function ProcessSteps() {
+export async function ProcessSteps() {
+  const t = (await getMessages("features")).process;
+  const steps = t.steps.map((label, i) => ({ label, icon: stepIcons[i] }));
+
   return (
     <PinnedSteps className="bg-white py-20">
       <Container>
         <Reveal className="mx-auto max-w-2xl text-center">
-          <SectionEyebrow variant="pill" tone="orange">Comment ça marche ?</SectionEyebrow>
+          <SectionEyebrow variant="pill" tone="orange">{t.eyebrow}</SectionEyebrow>
           <h2 className="mt-5 text-4xl font-extrabold text-black">
-            Un seul parcours pour piloter
+            {t.titleLines[0]}
             <br />
-            vos campagnes
+            {t.titleLines[1]}
           </h2>
           <p className="mt-3 text-sm text-gray-text">
-            Un flux simple et intégré, du paramétrage jusqu&apos;au rapport
-            final.
+            {t.text}
           </p>
         </Reveal>
 

@@ -1,13 +1,10 @@
 import { CountUp } from "@/components/motion/CountUp";
 import { Check, ChevronDown } from "lucide-react";
 import { FaFacebook, FaInstagram } from "react-icons/fa6";
+import { getMessages } from "@/i18n/server";
 
-const steps = [
-  { label: "Définir l'objectif", state: "done" as const },
-  { label: "Choisir les canaux", state: "active" as const },
-  { label: "Fixer le budget", state: "upcoming" as const },
-  { label: "Lancer", state: "upcoming" as const },
-];
+/** État de chaque étape (libellés : home.mockups.wizard.steps). */
+const stepStates = ["done", "active", "upcoming", "upcoming"] as const;
 
 function StepCircle({ state, number }: { state: "done" | "active" | "upcoming"; number: number }) {
   if (state === "done") {
@@ -31,13 +28,16 @@ function StepCircle({ state, number }: { state: "done" | "active" | "upcoming"; 
   );
 }
 
-export function CampaignWizardMockup() {
+export async function CampaignWizardMockup() {
+  const t = (await getMessages("home")).mockups.wizard;
+  const steps = t.steps.map((label, i) => ({ label, state: stepStates[i] }));
+
   return (
     <div className="w-full max-w-[500px] overflow-hidden rounded-[5px] border border-zinc-200 bg-white shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_10px_10px_-5px_rgba(0,0,0,0.1)]">
       <div className="border-b border-zinc-200 px-5 py-4">
-        <p className="text-xs font-bold text-zinc-900">Nouvelle campagne</p>
+        <p className="text-xs font-bold text-zinc-900">{t.title}</p>
         <p className="mt-1 text-[10px] text-gray-text">
-          Promo de fin d&apos;année — Facebook &amp; Instagram
+          {t.subtitle}
         </p>
       </div>
 
@@ -69,10 +69,10 @@ export function CampaignWizardMockup() {
 
         <div data-live="item">
           <p className="text-[9px] font-bold uppercase tracking-wide text-gray-text-light">
-            Objectif
+            {t.objective}
           </p>
           <div className="mt-1.5 flex items-center justify-between rounded-[5px] border border-zinc-200 bg-white px-3 py-2">
-            <span className="text-xs text-zinc-900">Augmenter les conversions</span>
+            <span className="text-xs text-zinc-900">{t.objectiveValue}</span>
             <ChevronDown className="size-3.5 text-zinc-300" aria-hidden="true" />
           </div>
         </div>
@@ -80,18 +80,18 @@ export function CampaignWizardMockup() {
         <div className="grid grid-cols-2 gap-4">
           <div data-live="item">
             <p className="text-[9px] font-bold uppercase tracking-wide text-gray-text-light">
-              Budget
+              {t.budget}
             </p>
             <div className="mt-1.5 rounded-[5px] border border-green-accent-dark bg-white px-3 py-2">
-              <CountUp value="150 000 FCFA" className="text-xs text-zinc-900" />
+              <CountUp value={t.budgetValue} className="text-xs text-zinc-900" />
             </div>
           </div>
           <div data-live="item">
             <p className="text-[9px] font-bold uppercase tracking-wide text-gray-text-light">
-              Durée
+              {t.duration}
             </p>
             <div className="mt-1.5 rounded-[5px] border border-zinc-200 bg-white px-3 py-2">
-              <span className="text-xs text-zinc-900">14 jours</span>
+              <span className="text-xs text-zinc-900">{t.durationValue}</span>
             </div>
           </div>
         </div>
@@ -106,7 +106,7 @@ export function CampaignWizardMockup() {
             Instagram
           </span>
           <span className="rounded-[5px] border border-zinc-200 bg-zinc-50 px-3 py-1.5 text-[10px] font-semibold text-gray-text">
-            + Ajouter
+            {t.add}
           </span>
         </div>
       </div>

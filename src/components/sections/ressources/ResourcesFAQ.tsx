@@ -6,12 +6,14 @@ import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
 import { Reveal } from "@/components/motion/Reveal";
 import { Collapse, ToggleIcon } from "@/components/motion/Disclosure";
-import { resourcesFaqs as faqs } from "@/data/faqs";
+import { useT } from "@/i18n/client";
 import { resourceId } from "@/data/resources";
 import { useResourceFocus } from "@/lib/resources-search";
 
 
 export function ResourcesFAQ() {
+  const t = useT("resources").faq;
+  const faqs = t.items;
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const baseId = useId();
 
@@ -20,7 +22,7 @@ export function ResourcesFAQ() {
     useCallback((id: string) => {
       const i = faqs.findIndex((f) => resourceId(f.question) === id);
       if (i !== -1) setOpenIndex(i);
-    }, []),
+    }, [faqs]),
   );
 
   return (
@@ -28,19 +30,18 @@ export function ResourcesFAQ() {
       <Container>
         <div className="grid grid-cols-1 gap-16 lg:grid-cols-[1fr_2fr]">
           <Reveal>
-            <SectionEyebrow variant="pill" tone="orange">FAQ</SectionEyebrow>
+            <SectionEyebrow variant="pill" tone="orange">{t.eyebrow}</SectionEyebrow>
             <h2 className="mt-5 text-4xl font-black text-black">
-              Questions fréquentes
+              {t.title}
             </h2>
             <p className="mt-4 text-sm leading-relaxed text-[#71717a]">
-              Vous ne trouvez pas votre réponse ? Notre équipe est là pour
-              vous aider.
+              {t.text}
             </p>
             <button
               type="button"
               className="mt-6 flex items-center gap-2 rounded-full border border-[#e4e4e7] px-5 py-3 text-sm font-semibold text-[#3f3f46] transition hover:bg-[#fafafa]"
             >
-              Contacter le support
+              {t.cta}
               <ArrowRight className="size-3.5" aria-hidden="true" />
             </button>
           </Reveal>

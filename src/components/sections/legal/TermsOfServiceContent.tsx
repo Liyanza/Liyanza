@@ -1,4 +1,5 @@
 import { Container } from "@/components/ui/Container";
+import { Link } from "@/i18n/navigation";
 import { LegalSection } from "./LegalSection";
 
 export const termsOfServiceSections = [
@@ -53,9 +54,9 @@ export function TermsOfServiceContent() {
             ou l&apos;utilisation du Service de quelque manière que ce soit
             vaut acceptation pleine et entière des présentes Conditions ainsi
             que de notre{" "}
-            <a href="/politique-confidentialite">
+            <Link href="/politique-confidentialite">
               Politique de confidentialité
-            </a>
+            </Link>
             . Si vous n&apos;acceptez pas ces Conditions, vous ne devez pas
             utiliser le Service.
           </p>
@@ -152,9 +153,9 @@ export function TermsOfServiceContent() {
             fournisseurs les informations strictement nécessaires à la
             création de votre compte (identifiant, adresse email, nom et
             prénom) — voir notre{" "}
-            <a href="/politique-confidentialite">
+            <Link href="/politique-confidentialite">
               Politique de confidentialité
-            </a>{" "}
+            </Link>{" "}
             pour le détail des données traitées.
           </p>
           <p>
@@ -225,7 +226,7 @@ export function TermsOfServiceContent() {
         <LegalSection id="tarifs" title="10. Tarifs et facturation">
           <p>
             Les formules et tarifs du Service sont décrits sur notre page{" "}
-            <a href="/tarifs">Tarifs</a>. Sauf mention contraire, les prix
+            <Link href="/tarifs">Tarifs</Link>. Sauf mention contraire, les prix
             sont indiqués hors taxes et peuvent évoluer&nbsp;; toute
             modification tarifaire sera communiquée aux Utilisateurs
             concernés avant son entrée en vigueur pour les abonnements en

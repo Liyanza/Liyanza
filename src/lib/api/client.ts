@@ -1,5 +1,6 @@
 "use client";
 
+import { localizePath, parsePath } from "@/i18n/paths";
 import type {
   AdvertisingChannelRecord,
   AssociateChannelsPayload,
@@ -103,8 +104,9 @@ async function authenticatedRequest<T>(url: string, init?: RequestInit): Promise
       // n'est pas un composant) — une session vraiment expirée doit repartir
       // d'un état propre plutôt qu'une navigation client qui garderait du
       // state React obsolète en mémoire.
-      // eslint-disable-next-line @next/next/no-location-assign-relative-destination
-      window.location.assign("/connexion");
+      // Page de connexion dans la langue de la page courante.
+      const { locale } = parsePath(window.location.pathname);
+      window.location.assign(localizePath("/connexion", locale));
     }
     throw error;
   }

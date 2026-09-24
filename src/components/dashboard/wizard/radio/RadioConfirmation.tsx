@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { AlertTriangle, CheckCircle2 } from "lucide-react";
 
 export function RadioConfirmation({

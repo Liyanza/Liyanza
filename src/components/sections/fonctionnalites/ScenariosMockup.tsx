@@ -1,21 +1,18 @@
 import { CountUp } from "@/components/motion/CountUp";
+import { getMessages } from "@/i18n/server";
 
+/** Données visuelles (noms et budgets : features.mockups.scenarios.items). */
 interface Scenario {
-  name: string;
-  budget: string;
   roi: string;
   roiColor: string;
   roas: string;
   progress: number;
   progressClass: string;
   highlighted?: boolean;
-  badge?: string;
 }
 
-const scenarios: Scenario[] = [
+const scenarioStyles: Scenario[] = [
   {
-    name: "Scénario A",
-    budget: "200 000 FCFA",
     roi: "245%",
     roiColor: "text-black",
     roas: "ROAS 4.2x",
@@ -23,19 +20,14 @@ const scenarios: Scenario[] = [
     progressClass: "bg-[#3b82f6]",
   },
   {
-    name: "Scénario B",
-    budget: "350 000 FCFA",
     roi: "318%",
     roiColor: "text-blue-500",
     roas: "ROAS 5.8x",
     progress: 82,
     progressClass: "bg-blue-500",
     highlighted: true,
-    badge: "Recommandé IA",
   },
   {
-    name: "Scénario C",
-    budget: "275 000 FCFA",
     roi: "272%",
     roiColor: "text-black",
     roas: "ROAS 4.9x",
@@ -44,12 +36,15 @@ const scenarios: Scenario[] = [
   },
 ];
 
-export function ScenariosMockup() {
+export async function ScenariosMockup() {
+  const t = (await getMessages("features")).mockups.scenarios;
+  const scenarios = scenarioStyles.map((s, i) => ({ ...s, ...t.items[i] }));
+
   return (
     <div className="w-full max-w-[448px] overflow-hidden rounded-2xl border border-border-light bg-white shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_10px_10px_-5px_rgba(0,0,0,0.1)]">
       <div className="flex items-center justify-between border-b border-border-light px-5 py-4">
-        <p className="text-sm font-bold text-black">Simulation de scénarios IA</p>
-        <p className="text-xs text-gray-text-light">Budget : 500 000 FCFA</p>
+        <p className="text-sm font-bold text-black">{t.title}</p>
+        <p className="text-xs text-gray-text-light">{t.budget}</p>
       </div>
 
       <div>
@@ -68,12 +63,12 @@ export function ScenariosMockup() {
                 >
                   {s.name}
                 </p>
-                {s.badge && (
+                {s.highlighted && (
                   <span
                     data-live="badge"
                     className="rounded-full bg-blue-500 px-2 py-0.5 text-[10px] font-bold text-white"
                   >
-                    {s.badge}
+                    {t.recommended}
                   </span>
                 )}
               </div>
@@ -81,7 +76,7 @@ export function ScenariosMockup() {
                 <p className={`text-sm font-bold ${s.roiColor}`}>
                   <CountUp value={s.roi} />
                 </p>
-                <p className="text-[10px] text-gray-text-light">ROI estimé</p>
+                <p className="text-[10px] text-gray-text-light">{t.estimatedRoi}</p>
               </div>
             </div>
             <p className="mt-0.5 text-xs text-gray-text">{s.budget}</p>
@@ -104,7 +99,7 @@ export function ScenariosMockup() {
           type="button"
           className="w-full rounded-full border-2 border-green-accent py-2.5 text-sm font-semibold text-green-accent"
         >
-          Voir tous les scénarios
+          {t.seeAll}
         </button>
       </div>
     </div>

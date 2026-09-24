@@ -2,8 +2,11 @@ import { ArrowRight, CheckCircle2, PlayCircle } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { Reveal } from "@/components/motion/Reveal";
+import { getMessages } from "@/i18n/server";
 
-export function FeaturesFinalCTA() {
+export async function FeaturesFinalCTA() {
+  const t = (await getMessages("common")).finalCta;
+
   return (
     <section className="relative overflow-hidden bg-[linear-gradient(169deg,var(--color-navy)_0%,#0a2e1a_77%,var(--color-navy)_100%)] py-20">
       <div
@@ -18,14 +21,13 @@ export function FeaturesFinalCTA() {
       <Container className="relative flex flex-col items-start gap-10 lg:flex-row lg:items-center lg:justify-between">
         <Reveal className="max-w-xl">
           <p className="text-xs font-bold uppercase leading-4 tracking-[0.1em] text-orange-500">
-            Commencez dès aujourd&apos;hui
+            {t.eyebrow}
           </p>
           <h2 className="mt-4 text-3xl font-extrabold leading-[1.25] text-white sm:text-4xl">
-            Prêt à piloter votre prochaine campagne autrement ?
+            {t.title}
           </h2>
           <p className="mt-3 max-w-sm text-sm font-medium leading-relaxed text-[#6b8ab0]">
-            Rejoignez KIYANZA et transformez vos idées en résultats concrets.
-            Gratuit pour commencer.
+            {t.text}
           </p>
         </Reveal>
 
@@ -38,7 +40,7 @@ export function FeaturesFinalCTA() {
               className="sm:w-[300px]"
               icon={<ArrowRight className="size-4" aria-hidden="true" />}
             >
-              Commencer gratuitement
+              {t.primary}
             </Button>
             <Button
               variant="outline"
@@ -48,18 +50,16 @@ export function FeaturesFinalCTA() {
               icon={<PlayCircle className="size-[18px]" aria-hidden="true" />}
               iconPosition="left"
             >
-              Voir comment ça marche
+              {t.secondary}
             </Button>
           </div>
           <div className="flex flex-wrap items-center gap-5 text-xs text-[#6b8ab0]">
-            <span className="flex items-center gap-1">
-              <CheckCircle2 className="size-3.5 text-green-accent" aria-hidden="true" />
-              Annulation à tout moment
-            </span>
-            <span className="flex items-center gap-1">
-              <CheckCircle2 className="size-3.5 text-green-accent" aria-hidden="true" />
-              Support inclus
-            </span>
+            {t.points.map((point) => (
+              <span key={point} className="flex items-center gap-1">
+                <CheckCircle2 className="size-3.5 text-green-accent" aria-hidden="true" />
+                {point}
+              </span>
+            ))}
           </div>
         </Reveal>
       </Container>

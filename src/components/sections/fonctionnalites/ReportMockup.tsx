@@ -1,22 +1,17 @@
 import { CountUp } from "@/components/motion/CountUp";
+import { getMessages } from "@/i18n/server";
 
-const stats = [
-  { label: "Impressions", value: "124 400" },
-  { label: "Conversions", value: "1 384" },
-  { label: "Taux conv.", value: "4.5%" },
-  { label: "Budget dépensé", value: "85 000F" },
-  { label: "ROAS", value: "5.8x" },
-  { label: "CPA", value: "85 FCFA" },
-];
+export async function ReportMockup() {
+  const t = (await getMessages("features")).mockups.report;
+  const stats = t.stats;
 
-export function ReportMockup() {
   return (
     <div className="w-full max-w-[384px] overflow-hidden rounded-2xl border border-border-light bg-white shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_10px_10px_-5px_rgba(0,0,0,0.1)]">
       <div className="flex items-center justify-between border-b border-border-light px-5 py-4">
         <div>
-          <p className="text-sm font-bold text-navy">Rapport de campagne</p>
+          <p className="text-sm font-bold text-navy">{t.title}</p>
           <p className="text-[10px] text-gray-text-light">
-            Promo Orange Money · Mai 2025
+            {t.subtitle}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -80,13 +75,13 @@ export function ReportMockup() {
             type="button"
             className="flex-1 rounded-full border-2 border-green-accent py-2.5 text-xs font-semibold text-green-accent"
           >
-            Exporter PDF
+            {t.export}
           </button>
           <button
             type="button"
             className="flex-1 rounded-full bg-green-accent py-2.5 text-xs font-semibold text-white"
           >
-            Partager →
+            {t.share}
           </button>
         </div>
       </div>

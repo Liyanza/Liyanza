@@ -1,4 +1,6 @@
 import { CountUp } from "@/components/motion/CountUp";
+import { getMessages } from "@/i18n/server";
+import { fill } from "@/i18n/format";
 
 interface ChannelStat {
   name: string;
@@ -12,39 +14,21 @@ const channels: ChannelStat[] = [
   { name: "WhatsApp", roas: "ROAS 4.8×", progress: 96 },
 ];
 
-interface Activity {
-  icon: string;
-  text: string;
-  time: string;
-  tone: "alert" | "success" | "info";
-}
+/** Pictogramme et ton de chaque activité (textes : home.mockups.monitoring). */
+const activityStyles = [
+  { icon: "▲", tone: "alert" },
+  { icon: "✓", tone: "success" },
+  { icon: "✦", tone: "info" },
+] as const;
 
-const activities: Activity[] = [
-  {
-    icon: "▲",
-    text: "Budget Promo Orange Money à 85 %",
-    time: "Il y a 1 h",
-    tone: "alert",
-  },
-  {
-    icon: "✓",
-    text: "Objectif conversions Instagram atteint",
-    time: "Il y a 3 h",
-    tone: "success",
-  },
-  {
-    icon: "✦",
-    text: "Nouvelle recommandation IA disponible",
-    time: "Il y a 4 h",
-    tone: "info",
-  },
-];
+export async function ChannelMonitoringMockup() {
+  const t = (await getMessages("home")).mockups.monitoring;
+  const activities = t.activities.map((a, i) => ({ ...a, ...activityStyles[i] }));
 
-export function ChannelMonitoringMockup() {
   return (
     <div className="w-full max-w-[500px] overflow-hidden rounded-[5px] border border-white bg-white shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_10px_10px_-5px_rgba(0,0,0,0.1)]">
       <div className="border-b border-zinc-200 px-5 py-4">
-        <p className="text-xs font-bold text-zinc-900">Monitoring en temps réel</p>
+        <p className="text-xs font-bold text-zinc-900">{t.title}</p>
       </div>
 
       <div className="space-y-4 p-5">
@@ -64,7 +48,7 @@ export function ChannelMonitoringMockup() {
               />
             </div>
             <p className="mt-0.5 text-[8px] text-gray-text">
-              <CountUp value={`${channel.progress} %`} /> de l&apos;objectif
+              <CountUp value={fill(t.percent, { value: channel.progress })} /> {t.ofGoal}
             </p>
           </div>
         ))}

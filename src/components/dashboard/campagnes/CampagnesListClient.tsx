@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Plus } from "lucide-react";
 import { TopBar } from "@/components/dashboard/layout/TopBar";
 import { Button } from "@/components/ui/Button";

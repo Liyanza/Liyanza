@@ -5,45 +5,48 @@ import { ArrowRight, Clock } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
 import { Reveal } from "@/components/motion/Reveal";
-import { guides, resourceId, type Level } from "@/data/resources";
+import { resourceId } from "@/data/resources";
+import { useT } from "@/i18n/client";
 import { useResourceFocus } from "@/lib/resources-search";
 
-const filters = ["Tous", "Guide", "Tutoriel", "Vidéo", "FAQ"] as const;
+const filters = ["all", "guide", "tutorial", "video", "faq"] as const;
 
-const levelStyles: Record<Level, string> = {
-  Débutant: "bg-blue-500/10 text-blue-500",
-  Intermédiaire: "bg-orange-500/10 text-orange-500",
-  Avancé: "bg-red-500/10 text-red-600",
+const levelStyles = {
+  beginner: "bg-blue-500/10 text-blue-500",
+  intermediate: "bg-orange-500/10 text-orange-500",
+  advanced: "bg-red-500/10 text-red-600",
 };
 
 export function GuidesSection() {
-  const [active, setActive] = useState<(typeof filters)[number]>("Tous");
+  const t = useT("resources").guides;
+  const guides = t.items;
+  const [active, setActive] = useState<(typeof filters)[number]>("all");
 
   // Un résultat de recherche vise un guide masqué par le filtre : on repasse sur « Tous ».
   useResourceFocus(
     useCallback((id: string) => {
-      if (guides.some((g) => resourceId(g.title) === id)) setActive("Tous");
-    }, []),
+      if (guides.some((g) => resourceId(g.title) === id)) setActive("all");
+    }, [guides]),
   );
 
   const visible =
-    active === "Tous" ? guides : guides.filter((g) => g.type === active);
+    active === "all" ? guides : guides.filter((g) => g.type === active);
 
   return (
     <section className="border-t border-[#e4e4e7] bg-blue-500/[0.09] py-20">
       <Container>
         <Reveal className="flex flex-wrap items-center justify-between gap-6">
           <div>
-            <SectionEyebrow variant="pill" tone="orange">Guides &amp; Tutoriels</SectionEyebrow>
+            <SectionEyebrow variant="pill" tone="orange">{t.eyebrow}</SectionEyebrow>
             <h2 className="mt-5 text-4xl font-extrabold text-black sm:text-5xl">
-              Apprenez à mieux piloter vos campagnes
+              {t.title}
             </h2>
           </div>
           <button
             type="button"
             className="flex items-center gap-2 rounded-full border border-[#e4e4e7] px-5 py-3 text-sm font-semibold text-[#3f3f46] transition hover:bg-white"
           >
-            Voir tous les guides
+            {t.seeAll}
             <ArrowRight className="size-3.5" aria-hidden="true" />
           </button>
         </Reveal>
@@ -62,7 +65,7 @@ export function GuidesSection() {
                     : "border border-[#e4e4e7] bg-white text-[#52525b] hover:bg-[#f4f4f5]"
                 }`}
               >
-                {filter}
+                {t.filters[filter]}
               </button>
             );
           })}
@@ -78,12 +81,12 @@ export function GuidesSection() {
             >
               <div className="flex items-center justify-between gap-2">
                 <span className="rounded-full border border-[#e4e4e7] bg-[#f4f4f5] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-[#52525b]">
-                  {guide.type}
+                  {t.filters[guide.type]}
                 </span>
                 <span
                   className={`rounded-full px-2 py-1 text-[10px] font-bold tracking-wide ${levelStyles[guide.level]}`}
                 >
-                  {guide.level}
+                  {t.levels[guide.level]}
                 </span>
               </div>
               <h3 className="mt-4 text-base font-bold text-black">{guide.title}</h3>
@@ -99,7 +102,7 @@ export function GuidesSection() {
                   type="button"
                   className="flex items-center gap-1 text-xs font-semibold text-green-accent-dark"
                 >
-                  Lire
+                  {t.read}
                   <ArrowRight className="size-3" aria-hidden="true" />
                 </button>
               </div>
@@ -107,7 +110,7 @@ export function GuidesSection() {
           ))}
           {visible.length === 0 && (
             <p className="col-span-full py-10 text-center text-sm text-[#71717a]">
-              Aucun contenu disponible pour ce filtre pour le moment.
+              {t.empty}
             </p>
           )}
         </Reveal>

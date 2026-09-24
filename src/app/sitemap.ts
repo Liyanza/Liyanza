@@ -1,5 +1,7 @@
 import type { MetadataRoute } from "next";
 import { absoluteUrl } from "@/lib/site-config";
+import { defaultLocale, localeMeta, locales } from "@/i18n/config";
+import { localizePath } from "@/i18n/paths";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
@@ -23,10 +25,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // volontairement exclues du sitemap : elles sont en `noindex` (voir leurs
   // métadonnées) et n'ont aucun intérêt SEO.
 
-  return publicRoutes.map((route) => ({
-    url: absoluteUrl(route.path),
-    lastModified: now,
-    changeFrequency: route.changeFrequency,
-    priority: route.priority,
-  }));
+  // Une entrée par page et par langue, chacune annonçant ses équivalents
+  // (hreflang) — le français sert de version par défaut (x-default).
+  return publicRoutes.flatMap((route) => {
+    const languages = {
+      ...Object.fromEntries(locales.map((l) => [localeMeta[l].htmlLang, absoluteUrl(localizePath(route.path, l))])),
+      "x-default": absoluteUrl(localizePath(route.path, defaultLocale)),
+    };
+    return locales.map((locale) => ({
+      url: absoluteUrl(localizePath(route.path, locale)),
+      lastModified: now,
+      changeFrequency: route.changeFrequency,
+      priority: route.priority,
+      alternates: { languages },
+    }));
+  });
 }

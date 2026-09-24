@@ -15,17 +15,21 @@ export function organizationJsonLd() {
   };
 }
 
-/** Schema.org WebSite — permet à Google de comprendre la structure du site. */
-export function websiteJsonLd() {
+/**
+ * Schema.org WebSite — permet à Google de comprendre la structure du site.
+ * Le site est bilingue : toutes les langues sont déclarées, et la description
+ * suit la langue de la page servie.
+ */
+export function websiteJsonLd(description: string = siteConfig.defaultDescription) {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "@id": absoluteUrl("/#website"),
     url: siteConfig.url,
     name: siteConfig.name,
-    description: siteConfig.defaultDescription,
+    description,
     publisher: { "@id": absoluteUrl("/#organization") },
-    inLanguage: "fr-FR",
+    inLanguage: ["fr-FR", "en-US"],
   };
 }
 

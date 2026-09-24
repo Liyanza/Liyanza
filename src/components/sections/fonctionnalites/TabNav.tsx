@@ -3,16 +3,11 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { MEDIA } from "@/lib/motion/tokens";
 
-const tabs = [
-  { number: "01", label: "Campagnes", href: "#campagnes" },
-  { number: "02", label: "Scénarios IA", href: "#scenarios-ia" },
-  { number: "03", label: "Gestion des Campagnes", href: "#gestion-campagnes" },
-  { number: "04", label: "Monitoring", href: "#monitoring" },
-  { number: "05", label: "Recommandations IA", href: "#recommandations-ia" },
-  { number: "06", label: "Rapports", href: "#rapports" },
-];
+/** Ancres des sections (identiques dans toutes les langues) ; libellés en props. */
+const anchors = ["#campagnes", "#scenarios-ia", "#gestion-campagnes", "#monitoring", "#recommandations-ia", "#rapports"];
+const tabs = anchors.map((href, i) => ({ number: String(i + 1).padStart(2, "0"), href }));
 
-export function TabNav() {
+export function TabNav({ label, items }: { label: string; items: string[] }) {
   const [active, setActive] = useState(tabs[0].href);
   const linkRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
   const navRef = useRef<HTMLElement>(null);
@@ -88,11 +83,11 @@ export function TabNav() {
   return (
     <nav
       ref={navRef}
-      aria-label="Sections de fonctionnalités"
+      aria-label={label}
       className="group sticky top-20 z-30 border-b border-border-light bg-white shadow-[0_1px_2px_rgba(0,0,0,0.1),0_1px_3px_rgba(0,0,0,0.1)]"
     >
       <div className="relative mx-auto flex max-w-[1280px] gap-2 overflow-x-auto px-6">
-        {tabs.map((tab) => {
+        {tabs.map((tab, i) => {
           const isActive = active === tab.href;
           return (
             <a
@@ -115,7 +110,7 @@ export function TabNav() {
               >
                 {tab.number}
               </span>
-              {tab.label}
+              {items[i]}
             </a>
           );
         })}

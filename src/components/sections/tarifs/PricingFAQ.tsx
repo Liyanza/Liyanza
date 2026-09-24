@@ -6,43 +6,10 @@ import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
 import { Reveal } from "@/components/motion/Reveal";
 import { Collapse, ToggleIcon } from "@/components/motion/Disclosure";
+import { Link } from "@/i18n/navigation";
+import type { Messages } from "@/i18n/dictionaries";
 
-const faqs = [
-  {
-    question: "Puis-je commencer gratuitement ?",
-    answer:
-      "Oui, la formule FREE vous permet de découvrir KIYANZA sans engagement ni carte bancaire.",
-  },
-  {
-    question: "Puis-je changer de formule à tout moment ?",
-    answer:
-      "Oui, vous pouvez passer à une formule supérieure ou inférieure à tout moment depuis votre espace client.",
-  },
-  {
-    question:
-      "Quelle est la différence entre facturation mensuelle et annuelle ?",
-    answer:
-      "La facturation annuelle vous permet de bénéficier d'une réduction par rapport au paiement mensuel, pour le même accès à toutes les fonctionnalités.",
-  },
-  {
-    question:
-      "Les fonctionnalités IA sont-elles disponibles dans toutes les offres ?",
-    answer:
-      "Un accès limité aux recommandations IA est inclus dans la formule FREE. Les scénarios IA et recommandations avancées sont disponibles à partir de la formule PRO.",
-  },
-  {
-    question: "Comment fonctionne la formule ENTERPRISE ?",
-    answer:
-      "La formule ENTERPRISE est sur devis et s'adapte aux besoins spécifiques de votre organisation, avec un accompagnement dédié.",
-  },
-  {
-    question: "Puis-je annuler mon abonnement ?",
-    answer:
-      "Oui, vous pouvez annuler votre abonnement à tout moment, sans engagement ni frais cachés.",
-  },
-];
-
-export function PricingFAQ() {
+export function PricingFAQ({ t }: { t: Messages["pricing"]["faq"] }) {
   const [openIndex, setOpenIndex] = useState<number | null>(3);
   const baseId = useId();
 
@@ -51,25 +18,24 @@ export function PricingFAQ() {
       <Container>
         <div className="grid grid-cols-1 gap-16 lg:grid-cols-[1fr_2fr]">
           <Reveal>
-            <SectionEyebrow variant="pill" tone="orange">FAQ Tarifs</SectionEyebrow>
+            <SectionEyebrow variant="pill" tone="orange">{t.eyebrow}</SectionEyebrow>
             <h2 className="mt-5 text-4xl font-extrabold text-black">
-              Questions fréquentes
+              {t.title}
             </h2>
             <p className="mt-4 text-sm leading-relaxed text-gray-text">
-              Vous ne trouvez pas votre réponse ? Notre équipe est
-              disponible pour vous aider.
+              {t.text}
             </p>
-            <a
+            <Link
               href="/ressources"
               className="mt-6 inline-flex items-center gap-2 rounded-full border border-zinc-200 px-6 py-3 text-sm font-semibold text-[#3f3f46] hover:bg-white"
             >
-              Voir toutes les ressources
+              {t.cta}
               <ArrowRight className="size-3.5" aria-hidden="true" />
-            </a>
+            </Link>
           </Reveal>
 
           <Reveal stagger className="divide-y divide-[#e4e4e7] border-t border-[#e4e4e7]">
-            {faqs.map((faq, i) => {
+            {t.items.map((faq, i) => {
               const isOpen = openIndex === i;
               return (
                 <div key={faq.question} data-reveal-item>

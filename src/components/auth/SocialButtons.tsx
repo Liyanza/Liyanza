@@ -5,8 +5,10 @@ import { FaFacebook } from "react-icons/fa6";
 import { FcGoogle } from "react-icons/fc";
 import { Loader2 } from "lucide-react";
 import { loginWithProvider, ApiError } from "@/lib/api/client";
+import { useT } from "@/i18n/client";
 
 export function SocialButtons() {
+  const t = useT("auth");
   const [pending, setPending] = useState<"google" | "facebook" | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -18,7 +20,7 @@ export function SocialButtons() {
       // d'échec (la redirection réussie quitte la page avant le retour).
       await loginWithProvider(provider);
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Impossible de démarrer la connexion.");
+      setError(err instanceof ApiError ? err.message : t.social.startError);
       setPending(null);
     }
   }

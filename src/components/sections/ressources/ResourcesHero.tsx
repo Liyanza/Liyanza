@@ -6,16 +6,14 @@ import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
 import { HeroIntro } from "@/components/motion/HeroIntro";
 import { focusResource, searchResources } from "@/lib/resources-search";
-
-const popularSearches = [
-  "Créer une campagne",
-  "Scénarios IA",
-  "Monitoring",
-  "Rapports",
-  "Budget",
-];
+import { buildResourceIndex } from "@/data/resources";
+import { useT } from "@/i18n/client";
+import { fill } from "@/i18n/format";
 
 export function ResourcesHero() {
+  const messages = useT("resources");
+  const t = messages.search;
+  const index = useMemo(() => buildResourceIndex(messages), [messages]);
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -23,11 +21,12 @@ export function ResourcesHero() {
   const listRef = useRef<HTMLUListElement>(null);
   const panelId = useId();
 
-  const results = useMemo(() => searchResources(query), [query]);
+  const results = useMemo(() => searchResources(index, query), [index, query]);
   const showPanel = open && query.trim().length > 1;
-  const status = results.length
-    ? `${results.length} résultat${results.length > 1 ? "s" : ""} pour « ${query.trim()} »`
-    : `Aucun résultat pour « ${query.trim()} »`;
+  const q = query.trim();
+  const status = !results.length
+    ? fill(t.noResults, { query: q })
+    : fill(results.length === 1 ? t.resultsOne : t.resultsMany, { count: results.length, query: q });
 
   // Ferme le panneau au clic en dehors.
   useEffect(() => {
@@ -78,16 +77,15 @@ export function ResourcesHero() {
       <Container className="mx-auto max-w-3xl text-center">
         <HeroIntro>
           <div data-intro="badge">
-            <SectionEyebrow variant="pill" tone="orange">Centre de ressources</SectionEyebrow>
+            <SectionEyebrow variant="pill" tone="orange">{messages.hero.eyebrow}</SectionEyebrow>
           </div>
           <h1 data-intro="title" className="mt-6 text-4xl font-black leading-tight tracking-tight text-black sm:text-5xl">
-            Comment pouvons-nous
+            {messages.hero.titleStart}
             <br />
-            <span className="text-orange-500">vous aider ?</span>
+            <span className="text-orange-500">{messages.hero.titleHighlight}</span>
           </h1>
           <p data-intro="text" className="mt-4 text-lg text-black/45">
-            Guides, tutoriels, vidéos et FAQ — tout ce qu&apos;il faut pour
-            piloter vos campagnes comme un expert.
+            {messages.hero.text}
           </p>
 
           <div
@@ -98,7 +96,7 @@ export function ResourcesHero() {
           >
             <form
               role="search"
-              aria-label="Rechercher dans les ressources"
+              aria-label={t.formLabel}
               className="flex items-center gap-2 rounded-full border border-[#e8f5e9] bg-white py-1.5 pl-5 pr-1.5 has-[input:focus-visible]:ring-2 has-[input:focus-visible]:ring-green-accent"
               onSubmit={(e) => {
                 e.preventDefault();
@@ -117,8 +115,8 @@ export function ResourcesHero() {
                   setOpen(true);
                 }}
                 onFocus={() => setOpen(true)}
-                placeholder="Chercher un guide, tutoriel, question..."
-                aria-label="Chercher un guide, un tutoriel ou une question"
+                placeholder={t.placeholder}
+                aria-label={t.inputLabel}
                 aria-controls={panelId}
                 autoComplete="off"
                 className="w-full bg-transparent text-base text-black placeholder:text-black/50 focus:outline-none [&::-webkit-search-cancel-button]:hidden"
@@ -127,7 +125,7 @@ export function ResourcesHero() {
                 <button
                   type="button"
                   onClick={() => runSearch("")}
-                  aria-label="Effacer la recherche"
+                  aria-label={t.clear}
                   className="flex size-8 shrink-0 items-center justify-center rounded-full text-black/40 transition hover:bg-black/5 hover:text-black"
                 >
                   <X className="size-4" aria-hidden="true" />
@@ -137,7 +135,7 @@ export function ResourcesHero() {
                 type="submit"
                 className="shrink-0 rounded-full bg-green-600 px-6 py-4 text-sm font-bold text-white transition hover:bg-green-accent-dark"
               >
-                Rechercher
+                {t.submit}
               </button>
             </form>
 
@@ -161,7 +159,7 @@ export function ResourcesHero() {
                         className="group flex w-full items-start gap-3 px-5 py-3 text-left transition hover:bg-green-600/5 focus-visible:bg-green-600/5 focus-visible:outline-none"
                       >
                         <span className="mt-0.5 shrink-0 rounded-full border border-[#e4e4e7] bg-[#f4f4f5] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[#52525b]">
-                          {r.kind}
+                          {t.kinds[r.kind]}
                         </span>
                         <span className="min-w-0 flex-1">
                           <span className="block text-sm font-semibold text-black">{r.title}</span>
@@ -177,15 +175,15 @@ export function ResourcesHero() {
                 </ul>
               ) : (
                 <p className="px-5 py-4 text-sm text-black/55">
-                  Essayez un autre mot-clé, par exemple « campagne », « budget » ou « rapports ».
+                  {t.hint}
                 </p>
               )}
             </div>
           </div>
 
           <div data-intro="meta" className="mt-6 flex flex-wrap items-center justify-center gap-2 text-xs">
-            <span className="text-black/25">Populaires :</span>
-            {popularSearches.map((term) => (
+            <span className="text-black/25">{t.popularLabel}</span>
+            {t.popular.map((term) => (
               <button
                 key={term}
                 type="button"

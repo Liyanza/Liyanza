@@ -3,12 +3,25 @@
 import { useId, useState } from "react";
 import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
-import { homeFaqs } from "@/data/faqs";
+import { Link } from "@/i18n/navigation";
+import type { FaqEntry } from "@/data/faqs";
 import { Reveal } from "@/components/motion/Reveal";
 import { Collapse, ToggleIcon } from "@/components/motion/Disclosure";
 
-export function LandingFAQ() {
-  const [openIndex, setOpenIndex] = useState<number | null>(homeFaqs.length - 1);
+export function LandingFAQ({
+  eyebrow,
+  title,
+  text,
+  cta,
+  items,
+}: {
+  eyebrow: string;
+  title: string;
+  text: string;
+  cta: string;
+  items: FaqEntry[];
+}) {
+  const [openIndex, setOpenIndex] = useState<number | null>(items.length - 1);
   const baseId = useId();
 
   return (
@@ -17,14 +30,13 @@ export function LandingFAQ() {
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_2fr] lg:gap-12">
           <Reveal className="lg:col-start-1 lg:row-start-1">
             <SectionEyebrow variant="pill" tone="orange">
-              FAQ
+              {eyebrow}
             </SectionEyebrow>
             <h2 className="mt-5 text-3xl font-bold leading-[1.5] tracking-[-0.02em] text-zinc-950 sm:text-[40px]">
-              Questions fréquentes
+              {title}
             </h2>
             <p className="mt-4 text-base leading-[26px] text-zinc-500">
-              Tout ce que vous devez savoir sur KIYANZA. Vous ne trouvez pas votre
-              réponse ?
+              {text}
             </p>
           </Reveal>
 
@@ -32,7 +44,7 @@ export function LandingFAQ() {
             stagger
             className="order-2 divide-y divide-zinc-200 border-b border-zinc-200 lg:order-none lg:col-start-2 lg:row-start-1 lg:row-span-2"
           >
-            {homeFaqs.map((faq, i) => {
+            {items.map((faq, i) => {
               const isOpen = openIndex === i;
               return (
                 <div key={faq.question} data-reveal-item>
@@ -60,12 +72,12 @@ export function LandingFAQ() {
             })}
           </Reveal>
 
-          <a
+          <Link
             href="/ressources"
             className="order-3 inline-flex items-center self-start justify-self-start rounded-full border-2 border-zinc-300 px-6 py-3 text-sm font-semibold text-zinc-950 transition hover:bg-white lg:order-none lg:col-start-1 lg:row-start-2"
           >
-            Voir toutes les ressources
-          </a>
+            {cta}
+          </Link>
         </div>
       </Container>
     </section>

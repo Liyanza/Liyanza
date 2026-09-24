@@ -1,0 +1,128 @@
+/** Pages d'authentification (connexion, inscription, mot de passe). */
+const auth = {
+  shell: {
+    backToSite: "Retour au site",
+    backHome: "Retour à l'accueil",
+    security: "Données sécurisées · Conformité RGPD · Chiffrement bout-en-bout",
+    imageAlt: "Une professionnelle du marketing souriante, assise en tailleur avec son ordinateur portable",
+    stats: {
+      roi: "ROI",
+      budgetSplit: "Répartition du budget",
+      bestAudience: "Meilleure audience",
+      audienceValue: "25 – 45 ans",
+      conversions: "Conversions",
+    },
+  },
+  brand: {
+    login: {
+      heading: "Bon retour parmi nous !",
+      paragraph: "Accédez à votre cockpit marketing et reprenez le pilotage là où vous l'aviez laissé.",
+    },
+    signup: {
+      heading: "Lancez-vous. C'est gratuit !",
+      paragraph: "Rejoignez 500+ équipes marketing qui pilotent leurs campagnes avec l'IA KIYANZA.",
+    },
+    forgot: {
+      heading: "Pas de panique !",
+      paragraph: "Nous allons vous envoyer un lien pour réinitialiser votre mot de passe en toute sécurité.",
+    },
+    reset: {
+      heading: "Presque terminé !",
+      paragraph: "Choisissez un nouveau mot de passe pour votre compte KIYANZA.",
+    },
+  },
+  meta: {
+    login: { title: "Connexion" },
+    signup: { title: "Créer un compte" },
+    forgot: { title: "Mot de passe oublié" },
+    reset: { title: "Nouveau mot de passe" },
+  },
+  common: {
+    or: "ou",
+    genericError: "Une erreur est survenue.",
+    email: "Adresse email",
+    emailPlaceholder: "votre@email.com",
+    password: "Mot de passe",
+    showPassword: "Afficher le mot de passe",
+    hidePassword: "Masquer le mot de passe",
+    confirmPassword: "Confirmer le mot de passe",
+    confirmPlaceholder: "Répétez le mot de passe",
+    minChars: "Minimum 8 caractères",
+    mismatch: "Les mots de passe ne correspondent pas",
+    login: "Se connecter",
+    backToLogin: "Retour à la connexion",
+    terms: "Conditions d'utilisation",
+    privacy: "Politique de confidentialité",
+  },
+  social: {
+    startError: "Impossible de démarrer la connexion.",
+  },
+  login: {
+    title: "Connexion",
+    noAccount: "Pas encore de compte ?",
+    createAccount: "Créer un compte",
+    passwordPlaceholder: "Votre mot de passe",
+    remember: "Se souvenir de moi",
+    forgot: "Mot de passe oublié ?",
+    legalStart: "En vous connectant, vous acceptez nos",
+    legalAnd: "et notre",
+  },
+  signup: {
+    title: "Créer un compte",
+    already: "Déjà inscrit ?",
+    firstName: "Prénom",
+    lastName: "Nom",
+    lastNamePlaceholder: "Nom de famille",
+    phone: "Téléphone",
+    strength: { weak: "Faible", medium: "Moyen", strong: "Fort", veryStrong: "Très fort" },
+    rules: { length: "8+ caractères", upper: "Majuscule", number: "Chiffre" },
+    acceptStart: "J'accepte les",
+    acceptAnd: "et la",
+    acceptEnd: "de KIYANZA.",
+    submit: "Créer mon compte gratuitement",
+    perks: ["Gratuit sans carte", "Annulez à tout moment"],
+  },
+  forgot: {
+    sentTitle: "Email envoyé !",
+    sentText: "Un lien de réinitialisation a été envoyé à",
+    tips: [
+      "Vérifiez vos spams si vous ne trouvez pas l'email.",
+      "Le lien expire dans 30 minutes.",
+      "Ne partagez jamais ce lien avec quelqu'un d'autre.",
+    ],
+    resend: "← Renvoyer l'email",
+    title: "Mot de passe oublié ?",
+    text: "Saisissez votre adresse email. Nous vous enverrons un lien pour réinitialiser votre mot de passe.",
+    submit: "Recevoir le lien de réinitialisation",
+    privacyNote:
+      "Pour des raisons de sécurité, nous ne confirmons pas si l'adresse email est associée à un compte existant.",
+    remember: "Vous vous souvenez de votre mot de passe ?",
+  },
+  reset: {
+    invalidTitle: "Lien invalide",
+    invalidText: "Ce lien de réinitialisation est incomplet. Demandez-en un nouveau.",
+    newLink: "Recevoir un nouveau lien",
+    doneTitle: "Mot de passe mis à jour !",
+    doneText:
+      "Vos autres sessions ont été déconnectées par sécurité. Connectez-vous avec votre nouveau mot de passe.",
+    title: "Nouveau mot de passe",
+    text: "Choisissez un nouveau mot de passe pour votre compte.",
+    newPassword: "Nouveau mot de passe",
+    submit: "Réinitialiser le mot de passe",
+  },
+  oauth: {
+    errors: {
+      denied: "Vous avez annulé la connexion.",
+      invalid_or_expired_state: "La session de connexion a expiré, réessayez.",
+      missing_code: "La connexion a été interrompue, réessayez.",
+      account_disabled: "Ce compte est désactivé. Contactez un administrateur.",
+      exchange_failed: "La connexion a échoué, réessayez.",
+    } as Record<string, string>,
+    failed: "La connexion a échoué, réessayez.",
+    invalidLink: "Lien de connexion invalide.",
+    errorTitle: "Connexion impossible",
+    loading: "Connexion en cours…",
+  },
+};
+
+export default auth;

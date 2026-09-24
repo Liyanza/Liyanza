@@ -1,24 +1,25 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { ArrowRight, ChevronDown, Globe, Menu, X } from "lucide-react";
+import { Link, usePathname } from "@/i18n/navigation";
+import { ArrowRight, Menu, X } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { Logo } from "@/components/Logo";
-
-const links = [
-  { label: "Accueil", href: "/" },
-  { label: "Fonctionnalités", href: "/fonctionnalites" },
-  { label: "Tarifs", href: "/tarifs" },
-  { label: "Ressources", href: "/ressources" },
-  { label: "À propos", href: "/a-propos" },
-];
+import { LanguageSwitcher, LanguageToggle } from "@/components/i18n/LanguageSwitcher";
+import { useT } from "@/i18n/client";
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const t = useT("common").nav;
+  const links = [
+    { label: t.home, href: "/" },
+    { label: t.features, href: "/fonctionnalites" },
+    { label: t.pricing, href: "/tarifs" },
+    { label: t.resources, href: "/ressources" },
+    { label: t.about, href: "/a-propos" },
+  ];
 
   return (
     <header
@@ -26,13 +27,14 @@ export function Navbar() {
       style={{ viewTransitionName: "site-header" }}
     >
       <Container className="flex h-20 items-center justify-between">
-        <Link href="/" className="shrink-0" aria-label="KIYANZA — Accueil">
+        {/* data-nav-logo : cible du « portail » du splash (indépendant de la langue). */}
+        <Link href="/" className="shrink-0" aria-label={t.homeAria} data-nav-logo>
           <Logo />
         </Link>
 
         <nav
           className="hidden items-center gap-8 lg:flex"
-          aria-label="Navigation principale"
+          aria-label={t.label}
         >
           {links.map((link) => {
             const active = pathname === link.href;
@@ -55,7 +57,7 @@ export function Navbar() {
 
         <div className="hidden items-center gap-3 lg:flex">
           <Button variant="outline" size="sm" href="/connexion">
-            Se connecter
+            {t.login}
           </Button>
           <Button
             variant="solid"
@@ -63,23 +65,15 @@ export function Navbar() {
             href="/inscription"
             icon={<ArrowRight className="size-4" aria-hidden="true" />}
           >
-            Essayer gratuitement
+            {t.tryFree}
           </Button>
-          <button
-            type="button"
-            className="flex items-center gap-1 rounded-full px-4 py-2 text-sm font-semibold text-black transition hover:bg-black/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-accent"
-            aria-label="Changer de langue, actuellement Français"
-          >
-            <Globe className="size-4" aria-hidden="true" />
-            FR
-            <ChevronDown className="size-4" aria-hidden="true" />
-          </button>
+          <LanguageSwitcher />
         </div>
 
         <button
           type="button"
           className="relative inline-flex size-10 items-center justify-center rounded-lg text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-accent lg:hidden"
-          aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
+          aria-label={open ? t.closeMenu : t.openMenu}
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
         >
@@ -108,7 +102,7 @@ export function Navbar() {
         <Container className="flex flex-col gap-4 py-6">
           <nav
             className="flex flex-col gap-4"
-            aria-label="Navigation principale mobile"
+            aria-label={t.mobileLabel}
           >
             {links.map((link, i) => {
               const active = pathname === link.href;
@@ -130,7 +124,7 @@ export function Navbar() {
           </nav>
           <div className="flex flex-col gap-3 pt-2">
             <Button variant="outline" size="sm" href="/connexion">
-              Se connecter
+              {t.login}
             </Button>
             <Button
               variant="solid"
@@ -138,8 +132,9 @@ export function Navbar() {
               href="/inscription"
               icon={<ArrowRight className="size-4" aria-hidden="true" />}
             >
-              Essayer gratuitement
+              {t.tryFree}
             </Button>
+            <LanguageToggle className="pt-2" />
           </div>
         </Container>
       </div>
