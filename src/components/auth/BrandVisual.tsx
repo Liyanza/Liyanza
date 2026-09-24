@@ -5,7 +5,7 @@ export function BrandVisual() {
   return (
     <div data-intro="visual" className="relative mx-auto w-full max-w-[514px]">
       <Image
-        src="/auth-welcome.png"
+        src="/auth-photo.png"
         alt="Une professionnelle du marketing souriante, assise en tailleur avec son ordinateur portable"
         width={1024}
         height={1024}
