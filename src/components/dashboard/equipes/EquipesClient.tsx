@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Plus, UserX } from "lucide-react";
+import { MailCheck, Plus, UserX, X } from "lucide-react";
 import { TopBar } from "@/components/dashboard/layout/TopBar";
 import { useAuth } from "@/context/AuthContext";
 import {
@@ -33,6 +33,7 @@ export function EquipesClient() {
   const [form, setForm] = useState(EMPTY_FORM);
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const [invitedName, setInvitedName] = useState<string | null>(null);
 
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
@@ -59,8 +60,14 @@ export function EquipesClient() {
     setSubmitting(true);
     setFormError(null);
     apiCreateSubAccount(form).then(
-      (created) => {
-        setMembers((prev) => [...prev, created]);
+      (result) => {
+        if (result.status === "INVITED") {
+          // Compte existant : il rejoindra l'équipe en cliquant sur le lien.
+          setInvitedName(`${result.firstName} ${result.lastName}`.trim() || result.email);
+        } else {
+          setMembers((prev) => [...prev, result]);
+          setInvitedName(null);
+        }
         setForm(EMPTY_FORM);
         setShowForm(false);
         setSubmitting(false);
@@ -198,6 +205,24 @@ export function EquipesClient() {
                 </button>
               </div>
             </form>
+          )}
+
+          {invitedName && (
+            <div role="status" className="flex items-start gap-3 rounded-[5px] border border-green-accent-dark/20 bg-green-accent-dark/5 p-4">
+              <MailCheck className="mt-0.5 size-5 shrink-0 text-green-accent-dark" aria-hidden="true" />
+              <div className="flex-1">
+                <p className="text-sm font-semibold text-black">{fill(tt.invitedTitle, { name: invitedName })}</p>
+                <p className="mt-0.5 text-xs text-gray-text">{tt.invitedText}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setInvitedName(null)}
+                aria-label={dash.common.close}
+                className="shrink-0 text-gray-text-light hover:text-black"
+              >
+                <X className="size-4" aria-hidden="true" />
+              </button>
+            </div>
           )}
 
           {loadError && <p className="text-sm text-red-600">{loadError}</p>}

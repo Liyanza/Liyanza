@@ -11,7 +11,7 @@ const dashField = {
     createError: "Impossible de créer ce panneau.",
     title: "Suivi terrain",
     subtitle:
-      "Panneaux/affiches suivis par géolocalisation — vert : emplacement confirmé, orange : écart détecté, gris : en attente de preuve.",
+      "Panneaux/affiches suivis par géolocalisation — vert : preuve validée (placée à l'endroit où la photo a été prise), bleu : preuve à valider, rouge : preuve refusée, gris : en attente de preuve.",
     add: "Ajouter un panneau",
     /** {lat}, {lng} = coordonnées du point placé. */
     pointPlaced: "Point placé ({lat}, {lng}) — complétez le formulaire ci-dessous.",
@@ -27,16 +27,35 @@ const dashField = {
     panels: "Panneaux ({count})",
     loading: "Chargement des panneaux…",
     empty: "Aucun panneau pour le moment.",
-    pending: "En attente",
-    confirmed: "Confirmé",
-    gap: "Écart",
+    statuses: {
+      awaiting: "En attente de preuve",
+      pending: "À valider",
+      validated: "Validée",
+      rejected: "Refusée",
+    },
+    /** {distance} = écart en mètres. */
+    distanceOk: "Emplacement conforme ({distance} m)",
+    distanceGap: "Écart de {distance} m avec l'emplacement prévu",
+    /** {date} = date de la photo. */
+    takenAt: "Photo prise le {date}",
+    enlarge: "Agrandir la photo",
+    closePhoto: "Fermer la photo",
+    photoAlt: "Photo de preuve : {location}",
+    validate: "Valider",
+    reject: "Refuser",
+    rejectPlaceholder: "Motif du refus (facultatif, conservé dans l'historique)…",
+    confirmReject: "Confirmer le refus",
+    reviewError: "Impossible d'enregistrer la décision.",
+    /** {comment} = motif du refus. */
+    rejectedReason: "Motif : {comment}",
+    newLink: "Générer un nouveau lien de preuve →",
     copyLink: "Copier le lien",
     generating: "Génération...",
     generateLink: "Générer le lien de preuve →",
-    popupConfirmed: "✅ Emplacement confirmé",
-    /** {distance} = écart en mètres. */
-    popupGap: "⚠️ Écart de {distance} m avec l'emplacement prévu",
-    popupPending: "⏳ En attente de la preuve du prestataire",
+    popupValidated: "✅ Preuve validée",
+    popupPending: "🕓 Preuve reçue — à valider",
+    popupRejected: "❌ Preuve refusée",
+    popupAwaiting: "⏳ En attente de la preuve du prestataire",
   },
   proof: {
     metaTitle: "Preuve d'installation",

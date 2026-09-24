@@ -32,6 +32,10 @@ const dashAccount = {
     deactivated: "Désactivé",
     active: "Actif",
     deactivate: "Désactiver",
+    /** {name} = nom de la personne invitée. */
+    invitedTitle: "Invitation envoyée à {name}",
+    invitedText:
+      "Cette personne a déjà un compte Liyanza : elle a reçu un email sans mot de passe et rejoindra l'équipe dès qu'elle aura cliqué sur le lien.",
   },
   createCompany: {
     error: "Impossible de créer votre entreprise.",

@@ -112,6 +112,25 @@ export interface CompanyMember {
   deactivatedAt: string | null;
 }
 
+/**
+ * Réponse de POST /users : nouveau compte créé (mot de passe temporaire
+ * envoyé), ou compte existant invité (lien d'acceptation envoyé).
+ */
+export type CreateSubAccountResult =
+  | (CompanyMember & { status: "CREATED" })
+  | { status: "INVITED"; email: string; firstName: string; lastName: string };
+
+export interface ReviewProofPayload {
+  decision: "VALIDATED" | "REJECTED";
+  comment?: string;
+}
+
+export interface AcceptInvitationResult {
+  success: true;
+  companyName: string;
+  email: string;
+}
+
 export interface CreateSubAccountPayload {
   email: string;
   firstName: string;
@@ -384,7 +403,9 @@ export interface InstallationRecord {
     latitude: number;
     longitude: number;
     takenAt: string;
+    /** PENDING (à valider), VALIDATED ou REJECTED. */
     validationStatus: string;
+    validationComment: string | null;
   } | null;
   distanceMeters: number | null;
   locationMatch: boolean | null;

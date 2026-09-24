@@ -5,11 +5,24 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import type { InstallationRecord } from "@/lib/api/types";
 import { useT } from "@/i18n/client";
-import { fill } from "@/i18n/format";
+import { proofState, type ProofState } from "./InstallationCard";
 
-function colorFor(installation: InstallationRecord): string {
-  if (!installation.proof) return "#94a3b8";
-  return installation.locationMatch ? "#00a846" : "#f97316";
+const COLORS: Record<ProofState, string> = {
+  awaiting: "#94a3b8",
+  pending: "#296bd6",
+  validated: "#00a846",
+  rejected: "#dc2626",
+};
+
+/**
+ * Une preuve validée est placée là où la photo a été prise ; tant qu'elle
+ * n'est pas validée, le point reste à l'emplacement prévu.
+ */
+function positionFor(installation: InstallationRecord): [number, number] {
+  if (installation.proof && proofState(installation) === "validated") {
+    return [installation.proof.latitude, installation.proof.longitude];
+  }
+  return [installation.plannedLatitude, installation.plannedLongitude];
 }
 
 function makeIcon(color: string) {
@@ -49,28 +62,34 @@ export function TerrainMap({
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       <ClickCapture onPick={onMapClick} />
-      {installations.map((installation) => (
-        <Marker
-          key={installation.id}
-          position={[
-            installation.proof?.latitude ?? installation.plannedLatitude,
-            installation.proof?.longitude ?? installation.plannedLongitude,
-          ]}
-          icon={makeIcon(colorFor(installation))}
-        >
-          <Popup>
-            <strong>{installation.location}</strong>
-            <br />
-            {installation.campaignName}
-            <br />
-            {installation.proof
-              ? installation.locationMatch
-                ? t.popupConfirmed
-                : fill(t.popupGap, { distance: installation.distanceMeters ?? "?" })
-              : t.popupPending}
-          </Popup>
-        </Marker>
-      ))}
+      {installations.map((installation) => {
+        const state = proofState(installation);
+        return (
+          <Marker key={installation.id} position={positionFor(installation)} icon={makeIcon(COLORS[state])}>
+            <Popup>
+              <strong>{installation.location}</strong>
+              <br />
+              {installation.campaignName}
+              <br />
+              {state === "validated"
+                ? t.popupValidated
+                : state === "pending"
+                  ? t.popupPending
+                  : state === "rejected"
+                    ? t.popupRejected
+                    : t.popupAwaiting}
+              {state === "validated" && installation.proof && (
+                // eslint-disable-next-line @next/next/no-img-element -- photo en data URL ou URL externe
+                <img
+                  src={installation.proof.photo}
+                  alt=""
+                  style={{ display: "block", width: 200, maxHeight: 160, objectFit: "cover", borderRadius: 8, marginTop: 8 }}
+                />
+              )}
+            </Popup>
+          </Marker>
+        );
+      })}
       {pendingPoint && <Marker position={[pendingPoint.lat, pendingPoint.lng]} icon={makeIcon("#296bd6")} />}
     </MapContainer>
   );
