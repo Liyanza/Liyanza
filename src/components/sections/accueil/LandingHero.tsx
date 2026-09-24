@@ -70,14 +70,14 @@ export function LandingHero() {
 
           <div
             data-intro="visual"
-            className="relative w-full max-w-[640px] justify-self-center lg:ml-auto lg:mr-[-48px] lg:max-w-[773px] xl:ml-[-80px] xl:mr-[-40px] xl:w-[calc(100%+120px)] xl:max-w-none xl:justify-self-start"
+            className="relative w-full max-w-[640px] justify-self-center lg:ml-auto lg:mr-[-48px] lg:max-w-[773px] xl:ml-[-80px] xl:mr-[-24px] xl:w-[calc(100%+104px)] 2xl:w-[773px] xl:max-w-none xl:justify-self-start"
           >
             <Image
               src="/hero-home.png"
               alt="Une professionnelle du marketing souriante, ordinateur portable à la main, prête à piloter ses campagnes avec KIYANZA"
               width={1285}
               height={1024}
-              sizes="(min-width: 1280px) 800px, (min-width: 1024px) 50vw, (min-width: 640px) 640px, 100vw"
+              sizes="(min-width: 1280px) 773px, (min-width: 1024px) 50vw, (min-width: 640px) 640px, 100vw"
               className="relative h-auto w-full object-contain"
               loading="eager"
               fetchPriority="high"
