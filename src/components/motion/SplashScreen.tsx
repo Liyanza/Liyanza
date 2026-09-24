@@ -191,6 +191,9 @@ export function SplashScreen() {
       const h = window.innerHeight;
       trail.setAttribute("viewBox", `0 0 ${w} ${h}`);
       ribbons.forEach((path) => path.setAttribute("d", d));
+      // Rubans vides tant que l'oiseau n'a pas décollé : ne jamais dévoiler le
+      // parcours à l'avance.
+      gsap.set(ribbons, { drawSVG: "0% 0%" });
 
       // Progression pilotée à la main : p = position sur le tracé (0→1),
       // hover = redressement pendant un arrêt, bob = flottement vertical.
@@ -271,7 +274,7 @@ export function SplashScreen() {
 
       const start = MotionPathPlugin.getPositionOnPath(raw, 0) as { x: number; y: number };
       gsap.set(halo, { x: start.x, y: start.y });
-      tl.set([bird, halo], { opacity: 1 }).call(render);
+      tl.call(render).set([bird, halo, trail], { opacity: 1 });
       [...hovers, { at: 1, duration: 0 }].forEach((stop, i, all) => {
         const last = i === all.length - 1;
         // Chaque bond accélère puis freine : effet « fonce / s'arrête net ».
@@ -437,7 +440,7 @@ export function SplashScreen() {
       />
 
       {/* Sillage : trois rubans qui suivent l'oiseau (tracé posé en JS). */}
-      <svg ref={trailRef} className="pointer-events-none absolute inset-0 size-full" aria-hidden="true">
+      <svg ref={trailRef} className="pointer-events-none absolute inset-0 size-full opacity-0" aria-hidden="true">
         {cfg.trail.ribbons.map((r) => (
           <path
             key={r.color}
@@ -446,7 +449,6 @@ export function SplashScreen() {
             strokeWidth={r.width}
             strokeOpacity={r.opacity}
             strokeLinecap="round"
-            strokeDasharray="0 1"
           />
         ))}
       </svg>
