@@ -350,6 +350,17 @@ export function SplashScreen() {
         const dur = cfg.portal.duration;
         const ease = "power3.inOut";
         const radius = Math.hypot(w, h);
+        // Trou du voile blanc, calculé en pixels à chaque image. Surtout pas de
+        // var()/calc() dans le dégradé : Safari (iPhone) les gère mal dans un
+        // mask-image et rendait tout le voile transparent. Le masque n'existe
+        // d'ailleurs que pendant le portail : avant, le voile est un aplat blanc.
+        const feather = cfg.portal.feather;
+        const hole = { r: -feather };
+        const cutHole = () => {
+          const mask = `radial-gradient(circle at 50% 50%, transparent ${hole.r}px, #000 ${hole.r + feather}px)`;
+          veil.style.setProperty("-webkit-mask-image", mask);
+          veil.style.setProperty("mask-image", mask);
+        };
         const pt = gsap.timeline({ onComplete: finish });
         // Le logo et l'oiseau glissent vers la barre de navigation…
         pt.to(logo, { x: n.left - l.left, y: n.top - l.top, scale: k, transformOrigin: "0 0", duration: dur, ease }, 0)
@@ -361,11 +372,7 @@ export function SplashScreen() {
             ease,
           }, 0)
           // …pendant que l'écran blanc s'ouvre en cercle depuis le centre.
-          .fromTo(veil, { "--portal": `${-cfg.portal.feather}px` }, {
-            "--portal": `${radius}px`,
-            duration: dur * 0.9,
-            ease: "power2.in",
-          }, dur * 0.1)
+          .to(hole, { r: radius, duration: dur * 0.9, ease: "power2.in", onUpdate: cutHole }, dur * 0.1)
           .to([skipBtn, halo], { opacity: 0, duration: 0.3 }, 0)
           // Arrivé pile sur le vrai logo : on s'efface.
           .to([logo, bird], { opacity: 0, duration: 0.2 }, dur - 0.05);
@@ -416,14 +423,13 @@ export function SplashScreen() {
       }
       onClick={() => skipRef.current()}
     >
-      {/* Écran blanc (avec grain) ; percé d'un cercle pendant le « portail ». */}
+      {/* Écran blanc (avec grain), sans masque ; percé d'un cercle uniquement pendant le « portail ». */}
       <div
         ref={veilRef}
         className="splash-veil absolute inset-0"
         style={
           {
             backgroundColor: cfg.background,
-            "--portal-feather": `${cfg.portal.feather}px`,
             "--grain": cfg.ambience.grain,
           } as CSSProperties
         }
