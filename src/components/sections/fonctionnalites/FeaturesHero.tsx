@@ -4,8 +4,11 @@ import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { SectionEyebrow } from "@/components/ui/Badge";
 import { HeroIntro } from "@/components/motion/HeroIntro";
+import { getMessages } from "@/i18n/server";
 
-export function FeaturesHero() {
+export async function FeaturesHero() {
+  const t = (await getMessages("features")).hero;
+
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-[#f0fdf4] via-white to-[#eff6ff]">
       <div
@@ -17,18 +20,17 @@ export function FeaturesHero() {
         <HeroIntro className="grid grid-cols-1 items-center gap-16 lg:grid-cols-2">
           <div>
             <div data-intro="badge">
-              <SectionEyebrow variant="pill" tone="orange">Fonctionnalités</SectionEyebrow>
+              <SectionEyebrow variant="pill" tone="orange">{t.eyebrow}</SectionEyebrow>
             </div>
             <h1 data-intro="title" className="mt-5 text-5xl font-extrabold leading-[1.1] tracking-tight text-black sm:text-6xl">
-              Tout pour piloter
+              {t.titleLines[0]}
               <br />
-              vos campagnes
+              {t.titleLines[1]}
               <br />
-              <span className="text-orange-500">marketing</span>
+              <span className="text-orange-500">{t.titleHighlight}</span>
             </h1>
             <p data-intro="text" className="mt-5 max-w-md text-base font-medium leading-relaxed text-gray-text">
-              De la planification à l&apos;analyse, KIYANZA vous aide à prendre
-              de meilleures décisions et à optimiser vos performances.
+              {t.text}
             </p>
             <div data-intro="actions" className="mt-8 flex flex-wrap gap-3">
               <Button
@@ -38,7 +40,7 @@ export function FeaturesHero() {
                 className="!bg-green-accent hover:!bg-green-accent-dark"
                 icon={<ArrowRight className="size-4" aria-hidden="true" />}
               >
-                Commencer gratuitement
+                {t.ctaPrimary}
               </Button>
               <Button
                 variant="outline"
@@ -48,7 +50,7 @@ export function FeaturesHero() {
                 icon={<PlayCircle className="size-[18px]" aria-hidden="true" />}
                 iconPosition="left"
               >
-                Voir comment ça marche
+                {t.ctaSecondary}
               </Button>
             </div>
           </div>
@@ -57,7 +59,7 @@ export function FeaturesHero() {
             <div className="relative aspect-[692/499] w-full">
               <Image
                 src="/fonctionnalites-hero.png"
-                alt="Une professionnelle du marketing souriante, ordinateur portable à la main, prête à piloter ses campagnes avec KIYANZA"
+                alt={t.imageAlt}
                 fill
                 sizes="(min-width: 1024px) 620px, (min-width: 520px) 480px, 100vw"
                 className="object-cover"

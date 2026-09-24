@@ -1,34 +1,37 @@
 import { CountUp } from "@/components/motion/CountUp";
+import { getMessages } from "@/i18n/server";
 
-const stats = [
-  { label: "Impressions", value: "124 400", change: "+18%", color: "text-green-accent" },
-  { label: "Clics", value: "9 240", change: "+12%", color: "text-blue-500" },
-  { label: "Conversions", value: "1 384", change: "+22%", color: "text-green-accent" },
-  { label: "Dépenses", value: "89 000F", change: "+8%", color: "text-orange-500" },
-  { label: "ROAS", value: "5.8x", change: "+15%", color: "text-violet-500" },
+/** Variation et couleur de chaque indicateur (libellés/valeurs : features.mockups.monitoring). */
+const statStyles = [
+  { change: "+18%", color: "text-green-accent" },
+  { change: "+12%", color: "text-blue-500" },
+  { change: "+22%", color: "text-green-accent" },
+  { change: "+8%", color: "text-orange-500" },
+  { change: "+15%", color: "text-violet-500" },
 ];
 
-const alerts = [
-  { dot: "bg-orange-500", text: "CPC dépasse le seuil sur Facebook", time: "Il y a 2h" },
-  { dot: "bg-green-accent", text: "Conversion rate en hausse : +4.2%", time: "Il y a 4h" },
-];
+const alertDots = ["bg-orange-500", "bg-green-accent"];
 
-export function MonitoringMockup() {
+export async function MonitoringMockup() {
+  const t = (await getMessages("features")).mockups.monitoring;
+  const stats = t.stats.map((s, i) => ({ ...s, ...statStyles[i] }));
+  const alerts = t.alerts.map((a, i) => ({ ...a, dot: alertDots[i] }));
+
   return (
     <div className="w-full max-w-[448px] overflow-hidden rounded-2xl border border-border-light bg-white shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_10px_10px_-5px_rgba(0,0,0,0.1)]">
       <div className="flex items-center justify-between border-b border-border-light px-5 py-4">
         <div>
-          <p className="text-sm font-bold text-navy">Monitoring temps réel</p>
+          <p className="text-sm font-bold text-navy">{t.title}</p>
           <p className="mt-0.5 flex items-center gap-1.5 text-[10px] text-gray-text-light">
             <span className="relative flex size-1.5">
               <span className="absolute inset-0 animate-ping rounded-full bg-green-accent opacity-75" />
               <span className="relative size-1.5 rounded-full bg-green-accent" />
             </span>
-            En direct · 12–18 Mai 2025
+            {t.live}
           </p>
         </div>
         <span className="rounded-full border border-blue-500 px-2.5 py-1 text-[10px] font-medium text-blue-500">
-          7 derniers jours
+          {t.range}
         </span>
       </div>
 
@@ -71,7 +74,7 @@ export function MonitoringMockup() {
 
         <div className="mt-4 border-t border-border-light pt-4">
           <p className="text-[10px] font-bold uppercase tracking-wide text-gray-text-light">
-            Alertes automatiques
+            {t.alertsTitle}
           </p>
           <div className="mt-2 space-y-2">
             {alerts.map((alert) => (

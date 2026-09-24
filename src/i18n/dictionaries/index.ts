@@ -1,5 +1,6 @@
 import type { Locale } from "../config";
 import type frCommon from "./fr/common";
+import type frFeatures from "./fr/features";
 import type frHome from "./fr/home";
 import type frPlans from "./fr/plans";
 
@@ -12,11 +13,13 @@ import type frPlans from "./fr/plans";
 const loaders = {
   fr: {
     common: () => import("./fr/common").then((m) => m.default),
+    features: () => import("./fr/features").then((m) => m.default),
     home: () => import("./fr/home").then((m) => m.default),
     plans: () => import("./fr/plans").then((m) => m.default),
   },
   en: {
     common: () => import("./en/common").then((m) => m.default),
+    features: () => import("./en/features").then((m) => m.default),
     home: () => import("./en/home").then((m) => m.default),
     plans: () => import("./en/plans").then((m) => m.default),
   },
@@ -26,6 +29,7 @@ export type Namespace = keyof (typeof loaders)["fr"];
 
 export type Messages = {
   common: typeof frCommon;
+  features: typeof frFeatures;
   home: typeof frHome;
   plans: typeof frPlans;
 };
