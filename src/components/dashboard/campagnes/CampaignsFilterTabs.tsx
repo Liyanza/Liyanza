@@ -3,20 +3,20 @@ export function CampaignsFilterTabs({
   active,
   onChange,
 }: {
-  filters: { label: string; count: number }[];
+  filters: { id: string; label: string; count: number }[];
   active: string;
   onChange: (filter: string) => void;
 }) {
   return (
     <div className="flex flex-wrap items-center gap-1 rounded-full border border-border bg-white p-1">
       {filters.map((filter) => {
-        const isActive = filter.label === active;
+        const isActive = filter.id === active;
         return (
           <button
-            key={filter.label}
+            key={filter.id}
             type="button"
             aria-pressed={isActive}
-            onClick={() => onChange(filter.label)}
+            onClick={() => onChange(filter.id)}
             className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-medium transition-colors ${
               isActive ? "bg-green-accent-dark text-white shadow-sm" : "text-gray-text hover:bg-slate-50"
             }`}

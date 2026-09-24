@@ -1,6 +1,9 @@
+"use client";
+
 import { CheckCircle2, Heart, Megaphone, Plus, ShoppingCart, Target, TrendingUp, UserPlus } from "lucide-react";
 import { objectiveOptions, type ObjectiveOption } from "@/data/dashboard";
 import type { DigitalObjective } from "@/lib/api/types";
+import { useT } from "@/i18n/client";
 
 const icons: Record<ObjectiveOption["icon"], typeof Megaphone> = {
   awareness: Megaphone,
@@ -18,14 +21,15 @@ export function StepObjective({
   value: DigitalObjective | null;
   onChange: (id: DigitalObjective) => void;
 }) {
+  const t = useT("dashWizard").objective;
   return (
     <div>
       <div className="max-w-[768px]">
         <h1 className="text-[28px] font-semibold leading-9 tracking-[-0.7px] text-dash-heading">
-          Quel résultat souhaitez-vous obtenir ?
+          {t.title}
         </h1>
         <p className="mt-1 text-base leading-[26px] text-dash-body">
-          Choisissez l&apos;objectif prioritaire de cette campagne.
+          {t.subtitle}
         </p>
       </div>
 
@@ -58,11 +62,11 @@ export function StepObjective({
                     </span>
                   )}
                 </div>
-                <h2 className="mt-3 text-[15px] font-semibold text-dash-heading">{option.title}</h2>
-                <p className="mt-1 text-[13px] leading-[18px] text-dash-body">{option.description}</p>
+                <h2 className="mt-3 text-[15px] font-semibold text-dash-heading">{t.options[option.id].title}</h2>
+                <p className="mt-1 text-[13px] leading-[18px] text-dash-body">{t.options[option.id].description}</p>
               </div>
               <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.55px] text-dash-muted">
-                {option.optimization}
+                {t.options[option.id].optimization}
               </p>
             </button>
           );
@@ -74,7 +78,7 @@ export function StepObjective({
         className="mt-8 flex items-center gap-2 rounded-full border-2 border-green-accent px-4 py-2.5 text-xs font-semibold text-green-accent"
       >
         <Plus className="size-4" aria-hidden="true" />
-        Ajouter un objectif
+        {t.add}
       </button>
     </div>
   );

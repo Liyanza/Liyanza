@@ -6,11 +6,11 @@ import { FaFacebook, FaInstagram, FaTiktok, FaWhatsapp, FaYoutube } from "react-
 import { apiListSocialAccounts, ApiError } from "@/lib/api/client";
 import type { SocialAccountRecord, SocialPlatform } from "@/lib/api/types";
 import { SkeletonRows } from "@/components/dashboard/ui/Skeleton";
+import { useT } from "@/i18n/client";
 
 interface ChannelDefinition {
   platform: SocialPlatform | "WHATSAPP" | "TIKTOK" | "YOUTUBE";
   label: string;
-  description: string;
   Icon: typeof FaFacebook;
   iconClassName: string;
   // Seuls Facebook/Instagram sont intégrés (liaison Meta OAuth,
@@ -23,7 +23,6 @@ const CHANNEL_DEFINITIONS: ChannelDefinition[] = [
   {
     platform: "FACEBOOK",
     label: "Facebook",
-    description: "Atteignez votre audience sur Facebook",
     Icon: FaFacebook,
     iconClassName: "text-[#1877f2]",
     supported: true,
@@ -31,7 +30,6 @@ const CHANNEL_DEFINITIONS: ChannelDefinition[] = [
   {
     platform: "INSTAGRAM",
     label: "Instagram",
-    description: "Touchez votre communauté",
     Icon: FaInstagram,
     iconClassName: "text-[#e1306c]",
     supported: true,
@@ -39,7 +37,6 @@ const CHANNEL_DEFINITIONS: ChannelDefinition[] = [
   {
     platform: "WHATSAPP",
     label: "WhatsApp",
-    description: "Communiquez directement",
     Icon: FaWhatsapp,
     iconClassName: "text-[#25d366]",
     supported: false,
@@ -47,7 +44,6 @@ const CHANNEL_DEFINITIONS: ChannelDefinition[] = [
   {
     platform: "TIKTOK",
     label: "TikTok",
-    description: "Captez une audience engagée",
     Icon: FaTiktok,
     iconClassName: "text-black",
     supported: false,
@@ -55,7 +51,6 @@ const CHANNEL_DEFINITIONS: ChannelDefinition[] = [
   {
     platform: "YOUTUBE",
     label: "YouTube",
-    description: "Vidéo et visibilité maximale",
     Icon: FaYoutube,
     iconClassName: "text-[#FF0000]",
     supported: false,
@@ -75,6 +70,8 @@ export function StepChannels({
   value: SocialPlatform[];
   onToggle: (platform: SocialPlatform) => void;
 }) {
+  const t = useT("dashWizard").channels;
+  const common = useT("dash").common;
   const [accounts, setAccounts] = useState<SocialAccountRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -86,10 +83,11 @@ export function StepChannels({
         setLoading(false);
       },
       (error) => {
-        setLoadError(error instanceof ApiError ? error.message : "Impossible de charger les comptes liés.");
+        setLoadError(error instanceof ApiError ? error.message : t.loadError);
         setLoading(false);
       }
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- chargement unique au montage
   }, []);
 
   function linkedAccountFor(platform: SocialPlatform) {
@@ -100,14 +98,14 @@ export function StepChannels({
     <div>
       <div className="max-w-[768px]">
         <h1 className="text-[28px] font-semibold leading-9 tracking-[-0.7px] text-dash-heading sm:text-[32px]">
-          Configurez vos canaux de diffusion
+          {t.title}
         </h1>
-        <p className="mt-1 text-base leading-[26px] text-dash-body">Choisissez vos canaux !</p>
+        <p className="mt-1 text-base leading-[26px] text-dash-body">{t.subtitle}</p>
       </div>
 
       {loading ? (
         <div className="mt-6 rounded-2xl border border-border bg-white">
-          <SkeletonRows rows={3} label="Chargement de vos comptes liés…" />
+          <SkeletonRows rows={3} label={t.loading} />
         </div>
       ) : (
         <>
@@ -152,13 +150,13 @@ export function StepChannels({
                     <span className="block text-sm font-semibold text-[#101828]">{channel.label}</span>
                     <span className="block truncate text-[11.5px] text-gray-text-light">
                       {isSupportedPlatform
-                        ? (linkedAccount?.externalAccountName ?? "Aucun compte connecté — vous pourrez le lier depuis Mon entreprise")
-                        : channel.description}
+                        ? (linkedAccount?.externalAccountName ?? t.notLinked)
+                        : t.descriptions[channel.platform]}
                     </span>
                   </span>
                   {!channel.supported && (
                     <span className="shrink-0 rounded-full bg-dash-pill-bg px-2.5 py-1 text-[11px] font-semibold text-dash-muted">
-                      Bientôt disponible
+                      {common.comingSoon}
                     </span>
                   )}
                 </label>

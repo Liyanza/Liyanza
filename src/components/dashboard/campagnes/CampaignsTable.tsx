@@ -6,12 +6,8 @@ import type { CampagneRecord, CampaignStatus } from "@/lib/api/types";
 import { StatusPill } from "@/components/dashboard/ui/StatusPill";
 import { useAuth } from "@/context/AuthContext";
 import { apiLancerCampagne, ApiError } from "@/lib/api/client";
-
-const TYPE_LABELS: Record<CampagneRecord["type"], string> = {
-  DIGITAL: "Digital",
-  RADIO: "Radio",
-  POSTER: "Affichage",
-};
+import { Link } from "@/i18n/navigation";
+import { useFormat, useT } from "@/i18n/client";
 
 const TYPE_COLORS: Record<CampagneRecord["type"], string> = {
   DIGITAL: "#3b82f6",
@@ -29,29 +25,26 @@ const AVATAR_COLORS = ["#3b82f6", "#00a846", "#f97316", "#8b5cf6", "#e93c16"];
 // transition ; un décalage ici n'est qu'un bouton en trop, jamais une faille.
 interface Transition {
   status: CampaignStatus;
-  label: string;
+  /** Clé du libellé dans dashCampaigns.table.transitions. */
+  label: "launch" | "start" | "complete" | "cancel";
   tone: "primary" | "danger";
 }
 
 const NEXT_TRANSITIONS: Record<CampaignStatus, Transition[]> = {
   DRAFT: [
-    { status: "PLANNED", label: "Lancer", tone: "primary" },
-    { status: "CANCELLED", label: "Annuler", tone: "danger" },
+    { status: "PLANNED", label: "launch", tone: "primary" },
+    { status: "CANCELLED", label: "cancel", tone: "danger" },
   ],
   PLANNED: [
-    { status: "IN_PROGRESS", label: "Démarrer", tone: "primary" },
-    { status: "CANCELLED", label: "Annuler", tone: "danger" },
+    { status: "IN_PROGRESS", label: "start", tone: "primary" },
+    { status: "CANCELLED", label: "cancel", tone: "danger" },
   ],
   IN_PROGRESS: [
-    { status: "COMPLETED", label: "Terminer", tone: "primary" },
-    { status: "CANCELLED", label: "Annuler", tone: "danger" },
+    { status: "COMPLETED", label: "complete", tone: "primary" },
+    { status: "CANCELLED", label: "cancel", tone: "danger" },
   ],
   COMPLETED: [],
   CANCELLED: [],
-};
-
-const CONFIRM_MESSAGE: Partial<Record<CampaignStatus, string>> = {
-  CANCELLED: "Annuler cette campagne ? Cette action est irréversible.",
 };
 
 function initialsOf(name: string) {
@@ -66,19 +59,10 @@ function colorFor(id: string) {
   return AVATAR_COLORS[hash % AVATAR_COLORS.length];
 }
 
-function formatDateRange(startDate: string, endDate: string) {
-  const fmt = new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "short", year: "numeric" });
-  return `${fmt.format(new Date(startDate))} – ${fmt.format(new Date(endDate))}`;
-}
-
-function formatBudget(amount: number) {
-  return `${Math.round(amount).toLocaleString("fr-FR")} FCFA`;
-}
-
 export function CampaignsTable({
   rows,
-  title = "Campagnes récentes",
-  description = "Suivez l'évolution de vos campagnes et leurs performances.",
+  title,
+  description,
   viewAllHref,
   onChanged,
 }: {
@@ -91,14 +75,17 @@ export function CampaignsTable({
    * données (KPI, compteurs par onglet...). */
   onChanged?: () => void;
 }) {
+  const t = useT("dashCampaigns").table;
+  const dash = useT("dash");
+  const f = useFormat();
+  const shortDate = (iso: string) => f.date(iso, { day: "numeric", month: "short", year: "numeric" });
   const { user } = useAuth();
   const canManage = user?.role === "ADMIN" || user?.role === "MARKETING_MANAGER";
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [rowErrors, setRowErrors] = useState<Record<string, string>>({});
 
   function handleTransition(campaignId: string, status: CampaignStatus) {
-    const confirmMessage = CONFIRM_MESSAGE[status];
-    if (confirmMessage && !window.confirm(confirmMessage)) return;
+    if (status === "CANCELLED" && !window.confirm(t.confirmCancel)) return;
 
     setPendingId(campaignId);
     setRowErrors((prev) => ({ ...prev, [campaignId]: "" }));
@@ -110,7 +97,7 @@ export function CampaignsTable({
       (error: unknown) => {
         setRowErrors((prev) => ({
           ...prev,
-          [campaignId]: error instanceof ApiError ? error.message : "Impossible de changer le statut.",
+          [campaignId]: error instanceof ApiError ? error.message : t.statusError,
         }));
         setPendingId(null);
       }
@@ -125,33 +112,33 @@ export function CampaignsTable({
             <Eye className="size-3.5 text-green-accent-dark" aria-hidden="true" />
           </span>
           <div>
-            <h2 className="text-sm font-bold text-black">{title}</h2>
-            <p className="text-[11px] text-gray-text">{description}</p>
+            <h2 className="text-sm font-bold text-black">{title ?? t.title}</h2>
+            <p className="text-[11px] text-gray-text">{description ?? t.description}</p>
           </div>
         </div>
         {viewAllHref && (
-          <a href={viewAllHref} className="text-xs font-semibold text-green-accent-dark">
-            Voir toutes
-          </a>
+          <Link href={viewAllHref} className="text-xs font-semibold text-green-accent-dark">
+            {t.viewAll}
+          </Link>
         )}
       </div>
 
       {rows.length === 0 ? (
         <div className="flex flex-col items-center justify-center gap-2 px-6 py-16 text-center">
           <SearchX className="size-8 text-gray-text-light" aria-hidden="true" />
-          <p className="text-sm font-semibold text-black">Aucune campagne ne correspond à ces filtres</p>
-          <p className="text-xs text-gray-text">Essayez une autre recherche ou réinitialisez les filtres.</p>
+          <p className="text-sm font-semibold text-black">{t.emptyTitle}</p>
+          <p className="text-xs text-gray-text">{t.emptyText}</p>
         </div>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full min-w-[720px] text-left">
             <thead>
               <tr className="bg-slate-50 text-[11px] font-semibold text-gray-text">
-                <th className="px-5 py-2.5">Campagne</th>
-                <th className="px-5 py-2.5">Type</th>
-                <th className="px-5 py-2.5">Statut</th>
-                <th className="px-5 py-2.5">Budget prévu</th>
-                <th className="px-5 py-2.5">Actions</th>
+                <th className="px-5 py-2.5">{t.headers.campaign}</th>
+                <th className="px-5 py-2.5">{t.headers.type}</th>
+                <th className="px-5 py-2.5">{t.headers.status}</th>
+                <th className="px-5 py-2.5">{t.headers.budget}</th>
+                <th className="px-5 py-2.5">{t.headers.actions}</th>
               </tr>
             </thead>
             <tbody>
@@ -172,7 +159,7 @@ export function CampaignsTable({
                         <div className="min-w-0">
                           <p className="truncate text-xs font-semibold text-black">{row.name}</p>
                           <p className="truncate text-[10px] text-gray-text-light">
-                            {formatDateRange(row.startDate, row.endDate)}
+                            {shortDate(row.startDate)} – {shortDate(row.endDate)}
                           </p>
                         </div>
                       </div>
@@ -184,22 +171,22 @@ export function CampaignsTable({
                           style={{ backgroundColor: TYPE_COLORS[row.type] }}
                           aria-hidden="true"
                         />
-                        {TYPE_LABELS[row.type]}
+                        {dash.campaignTypes[row.type]}
                       </span>
                     </td>
                     <td className="px-5 py-3">
                       <StatusPill status={row.status} />
                     </td>
-                    <td className="px-5 py-3 text-xs text-gray-700">{formatBudget(row.plannedBudget)}</td>
+                    <td className="px-5 py-3 text-xs text-gray-700">{f.money(row.plannedBudget)}</td>
                     <td className="px-5 py-3">
                       <div className="flex flex-wrap items-center gap-2">
                         {row.type === "DIGITAL" && (
-                          <a
+                          <Link
                             href={`/dashboard/campagnes/${row.id}/resultats`}
                             className="text-xs font-semibold text-green-accent-dark hover:underline"
                           >
-                            Voir
-                          </a>
+                            {t.view}
+                          </Link>
                         )}
                         {transitions.map((transition) => (
                           <button
@@ -213,7 +200,7 @@ export function CampaignsTable({
                                 : "text-red-600 hover:underline"
                             }`}
                           >
-                            {transition.label}
+                            {t.transitions[transition.label]}
                           </button>
                         ))}
                         {row.type !== "DIGITAL" && transitions.length === 0 && (

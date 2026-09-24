@@ -6,6 +6,9 @@
 // Palette catégorielle validée (contraste + daltonisme) : voir le rapport de
 // scripts/validate_palette.js de la skill dataviz sur ["#00c853","#3b82f6","#f97316"].
 
+import { useFormat, useT } from "@/i18n/client";
+import { fill } from "@/i18n/format";
+
 const SERIES_COLORS = {
   reach: "#3b82f6", // Portée
   clicks: "#f97316", // Clics
@@ -21,6 +24,7 @@ export function BudgetDonutChart({
   totalLabel: string;
   totalSubLabel?: string;
 }) {
+  const t = useT("dashCampaigns").charts;
   const size = 140;
   const strokeWidth = 22;
   const radius = (size - strokeWidth) / 2;
@@ -39,7 +43,7 @@ export function BudgetDonutChart({
 
   return (
     <div className="flex items-center gap-6">
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} role="img" aria-label={`Répartition du budget : ${segments.map((s) => `${s.label} ${s.percent}%`).join(", ")}`}>
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} role="img" aria-label={fill(t.donutLabel, { segments: segments.map((s) => `${s.label} ${s.percent}%`).join(", ") })}>
         <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="#f1f5f9" strokeWidth={strokeWidth} />
         {arcs.map(({ segment, dash, offset }) => {
           return (
@@ -86,6 +90,8 @@ export function WeeklySpendBarChart({
 }: {
   points: { weekIndex: number; budgetSpent: number }[];
 }) {
+  const t = useT("dashCampaigns").charts;
+  const f = useFormat();
   const max = Math.max(...points.map((p) => p.budgetSpent), 1);
 
   return (
@@ -95,16 +101,16 @@ export function WeeklySpendBarChart({
         return (
           <div key={point.weekIndex} className="flex flex-1 flex-col items-center gap-2">
             <span className="text-[11px] font-semibold text-dash-heading">
-              {Math.round(point.budgetSpent).toLocaleString("fr-FR")}
+              {f.number(Math.round(point.budgetSpent))}
             </span>
             <div className="flex h-32 w-full items-end">
               <div
                 className="dash-grow w-full rounded-t-md bg-blue-500"
                 style={{ height: `${heightPercent}%` }}
-                title={`Semaine ${point.weekIndex} : ${Math.round(point.budgetSpent).toLocaleString("fr-FR")} FCFA`}
+                title={fill(t.weekSpend, { week: point.weekIndex, amount: f.money(point.budgetSpent) })}
               />
             </div>
-            <span className="text-[10px] font-medium text-dash-muted">S{point.weekIndex}</span>
+            <span className="text-[10px] font-medium text-dash-muted">{fill(t.weekShort, { week: point.weekIndex })}</span>
           </div>
         );
       })}
@@ -120,15 +126,18 @@ interface PerformanceSeriesPoint {
 }
 
 export function PerformanceLineChart({ points }: { points: PerformanceSeriesPoint[] }) {
+  const t = useT("dashCampaigns").charts;
+  const metrics = useT("dashCampaigns").results.metrics;
+  const f = useFormat();
   const width = 560;
   const height = 180;
   const paddingX = 24;
   const paddingY = 16;
 
   const seriesList: { key: keyof PerformanceSeriesPoint; label: string; color: string }[] = [
-    { key: "predictedReach", label: "Portée", color: SERIES_COLORS.reach },
-    { key: "predictedClicks", label: "Clics", color: SERIES_COLORS.clicks },
-    { key: "predictedConversions", label: "Conversions", color: SERIES_COLORS.conversions },
+    { key: "predictedReach", label: metrics.reach, color: SERIES_COLORS.reach },
+    { key: "predictedClicks", label: metrics.clicks, color: SERIES_COLORS.clicks },
+    { key: "predictedConversions", label: t.conversions, color: SERIES_COLORS.conversions },
   ];
 
   // Portée/Clics/Conversions diffèrent typiquement d'un ou deux ordres de
@@ -147,7 +156,7 @@ export function PerformanceLineChart({ points }: { points: PerformanceSeriesPoin
 
   return (
     <div>
-      <svg width="100%" viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Évolution hebdomadaire de la portée, des clics et des conversions">
+      <svg width="100%" viewBox={`0 0 ${width} ${height}`} role="img" aria-label={t.lineLabel}>
         {[0, 1, 2].map((i) => (
           <line
             key={i}
@@ -175,7 +184,7 @@ export function PerformanceLineChart({ points }: { points: PerformanceSeriesPoin
                   className="dash-pop"
                   style={{ animationDelay: `${200 + (i / Math.max(coords.length - 1, 1)) * 800}ms` }}
                 >
-                  <title>{`${series.label} — semaine ${points[i].weekIndex} : ${Math.round(c.value).toLocaleString("fr-FR")}`}</title>
+                  <title>{fill(t.pointTitle, { series: series.label, week: points[i].weekIndex, value: f.number(Math.round(c.value)) })}</title>
                 </circle>
               ))}
             </g>
@@ -185,7 +194,7 @@ export function PerformanceLineChart({ points }: { points: PerformanceSeriesPoin
           const x = paddingX + (index / Math.max(points.length - 1, 1)) * (width - paddingX * 2);
           return (
             <text key={point.weekIndex} x={x} y={height - 2} textAnchor="middle" className="fill-dash-muted text-[9px]">
-              S{point.weekIndex}
+              {fill(t.weekShort, { week: point.weekIndex })}
             </text>
           );
         })}
@@ -199,7 +208,7 @@ export function PerformanceLineChart({ points }: { points: PerformanceSeriesPoin
         ))}
       </div>
       <p className="mt-1 text-center text-[10px] text-dash-muted">
-        Chaque courbe est indexée sur son propre maximum (échelles très différentes) — survolez un point pour la valeur exacte.
+        {t.lineNote}
       </p>
     </div>
   );

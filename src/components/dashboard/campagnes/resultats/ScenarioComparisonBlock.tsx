@@ -1,17 +1,20 @@
+"use client";
+
 import { Star } from "lucide-react";
 import type { DigitalSimulationScenario } from "@/lib/api/types";
-
-function formatCompact(value: number): string {
-  if (value >= 1000) return `${(value / 1000).toFixed(1).replace(".0", "")}K`;
-  return value.toLocaleString("fr-FR");
-}
+import { useFormat, useT } from "@/i18n/client";
 
 function ScenarioMetrics({ scenario, compact }: { scenario: DigitalSimulationScenario; compact?: boolean }) {
+  const t = useT("dashCampaigns").results.metrics;
+  const f = useFormat();
+  // Notation compacte (125K / 125 k) selon la langue.
+  const formatCompact = (value: number) =>
+    value >= 1000 ? f.number(value, { notation: "compact", maximumFractionDigits: 1 }) : f.number(value);
   const metrics = [
-    { label: "Portée", value: formatCompact(scenario.predictedReach) },
-    { label: "Clics", value: formatCompact(scenario.predictedClicks) },
-    { label: "Conv.", value: formatCompact(scenario.predictedConversions) },
-    { label: "ROI", value: `${scenario.predictedRoas}x` },
+    { label: t.reach, value: formatCompact(scenario.predictedReach) },
+    { label: t.clicks, value: formatCompact(scenario.predictedClicks) },
+    { label: t.conversionsShort, value: formatCompact(scenario.predictedConversions) },
+    { label: t.roi, value: `${scenario.predictedRoas}x` },
   ];
 
   return (
@@ -27,6 +30,7 @@ function ScenarioMetrics({ scenario, compact }: { scenario: DigitalSimulationSce
 }
 
 export function ScenarioComparisonBlock({ scenarios }: { scenarios: DigitalSimulationScenario[] }) {
+  const t = useT("dashCampaigns").results.scenarios;
   const recommended = scenarios.find((s) => s.isRecommended) ?? scenarios[0];
   const others = scenarios.filter((s) => s.id !== recommended?.id);
 
@@ -38,8 +42,8 @@ export function ScenarioComparisonBlock({ scenarios }: { scenarios: DigitalSimul
         <div className="rounded-xl border-2 border-blue-500 bg-blue-500/5 p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-dash-heading">Scénario actuel</span>
-              <span className="rounded-full bg-blue-500 px-2 py-0.5 text-[10px] font-bold text-white">Recommandé</span>
+              <span className="text-xs font-bold text-dash-heading">{t.current}</span>
+              <span className="rounded-full bg-blue-500 px-2 py-0.5 text-[10px] font-bold text-white">{t.recommended}</span>
             </div>
           </div>
           <div className="mt-3 flex items-center justify-between border-b border-border-light pb-3">
@@ -52,7 +56,7 @@ export function ScenarioComparisonBlock({ scenarios }: { scenarios: DigitalSimul
               </div>
             </div>
             <div className="text-right">
-              <p className="text-[10px] uppercase tracking-wide text-dash-muted">Score global</p>
+              <p className="text-[10px] uppercase tracking-wide text-dash-muted">{t.globalScore}</p>
               <p className="text-xl font-bold text-dash-heading">
                 {recommended.score}
                 <span className="text-xs font-medium text-dash-muted">/100</span>
@@ -64,14 +68,14 @@ export function ScenarioComparisonBlock({ scenarios }: { scenarios: DigitalSimul
 
         {others.length > 0 && (
           <div>
-            <p className="mb-3 text-xs font-semibold text-dash-heading">Autres scénarios</p>
+            <p className="mb-3 text-xs font-semibold text-dash-heading">{t.others}</p>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {others.map((scenario) => (
                 <div key={scenario.id} className="rounded-xl border border-border-light bg-white p-3.5">
                   <div className="flex items-start justify-between">
                     <p className="text-xs font-bold text-dash-heading">{scenario.label}</p>
                     <p className="text-right text-[10px] font-semibold text-dash-muted">
-                      Score
+                      {t.score}
                       <br />
                       {scenario.score}/100
                     </p>

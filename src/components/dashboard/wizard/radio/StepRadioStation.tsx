@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import { radioStations } from "@/data/radioStations";
+import { useT } from "@/i18n/client";
 
 export interface RadioStationData {
   stationId: string | null;
@@ -15,6 +16,7 @@ export function StepRadioStation({
   value: RadioStationData;
   onChange: (data: RadioStationData) => void;
 }) {
+  const t = useT("dashWizard").radio;
   const [search, setSearch] = useState("");
 
   const filtered = useMemo(() => {
@@ -26,9 +28,9 @@ export function StepRadioStation({
   return (
     <div className="mx-auto max-w-[1215px] py-2">
       <h1 className="text-[28px] font-semibold leading-9 tracking-[-0.7px] text-dash-heading">
-        Sur quelle radio souhaitez-vous communiquer ?
+        {t.station.title}
       </h1>
-      <p className="mt-1 text-sm text-dash-muted">Sélectionnez la station de diffusion principale.</p>
+      <p className="mt-1 text-sm text-dash-muted">{t.station.subtitle}</p>
 
       <div className="mt-4 flex items-center gap-2 rounded-full border border-border-light bg-white px-4 py-3">
         <Search className="size-3.5 shrink-0 text-dash-muted" aria-hidden="true" />
@@ -36,7 +38,7 @@ export function StepRadioStation({
           type="text"
           value={search}
           onChange={(event) => setSearch(event.target.value)}
-          placeholder="Rechercher une radio..."
+          placeholder={t.station.search}
           className="w-full bg-transparent text-sm text-dash-heading outline-none placeholder:text-dash-muted"
         />
       </div>
@@ -59,7 +61,7 @@ export function StepRadioStation({
               </span>
               <span className="min-w-0 flex-1">
                 <span className="block text-sm font-semibold text-[#111827]">{station.name}</span>
-                <span className="block text-xs text-dash-muted">{station.coverage}</span>
+                <span className="block text-xs text-dash-muted">{t.coverage[station.coverage]}</span>
               </span>
               <span
                 className={`flex size-5 shrink-0 items-center justify-center rounded-full border ${
@@ -73,7 +75,7 @@ export function StepRadioStation({
         })}
         {filtered.length === 0 && (
           <p className="rounded-xl border border-border-light bg-white p-6 text-center text-sm text-dash-muted">
-            Aucune radio ne correspond à votre recherche.
+            {t.station.empty}
           </p>
         )}
       </div>

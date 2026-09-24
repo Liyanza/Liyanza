@@ -20,7 +20,11 @@ import { StepRadioFrequency, type RadioFrequencyData } from "./radio/StepRadioFr
 import { StepRadioRecap } from "./radio/StepRadioRecap";
 import { RadioConfirmation } from "./radio/RadioConfirmation";
 import { buildBroadcastSchedule } from "./radio/buildBroadcastSchedule";
-import { wizardSteps, objectiveOptions } from "@/data/dashboard";
+import { WIZARD_STEP_COUNT } from "@/data/dashboard";
+import { useFormat, useT } from "@/i18n/client";
+import { fill, formatDate } from "@/i18n/format";
+import type { Locale } from "@/i18n/config";
+import type { Messages } from "@/i18n/dictionaries";
 import { radioStations } from "@/data/radioStations";
 import {
   apiAssociateChannels,
@@ -68,7 +72,7 @@ const initialState: WizardState = {
   },
 };
 
-const DIGITAL_LAST_STEP = wizardSteps.length - 1;
+const DIGITAL_LAST_STEP = WIZARD_STEP_COUNT - 1;
 
 // Flux Radio (maquette Figma "MARKETED-OSC-2026", frames
 // Campagnes.CreationRadio) : 4 écrans propres (station, spot, fréquence,
@@ -100,10 +104,12 @@ function durationInDays(start: string, end: string): number {
   return diff > 0 ? diff : 1;
 }
 
-function formatMonthYear(iso: string): string {
+type WizardMessages = Messages["dashWizard"];
+
+function formatMonthYear(iso: string, locale: Locale): string {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return "";
-  const label = date.toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
+  const label = formatDate(date, locale, { month: "long", year: "numeric" });
   return label.charAt(0).toUpperCase() + label.slice(1);
 }
 
@@ -117,9 +123,9 @@ function formatMonthYear(iso: string): string {
  *    champ plannedBudget — l'allocation TOTAL/DAILY elle-même est transmise
  *    séparément à PUT digital-details, voir buildDigitalDetailsPayload).
  */
-function buildCampagnePayload(state: WizardState): CreateCampagnePayload | null {
+function buildCampagnePayload(state: WizardState, t: WizardMessages): CreateCampagnePayload | null {
   const type = state.type ? TYPE_TO_BACKEND[state.type] : undefined;
-  const objectiveOption = objectiveOptions.find((option) => option.id === state.objective);
+  const objectiveOption = state.objective ? t.objective.options[state.objective] : undefined;
   if (!type || !objectiveOption || !state.definition.name.trim()) return null;
 
   const days = durationInDays(state.budget.startDate, state.budget.endDate);
@@ -173,7 +179,11 @@ function buildChannelsPayload(state: WizardState): SelectDigitalChannelsPayload 
  * bien avant le flux Digital, plutôt que de rester en pur mock côté
  * campagne comme la première version de ce wizard.
  */
-function buildRadioCampagnePayload(state: WizardState): CreateCampagnePayload | null {
+function buildRadioCampagnePayload(
+  state: WizardState,
+  t: WizardMessages,
+  locale: Locale
+): CreateCampagnePayload | null {
   const station = radioStations.find((s) => s.id === state.radioStation.stationId);
   const { radioSpot, radioFrequency } = state;
   if (
@@ -188,16 +198,19 @@ function buildRadioCampagnePayload(state: WizardState): CreateCampagnePayload | 
   }
 
   return {
-    name: `Campagne Radio ${formatMonthYear(radioFrequency.startDate)}`.trim(),
+    name: fill(t.radio.campaignName, { month: formatMonthYear(radioFrequency.startDate, locale) }).trim(),
     startDate: radioFrequency.startDate,
     endDate: radioFrequency.endDate,
     plannedBudget: RADIO_DEFAULT_BUDGET,
-    objective: `Diffusion radio — ${station.name}`.slice(0, 2000),
+    objective: fill(t.radio.objective, { station: station.name }).slice(0, 2000),
     type: "RADIO",
   };
 }
 
 export function CampaignWizard() {
+  const t = useT("dashWizard");
+  const dash = useT("dash");
+  const f = useFormat();
   const [stepIndex, setStepIndex] = useState(0);
   // Direction of the last step change, so the new step slides in from it.
   const [stepDir, setStepDir] = useState<"forward" | "back">("forward");
@@ -208,7 +221,7 @@ export function CampaignWizard() {
   const [radioBroadcastCount, setRadioBroadcastCount] = useState(0);
   const [radioTruncated, setRadioTruncated] = useState(false);
 
-  const payload = useMemo(() => buildCampagnePayload(state), [state]);
+  const payload = useMemo(() => buildCampagnePayload(state, t), [state, t]);
   const digitalDetailsPayload = useMemo(() => buildDigitalDetailsPayload(state), [state]);
   const channelsPayload = useMemo(() => buildChannelsPayload(state), [state]);
   const isDigital = state.type === "digital";
@@ -250,9 +263,9 @@ export function CampaignWizard() {
   }, [isRadio, stepIndex, state]);
 
   async function submitRadioCampaign() {
-    const radioPayload = buildRadioCampagnePayload(state);
+    const radioPayload = buildRadioCampagnePayload(state, t, f.locale);
     if (!radioPayload) {
-      setRadioError("Formulaire incomplet : revenez aux étapes précédentes.");
+      setRadioError(t.errors.incomplete);
       return;
     }
     setRadioSubmitting(true);
@@ -274,9 +287,7 @@ export function CampaignWizard() {
         channel.id
       );
       if (broadcasts.length === 0) {
-        throw new Error(
-          "Aucune diffusion ne correspond à la période et aux jours sélectionnés."
-        );
+        throw new Error(t.errors.noBroadcast);
       }
       const created = await apiCreateSchedule(campaign.id, { broadcasts });
 
@@ -286,7 +297,9 @@ export function CampaignWizard() {
       setStepDir("forward");
       setStepIndex(RADIO_STEP.CONFIRMATION);
     } catch (error) {
-      setRadioError(error instanceof ApiError ? error.message : "Une erreur est survenue.");
+      setRadioError(
+        error instanceof ApiError || error instanceof Error ? error.message : dash.common.genericError
+      );
     } finally {
       setRadioSubmitting(false);
     }
@@ -316,24 +329,26 @@ export function CampaignWizard() {
   }
 
   const selectedRadioStation = radioStations.find((s) => s.id === state.radioStation.stationId);
+  const shortDate = (iso: string) => f.date(iso, { day: "numeric", month: "short", year: "numeric" });
+  const longDate = (iso: string) => f.date(iso, { day: "numeric", month: "long", year: "numeric" });
 
   return (
     <>
-      <TopBar title="Campagnes" />
+      <TopBar title={dash.titles.campaigns} />
       <main className="flex-1 overflow-y-auto bg-dash-wizard-canvas">
         <div className="mx-auto flex max-w-[1295px] flex-col gap-3 px-8 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-xs">
               <Link href="/dashboard/campagnes" className="flex items-center gap-1 font-semibold text-dash-body hover:text-black">
                 <ChevronRight className="size-3 rotate-180" aria-hidden="true" />
-                Campagnes
+                {dash.titles.campaigns}
               </Link>
               <span className="text-dash-muted">/</span>
-              <span className="font-semibold text-dash-heading">Assistant de Création</span>
+              <span className="font-semibold text-dash-heading">{t.breadcrumb}</span>
             </div>
             <Link
               href="/dashboard/campagnes"
-              aria-label="Fermer l'assistant de création"
+              aria-label={t.close}
               className="flex size-8 items-center justify-center rounded-full text-dash-muted hover:bg-white hover:text-black"
             >
               <X className="size-4" aria-hidden="true" />
@@ -405,9 +420,9 @@ export function CampaignWizard() {
                 <RadioConfirmation
                   campaignName={radioCampaign.name}
                   stationName={selectedRadioStation?.name ?? ""}
-                  budgetLabel={`${radioCampaign.plannedBudget.toLocaleString("fr-FR")} FCFA`}
-                  periodLabel={`${radioCampaign.startDate} – ${radioCampaign.endDate}`}
-                  startDateLabel={radioCampaign.startDate}
+                  budgetLabel={f.money(radioCampaign.plannedBudget)}
+                  periodLabel={`${shortDate(radioCampaign.startDate)} – ${shortDate(radioCampaign.endDate)}`}
+                  startDateLabel={longDate(radioCampaign.startDate)}
                   broadcastCount={radioBroadcastCount}
                   truncated={radioTruncated}
                 />
@@ -419,7 +434,7 @@ export function CampaignWizard() {
                 onBack={goBack}
                 onNext={goNext}
                 nextDisabled={!canContinue || radioSubmitting}
-                nextLabel={isRadio && stepIndex === RADIO_STEP.RECAP && radioSubmitting ? "Création..." : "Continuer"}
+                nextLabel={isRadio && stepIndex === RADIO_STEP.RECAP && radioSubmitting ? t.creating : t.continue}
                 showBack={stepIndex > 0}
               />
             )}

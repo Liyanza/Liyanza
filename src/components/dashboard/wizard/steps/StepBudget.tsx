@@ -4,6 +4,8 @@ import { Calendar, Zap } from "lucide-react";
 import { budgetPresets } from "@/data/dashboard";
 
 import type { BudgetAllocationType } from "@/lib/api/types";
+import { useFormat, useT } from "@/i18n/client";
+import { fill } from "@/i18n/format";
 
 export interface BudgetData {
   // Valeur envoyée telle quelle comme `budgetAllocation` à
@@ -12,10 +14,6 @@ export interface BudgetData {
   amount: number;
   startDate: string;
   endDate: string;
-}
-
-function formatFcfa(amount: number) {
-  return `${amount.toLocaleString("fr-FR")} FCFA`;
 }
 
 function durationInDays(start: string, end: string) {
@@ -33,16 +31,18 @@ export function StepBudget({
   data: BudgetData;
   onChange: (data: BudgetData) => void;
 }) {
+  const t = useT("dashWizard").budget;
+  const f = useFormat();
   const duration = durationInDays(data.startDate, data.endDate);
 
   return (
     <div>
       <div className="max-w-[768px]">
         <h1 className="text-[28px] font-semibold leading-9 tracking-[-0.7px] text-dash-heading sm:text-[32px]">
-          Combien souhaitez-vous investir et sur quelle période ?
+          {t.title}
         </h1>
         <p className="mt-1 text-base leading-[26px] text-dash-body">
-          Définissez le budget que vous souhaitez allouer à cette campagne et sur quelle période.
+          {t.subtitle}
         </p>
       </div>
 
@@ -52,7 +52,7 @@ export function StepBudget({
             <span className="flex size-7 items-center justify-center rounded-full bg-green-accent/10 text-sm font-semibold text-green-accent-dark">
               1
             </span>
-            <h2 className="text-lg font-semibold text-dash-heading">Type de budget et Montant</h2>
+            <h2 className="text-lg font-semibold text-dash-heading">{t.typeAndAmount}</h2>
           </div>
           <div className="flex items-start rounded-full bg-dash-pill-bg p-1">
             {(["TOTAL", "DAILY"] as const).map((type) => (
@@ -65,7 +65,7 @@ export function StepBudget({
                   data.budgetType === type ? "bg-green-accent text-white shadow-[0_1px_1px_rgba(0,0,0,0.05)]" : "text-dash-muted"
                 }`}
               >
-                Budget {type === "TOTAL" ? "total" : "quotidien"}
+                {type === "TOTAL" ? t.total : t.daily}
               </button>
             ))}
           </div>
@@ -73,10 +73,10 @@ export function StepBudget({
 
         <div className="flex flex-col gap-1 rounded-xl bg-dash-input-bg p-4">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-semibold text-dash-muted">Montant global alloué</span>
+            <span className="text-[11px] font-semibold text-dash-muted">{t.amount}</span>
             <span className="flex items-center gap-1 text-[11px] font-medium text-orange-500">
               <Zap className="size-2.5" aria-hidden="true" />
-              Cadence adaptative activée
+              {t.adaptive}
             </span>
           </div>
           <div className="flex items-baseline gap-2">
@@ -93,7 +93,7 @@ export function StepBudget({
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-[11px] font-semibold uppercase tracking-[0.55px] text-dash-muted">Préréglages :</span>
+          <span className="text-[11px] font-semibold uppercase tracking-[0.55px] text-dash-muted">{t.presets}</span>
           {budgetPresets.map((preset) => (
             <button
               key={preset}
@@ -103,7 +103,7 @@ export function StepBudget({
                 data.amount === preset ? "bg-blue-500 text-white" : "bg-dash-pill-bg text-dash-body"
               }`}
             >
-              {formatFcfa(preset)}
+              {f.money(preset)}
             </button>
           ))}
         </div>
@@ -115,12 +115,12 @@ export function StepBudget({
             <span className="flex size-7 items-center justify-center rounded-full bg-green-accent/10 text-sm font-semibold text-green-accent">
               2
             </span>
-            <h2 className="text-lg font-semibold text-dash-heading">Période de diffusion</h2>
+            <h2 className="text-lg font-semibold text-dash-heading">{t.period}</h2>
           </div>
           {duration !== null && (
             <span className="flex items-center gap-1.5 rounded-full bg-green-accent/10 px-3 py-1 text-[11px] font-semibold text-green-accent-dark">
               <Calendar className="size-3.5" aria-hidden="true" />
-              Durée totale : {duration} jours
+              {fill(t.duration, { days: duration })}
             </span>
           )}
         </div>
@@ -128,8 +128,8 @@ export function StepBudget({
         <div className="flex flex-col gap-4 sm:flex-row">
           {(
             [
-              { key: "startDate" as const, label: "Date de début" },
-              { key: "endDate" as const, label: "Date de fin" },
+              { key: "startDate" as const, label: t.startDate },
+              { key: "endDate" as const, label: t.endDate },
             ]
           ).map((field) => (
             <label key={field.key} className="flex flex-1 flex-col gap-1.5">

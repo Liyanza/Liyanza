@@ -1,20 +1,13 @@
-import { radioStations, radioDayOptions } from "@/data/radioStations";
+"use client";
+
+import { radioStations, slotLabel } from "@/data/radioStations";
+import { useFormat, useT } from "@/i18n/client";
+import { fill } from "@/i18n/format";
+import { formatDuration } from "./StepRadioSpot";
 import type { RadioStationData } from "./StepRadioStation";
 import type { RadioSpotData } from "./StepRadioSpot";
 import type { RadioFrequencyData } from "./StepRadioFrequency";
 
-function formatDateRange(start: string, end: string): string {
-  if (!start || !end) return "—";
-  const fmt = (iso: string) =>
-    new Date(iso).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
-  return `${fmt(start)} – ${fmt(end)}`;
-}
-
-function formatDuration(seconds: number | null): string {
-  if (seconds === null) return "—";
-  const rounded = Math.round(seconds);
-  return rounded < 60 ? `${rounded} sec` : `${Math.floor(rounded / 60)} min ${rounded % 60} sec`;
-}
 
 export function StepRadioRecap({
   station,
@@ -27,25 +20,33 @@ export function StepRadioRecap({
   frequency: RadioFrequencyData;
   error?: string | null;
 }) {
+  const t = useT("dashWizard").radio;
+  const f = useFormat();
   const selectedStation = radioStations.find((s) => s.id === station.stationId);
-  const dayLabels = frequency.days
-    .map((id) => radioDayOptions.find((d) => d.id === id)?.label)
-    .filter(Boolean)
-    .join(", ");
+  const dayLabels = frequency.days.map((id) => t.days[id]).join(", ");
+  const longDate = (iso: string) => f.date(`${iso}T00:00:00`, { day: "numeric", month: "long", year: "numeric" });
+  const period =
+    frequency.startDate && frequency.endDate ? `${longDate(frequency.startDate)} – ${longDate(frequency.endDate)}` : "—";
 
   const rows: { label: string; value: string }[] = [
-    { label: "Radio", value: selectedStation?.name ?? "—" },
-    { label: "Période", value: formatDateRange(frequency.startDate, frequency.endDate) },
-    { label: "Spot", value: spot.fileName ? `${spot.fileName} · ${formatDuration(spot.durationSec)}` : "—" },
-    { label: "Fréquence", value: `${frequency.perDay} diffusion${frequency.perDay > 1 ? "s" : ""} par jour` },
-    { label: "Créneaux", value: frequency.timeSlots.length > 0 ? frequency.timeSlots.join(", ") : "—" },
-    { label: "Jours", value: dayLabels || "—" },
-    { label: "Zone", value: selectedStation?.coverage.replace("Couverture ", "") ?? "—" },
+    { label: t.recap.radio, value: selectedStation?.name ?? "—" },
+    { label: t.recap.period, value: period },
+    { label: t.recap.spot, value: spot.fileName ? `${spot.fileName} · ${formatDuration(spot.durationSec, t.spot)}` : "—" },
+    {
+      label: t.recap.frequency,
+      value: fill(frequency.perDay > 1 ? t.frequency.perDayMany : t.frequency.perDayOne, { count: frequency.perDay }),
+    },
+    {
+      label: t.recap.slots,
+      value: frequency.timeSlots.length > 0 ? frequency.timeSlots.map((s) => slotLabel(s, f.locale)).join(", ") : "—",
+    },
+    { label: t.recap.days, value: dayLabels || "—" },
+    { label: t.recap.zone, value: selectedStation ? t.zones[selectedStation.coverage] : "—" },
   ];
 
   return (
     <div className="mx-auto max-w-[1215px] py-2">
-      <h1 className="text-[28px] font-semibold leading-9 tracking-[-0.7px] text-dash-heading">Récapitulatif</h1>
+      <h1 className="text-[28px] font-semibold leading-9 tracking-[-0.7px] text-dash-heading">{t.recap.title}</h1>
 
       <dl className="mt-6 flex flex-col divide-y divide-border-light rounded-2xl border border-border bg-white px-6">
         {rows.map((row) => (

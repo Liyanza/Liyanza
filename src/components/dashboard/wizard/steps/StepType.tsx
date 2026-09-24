@@ -1,5 +1,8 @@
+"use client";
+
 import { ChevronRight, Info, Radio, Smartphone, Presentation } from "lucide-react";
 import { campaignTypeOptions, type CampaignTypeOption } from "@/data/dashboard";
+import { useT } from "@/i18n/client";
 
 const icons: Record<CampaignTypeOption["icon"], typeof Smartphone> = {
   digital: Smartphone,
@@ -14,10 +17,12 @@ export function StepType({
   value: string | null;
   onChange: (id: string) => void;
 }) {
+  const t = useT("dashWizard").type;
+  const common = useT("dash").common;
   return (
     <div className="mx-auto flex max-w-[926px] flex-col items-center py-5">
       <h1 className="w-full max-w-[685px] text-[28px] font-semibold leading-9 tracking-[-0.7px] text-dash-heading">
-        Quel type de campagne souhaitez-vous créer ?
+        {t.title}
       </h1>
 
       <div className="mt-5 flex w-full flex-col gap-3">
@@ -39,12 +44,12 @@ export function StepType({
                 <Icon className="size-5 text-green-accent-dark" aria-hidden="true" />
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block text-base font-bold text-gray-900">{option.title}</span>
-                <span className="mt-0.5 block text-[12.5px] text-gray-text">{option.description}</span>
+                <span className="block text-base font-bold text-gray-900">{t.options[option.id].title}</span>
+                <span className="mt-0.5 block text-[12.5px] text-gray-text">{t.options[option.id].description}</span>
               </span>
               {!option.supported ? (
                 <span className="shrink-0 rounded-full bg-dash-pill-bg px-2.5 py-1 text-[11px] font-semibold text-dash-muted">
-                  Bientôt disponible
+                  {common.comingSoon}
                 </span>
               ) : selected ? (
                 <span className="flex size-5 shrink-0 items-center justify-center rounded-full border border-blue-500">
@@ -63,8 +68,7 @@ export function StepType({
           <Info className="size-3.5 text-blue-500" aria-hidden="true" />
         </span>
         <p className="text-xs leading-[19.5px] text-gray-text">
-          Combinez plusieurs types de campagnes pour maximiser votre impact. Une campagne radio + supports
-          publicitaires crée une présence forte.
+          {t.tip}
         </p>
       </div>
     </div>

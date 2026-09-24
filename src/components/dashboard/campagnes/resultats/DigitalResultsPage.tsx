@@ -13,6 +13,7 @@ import { CanauxTab } from "./CanauxTab";
 import { BudgetTab } from "./BudgetTab";
 import { PerformancesTab } from "./PerformancesTab";
 import { SkeletonKpis, SkeletonPanel } from "@/components/dashboard/ui/Skeleton";
+import { useT } from "@/i18n/client";
 
 function normalizeList(
   result: DigitalSimulationRecord[] | { items: DigitalSimulationRecord[] }
@@ -21,6 +22,8 @@ function normalizeList(
 }
 
 export function DigitalResultsPage({ campaignId }: { campaignId: string }) {
+  const t = useT("dashCampaigns").results;
+  const dash = useT("dash");
   const [simulation, setSimulation] = useState<DigitalSimulationRecord | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -34,29 +37,30 @@ export function DigitalResultsPage({ campaignId }: { campaignId: string }) {
         setLoading(false);
       },
       (err) => {
-        setError(err instanceof ApiError ? err.message : "Impossible de charger la simulation.");
+        setError(err instanceof ApiError ? err.message : t.loadError);
         setLoading(false);
       }
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- rechargé seulement si la campagne change
   }, [campaignId]);
 
   return (
     <>
-      <TopBar title="Simulation" searchPlaceholder="Rechercher une campagne, un rapport..." />
+      <TopBar title={t.title} searchPlaceholder={dash.home.searchPlaceholder} />
       <main className="flex-1 overflow-y-auto bg-dash-canvas">
         <div className="mx-auto flex max-w-[1100px] flex-col gap-6 px-8 py-8">
           <div>
             <Link href="/dashboard/campagnes" className="flex w-fit items-center gap-1.5 text-xs font-semibold text-dash-body hover:text-black">
               <ArrowLeft className="size-3.5" aria-hidden="true" />
-              Retour aux campagnes
+              {t.back}
             </Link>
-            <h1 className="mt-3 text-2xl font-bold text-dash-heading">Simulation</h1>
-            <p className="mt-0.5 text-sm text-dash-muted">Voici les résultats estimés pour vos scénarios.</p>
+            <h1 className="mt-3 text-2xl font-bold text-dash-heading">{t.title}</h1>
+            <p className="mt-0.5 text-sm text-dash-muted">{t.subtitle}</p>
           </div>
 
           {loading ? (
             <div className="flex flex-col gap-4">
-              <SkeletonKpis label="Chargement des résultats…" />
+              <SkeletonKpis label={t.loading} />
               <SkeletonPanel lines={5} />
             </div>
           ) : error ? (
@@ -66,7 +70,7 @@ export function DigitalResultsPage({ campaignId }: { campaignId: string }) {
             </div>
           ) : !simulation ? (
             <div className="rounded-xl bg-white p-10 text-center text-sm text-dash-muted shadow-[0_1px_1px_rgba(0,0,0,0.05)]">
-              Aucune simulation trouvée pour cette campagne.
+              {t.empty}
             </div>
           ) : (
             <>
@@ -74,7 +78,7 @@ export function DigitalResultsPage({ campaignId }: { campaignId: string }) {
 
               <div className="rounded-2xl border border-border bg-white p-6 shadow-[0_1px_1px_rgba(0,0,0,0.05)]">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-base font-semibold text-dash-heading">Détail du scénario</h2>
+                  <h2 className="text-base font-semibold text-dash-heading">{t.detail}</h2>
                 </div>
                 <div className="mt-2">
                   <ResultsTabs active={activeTab} onChange={setActiveTab} />

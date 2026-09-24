@@ -15,10 +15,14 @@ export const metadata: Metadata = {
  * page à l'autre) et fournis à toutes ses pages.
  */
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
-  const dash = await getMessages("dash");
+  const [dash, dashCampaigns, dashWizard] = await Promise.all([
+    getMessages("dash"),
+    getMessages("dashCampaigns"),
+    getMessages("dashWizard"),
+  ]);
 
   return (
-    <MessagesProvider messages={{ dash }}>
+    <MessagesProvider messages={{ dash, dashCampaigns, dashWizard }}>
       <AuthProvider>
         <div className="flex h-screen w-full overflow-hidden bg-white">
           <Sidebar />
