@@ -306,3 +306,22 @@ body {
     transform: translateX(100%);
   }
 }
+
+/* Ressources : contenu atteint depuis la recherche — halo vert qui s'estompe. */
+.search-hit {
+  animation: search-hit 1.8s var(--ease-out) both;
+  border-radius: 5px;
+}
+.search-hit:focus {
+  outline: none;
+}
+
+@keyframes search-hit {
+  0%,
+  35% {
+    box-shadow: 0 0 0 3px var(--color-green-accent-dark), 0 0 0 9px rgb(22 163 74 / 0.18);
+  }
+  100% {
+    box-shadow: 0 0 0 3px transparent, 0 0 0 9px transparent;
+  }
+}

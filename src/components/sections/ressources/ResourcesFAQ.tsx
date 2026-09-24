@@ -1,48 +1,27 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useCallback, useId, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
 import { Reveal } from "@/components/motion/Reveal";
 import { Collapse, ToggleIcon } from "@/components/motion/Disclosure";
+import { resourcesFaqs as faqs } from "@/data/faqs";
+import { resourceId } from "@/data/resources";
+import { useResourceFocus } from "@/lib/resources-search";
 
-const faqs = [
-  {
-    question: "Comment accéder aux rapports ?",
-    answer:
-      "Rendez-vous dans l'onglet Rapports de votre tableau de bord pour générer, exporter et partager vos rapports de campagne en quelques clics.",
-  },
-  {
-    question: "Comment modifier le budget d'une campagne active ?",
-    answer:
-      "Ouvrez la campagne concernée depuis la liste de vos campagnes, puis ajustez le budget directement depuis son panneau de paramètres — le changement est pris en compte immédiatement.",
-  },
-  {
-    question: "Puis-je connecter plusieurs comptes publicitaires ?",
-    answer:
-      "Oui, KIYANZA permet de connecter plusieurs comptes (Facebook, Instagram, WhatsApp, Google Ads) et de les piloter depuis un seul tableau de bord unifié.",
-  },
-  {
-    question: "Comment fonctionne l'assistant IA ?",
-    answer:
-      "L'assistant IA analyse vos campagnes et vos objectifs pour générer des scénarios et des recommandations concrètes, que vous restez libre d'appliquer ou d'ajuster.",
-  },
-  {
-    question: "KIYANZA est-il disponible en version mobile ?",
-    answer:
-      "L'interface est pensée responsive pour être consultée depuis un mobile ou une tablette ; une application dédiée est envisagée pour une prochaine étape.",
-  },
-  {
-    question: "Comment contacter le support ?",
-    answer:
-      "Notre équipe est joignable via le bouton « Contacter le support » ci-contre ou directement depuis le chat intégré à la plateforme.",
-  },
-];
 
 export function ResourcesFAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const baseId = useId();
+
+  // Une question trouvée par la recherche s'ouvre d'elle-même.
+  useResourceFocus(
+    useCallback((id: string) => {
+      const i = faqs.findIndex((f) => resourceId(f.question) === id);
+      if (i !== -1) setOpenIndex(i);
+    }, []),
+  );
 
   return (
     <section className="border-t border-[#e4e4e7] bg-white py-20">
@@ -70,7 +49,7 @@ export function ResourcesFAQ() {
             {faqs.map((faq, i) => {
               const isOpen = openIndex === i;
               return (
-                <div key={faq.question} data-reveal-item>
+                <div key={faq.question} id={resourceId(faq.question)} data-reveal-item className="scroll-mt-24">
                   <button
                     type="button"
                     onClick={() => setOpenIndex(isOpen ? null : i)}

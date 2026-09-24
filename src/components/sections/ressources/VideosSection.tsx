@@ -2,12 +2,8 @@ import { ArrowRight, Play } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
 import { Reveal } from "@/components/motion/Reveal";
+import { resourceId, videos } from "@/data/resources";
 
-const videos = [
-  { title: "Présentation générale de KIYANZA", views: "1,2k vues", duration: "5:12" },
-  { title: "Créer votre première campagne", views: "986 vues", duration: "8:30" },
-  { title: "Dashboard & KPIs : tour d'horizon", views: "754 vues", duration: "6:45" },
-];
 
 export function VideosSection() {
   return (
@@ -31,7 +27,7 @@ export function VideosSection() {
 
         <Reveal stagger className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {videos.map((video) => (
-            <div key={video.title} data-reveal-item className="rounded-[5px] border border-[#e4e4e7] bg-white">
+            <div key={video.title} id={resourceId(video.title)} data-reveal-item className="scroll-mt-24 rounded-[5px] border border-[#e4e4e7] bg-white">
               <div className="relative flex h-[140px] items-center justify-center rounded-t-[5px] bg-[#18181b]">
                 <button
                   type="button"

@@ -1,73 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { ArrowRight, Clock } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
 import { Reveal } from "@/components/motion/Reveal";
-
-type GuideType = "Guide" | "Tutoriel";
-type Level = "Débutant" | "Intermédiaire" | "Avancé";
-
-interface GuideCard {
-  type: GuideType;
-  level: Level;
-  title: string;
-  description: string;
-  readingTime: string;
-}
+import { guides, resourceId, type Level } from "@/data/resources";
+import { useResourceFocus } from "@/lib/resources-search";
 
 const filters = ["Tous", "Guide", "Tutoriel", "Vidéo", "FAQ"] as const;
-
-const guides: GuideCard[] = [
-  {
-    type: "Guide",
-    level: "Débutant",
-    title: "Comment créer sa première campagne avec KIYANZA",
-    description:
-      "Découvrez étape par étape comment définir vos objectifs, votre budget et vos canaux.",
-    readingTime: "8 min de lecture",
-  },
-  {
-    type: "Tutoriel",
-    level: "Intermédiaire",
-    title: "Utiliser les scénarios IA pour optimiser vos campagnes",
-    description:
-      "Comparez différents scénarios et laissez l'IA recommander la meilleure stratégie.",
-    readingTime: "5 min de lecture",
-  },
-  {
-    type: "Guide",
-    level: "Intermédiaire",
-    title: "Interpréter les performances d'une campagne",
-    description: "Apprenez à lire vos KPIs, graphiques et alertes de monitoring.",
-    readingTime: "6 min de lecture",
-  },
-  {
-    type: "Guide",
-    level: "Avancé",
-    title: "Optimiser son budget marketing",
-    description:
-      "Stratégies concrètes pour répartir efficacement votre budget sur plusieurs canaux.",
-    readingTime: "7 min de lecture",
-  },
-  {
-    type: "Tutoriel",
-    level: "Débutant",
-    title: "Exporter et partager vos rapports",
-    description:
-      "Générez des PDF, planifiez des envois automatiques et partagez avec votre équipe.",
-    readingTime: "4 min de lecture",
-  },
-  {
-    type: "Guide",
-    level: "Avancé",
-    title: "Stratégie multi-canaux avec KIYANZA",
-    description:
-      "Pilotez Facebook, Instagram, WhatsApp et Google Ads depuis un seul tableau de bord.",
-    readingTime: "9 min de lecture",
-  },
-];
 
 const levelStyles: Record<Level, string> = {
   Débutant: "bg-blue-500/10 text-blue-500",
@@ -77,6 +18,13 @@ const levelStyles: Record<Level, string> = {
 
 export function GuidesSection() {
   const [active, setActive] = useState<(typeof filters)[number]>("Tous");
+
+  // Un résultat de recherche vise un guide masqué par le filtre : on repasse sur « Tous ».
+  useResourceFocus(
+    useCallback((id: string) => {
+      if (guides.some((g) => resourceId(g.title) === id)) setActive("Tous");
+    }, []),
+  );
 
   const visible =
     active === "Tous" ? guides : guides.filter((g) => g.type === active);
@@ -124,8 +72,9 @@ export function GuidesSection() {
           {visible.map((guide) => (
             <div
               key={guide.title}
+              id={resourceId(guide.title)}
               data-reveal-item
-              className="flex flex-col rounded-[5px] border border-[#e4e4e7] bg-white p-6"
+              className="flex scroll-mt-24 flex-col rounded-[5px] border border-[#e4e4e7] bg-white p-6"
             >
               <div className="flex items-center justify-between gap-2">
                 <span className="rounded-full border border-[#e4e4e7] bg-[#f4f4f5] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-[#52525b]">
