@@ -3,6 +3,8 @@
 import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { CheckCircle2, XCircle } from "lucide-react";
+import { useT } from "@/i18n/client";
+import { fill } from "@/i18n/format";
 
 const PLATFORM_LABEL: Record<string, string> = {
   facebook: "Facebook",
@@ -17,6 +19,7 @@ const PLATFORM_LABEL: Record<string, string> = {
  * dans une petite fenêtre popup, qui se referme d'elle-même.
  */
 export function OAuthCallbackResult() {
+  const t = useT("dashField").oauth;
   const params = useSearchParams();
   const status = params.get("status");
   const platform = params.get("platform");
@@ -30,9 +33,7 @@ export function OAuthCallbackResult() {
   }, []);
 
   const errorMessage =
-    reason === "denied"
-      ? "Vous avez annulé l'autorisation côté Meta."
-      : "Une erreur est survenue pendant la connexion. Réessayez depuis la page Mon entreprise.";
+    reason === "denied" ? t.denied : t.error;
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-dash-canvas p-8 text-center">
@@ -42,14 +43,12 @@ export function OAuthCallbackResult() {
         <XCircle className="size-10 text-red-500" aria-hidden="true" />
       )}
       <p className="text-lg font-bold text-dash-heading">
-        {success ? "Compte connecté !" : "Connexion impossible"}
+        {success ? t.successTitle : t.errorTitle}
       </p>
       <p className="max-w-sm text-sm text-dash-muted">
-        {success
-          ? `Votre compte ${platformLabel} est maintenant lié à votre entreprise.`
-          : errorMessage}
+        {success ? fill(t.successText, { platform: platformLabel }) : errorMessage}
       </p>
-      <p className="text-xs text-dash-muted">Cette fenêtre va se fermer automatiquement…</p>
+      <p className="text-xs text-dash-muted">{t.closing}</p>
     </div>
   );
 }

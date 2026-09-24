@@ -4,6 +4,8 @@ import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaf
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import type { InstallationRecord } from "@/lib/api/types";
+import { useT } from "@/i18n/client";
+import { fill } from "@/i18n/format";
 
 function colorFor(installation: InstallationRecord): string {
   if (!installation.proof) return "#94a3b8";
@@ -39,6 +41,7 @@ export function TerrainMap({
   onMapClick: (lat: number, lng: number) => void;
   center: [number, number];
 }) {
+  const t = useT("dashField").terrain;
   return (
     <MapContainer center={center} zoom={12} style={{ height: "100%", width: "100%" }}>
       <TileLayer
@@ -62,9 +65,9 @@ export function TerrainMap({
             <br />
             {installation.proof
               ? installation.locationMatch
-                ? "✅ Emplacement confirmé"
-                : `⚠️ Écart de ${installation.distanceMeters ?? "?"} m avec l'emplacement prévu`
-              : "⏳ En attente de la preuve du prestataire"}
+                ? t.popupConfirmed
+                : fill(t.popupGap, { distance: installation.distanceMeters ?? "?" })
+              : t.popupPending}
           </Popup>
         </Marker>
       ))}

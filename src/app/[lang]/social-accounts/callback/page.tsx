@@ -1,16 +1,23 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { OAuthCallbackResult } from "@/components/social-accounts/OAuthCallbackResult";
+import { MessagesProvider } from "@/i18n/client";
+import { getMessages } from "@/i18n/server";
 
-export const metadata: Metadata = {
-  title: "Connexion du compte",
-  robots: { index: false, follow: false },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: (await getMessages("dashField")).oauth.metaTitle,
+    robots: { index: false, follow: false },
+  };
+}
 
-export default function SocialAccountsCallbackPage() {
+export default async function SocialAccountsCallbackPage() {
+  const dashField = await getMessages("dashField");
   return (
-    <Suspense>
-      <OAuthCallbackResult />
-    </Suspense>
+    <MessagesProvider messages={{ dashField }}>
+      <Suspense>
+        <OAuthCallbackResult />
+      </Suspense>
+    </MessagesProvider>
   );
 }
