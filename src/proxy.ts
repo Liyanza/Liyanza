@@ -24,6 +24,12 @@ export function proxy(request: NextRequest) {
   const url = request.nextUrl;
   const segments = url.pathname.split("/").filter(Boolean);
 
+  // Images de partage générées par Next : il les référence par leur chemin
+  // interne (/fr/tarifs/opengraph-image/…), déjà valide — on le sert tel quel.
+  if (isLocale(segments[0]) && segments.some((s) => s === "opengraph-image" || s === "twitter-image")) {
+    return NextResponse.next();
+  }
+
   // /fr/… n'est pas une adresse publique : le français est à la racine.
   if (segments[0] === defaultLocale) {
     return redirect(request, "/" + segments.slice(1).join("/"));

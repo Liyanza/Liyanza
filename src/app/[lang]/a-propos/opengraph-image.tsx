@@ -1,13 +1,7 @@
-import { buildOgImage, OG_IMAGE_SIZE, OG_IMAGE_CONTENT_TYPE } from "@/lib/og-image";
+import { ogImageMetadata, renderOgImage, type OgProps } from "@/lib/og-localized";
 
-export const size = OG_IMAGE_SIZE;
-export const contentType = OG_IMAGE_CONTENT_TYPE;
-export const alt = "À propos de KIYANZA";
+export const generateImageMetadata = (props: OgProps) => ogImageMetadata("about", props);
 
-export default async function Image() {
-  return buildOgImage({
-    eyebrow: "À propos",
-    title: "Nous rendons le marketing lisible par tous.",
-    subtitle: "Mission, valeurs, histoire et équipe derrière KIYANZA.",
-  });
+export default function Image(props: OgProps) {
+  return renderOgImage("about", props);
 }

@@ -42,9 +42,7 @@ export async function generateMetadata(): Promise<Metadata> {
     authors: [{ name: siteConfig.name, url: siteConfig.url }],
     creator: siteConfig.name,
     publisher: siteConfig.name,
-    alternates: {
-      canonical: "/",
-    },
+    // Pas d'URL canonique ici : chaque page déclare la sienne (localizedMetadata).
     robots: {
       index: true,
       follow: true,
@@ -92,7 +90,7 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
   const locale = await lang();
   if (!isLocale(locale)) notFound();
   const common = await loadMessages(locale, "common");
-  const jsonLd = [organizationJsonLd(), websiteJsonLd()];
+  const jsonLd = [organizationJsonLd(), websiteJsonLd(common.meta.description)];
 
   return (
     <html
