@@ -14,6 +14,7 @@ import { ResourcesFinalCTA } from "@/components/sections/ressources/ResourcesFin
 import { resourcesFaqs } from "@/data/faqs";
 import { faqPageJsonLd } from "@/lib/structured-data";
 import { PageTransition } from "@/components/motion/PageTransition";
+import { SplashScreen } from "@/components/motion/SplashScreen";
 
 const title = "Ressources";
 const description =
@@ -41,6 +42,7 @@ export default function RessourcesPage() {
 
   return (
     <>
+      <SplashScreen />
       <Navbar />
       <PageTransition>
         <main className="flex-1">

@@ -12,6 +12,7 @@ import { AboutFinalCTA } from "@/components/sections/apropos/AboutFinalCTA";
 import { aboutFaqs } from "@/data/faqs";
 import { faqPageJsonLd } from "@/lib/structured-data";
 import { PageTransition } from "@/components/motion/PageTransition";
+import { SplashScreen } from "@/components/motion/SplashScreen";
 
 const title = "À propos";
 const description =
@@ -39,6 +40,7 @@ export default function AProposPage() {
 
   return (
     <>
+      <SplashScreen />
       <Navbar />
       <PageTransition>
         <main className="flex-1">

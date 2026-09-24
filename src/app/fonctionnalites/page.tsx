@@ -14,6 +14,7 @@ import { ReportMockup } from "@/components/sections/fonctionnalites/ReportMockup
 import { ProcessSteps } from "@/components/sections/fonctionnalites/ProcessSteps";
 import { FeaturesFinalCTA } from "@/components/sections/fonctionnalites/FeaturesFinalCTA";
 import { PageTransition } from "@/components/motion/PageTransition";
+import { SplashScreen } from "@/components/motion/SplashScreen";
 
 const title = "Fonctionnalités";
 const description =
@@ -39,6 +40,7 @@ export const metadata: Metadata = {
 export default function FonctionnalitesPage() {
   return (
     <>
+      <SplashScreen />
       <Navbar />
       <PageTransition>
         <main className="flex-1">

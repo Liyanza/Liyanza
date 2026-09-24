@@ -10,6 +10,7 @@ import { PricingFinalCTA } from "@/components/sections/tarifs/PricingFinalCTA";
 import { pricingFaqs } from "@/data/faqs";
 import { faqPageJsonLd } from "@/lib/structured-data";
 import { PageTransition } from "@/components/motion/PageTransition";
+import { SplashScreen } from "@/components/motion/SplashScreen";
 
 const title = "Tarifs";
 const description =
@@ -37,6 +38,7 @@ export default function TarifsPage() {
 
   return (
     <>
+      <SplashScreen />
       <Navbar />
       <PageTransition>
         <main className="flex-1">
