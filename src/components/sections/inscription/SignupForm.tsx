@@ -8,14 +8,15 @@ import { Checkbox } from "@/components/auth/Checkbox";
 import { SocialButtons } from "@/components/auth/SocialButtons";
 import { OrDivider } from "@/components/auth/OrDivider";
 import { apiLogin, apiRegister, ApiError } from "@/lib/api/client";
+import { useT } from "@/i18n/client";
 
-type Strength = "" | "Faible" | "Moyen" | "Fort" | "Très fort";
+type Strength = "" | "weak" | "medium" | "strong" | "veryStrong";
 
 const strengthStyles: Record<Exclude<Strength, "">, string> = {
-  Faible: "text-red-500",
-  Moyen: "text-orange-500",
-  Fort: "text-blue-500",
-  "Très fort": "text-green-accent-dark",
+  weak: "text-red-500",
+  medium: "text-orange-500",
+  strong: "text-blue-500",
+  veryStrong: "text-green-accent-dark",
 };
 
 function getStrength(password: string): Strength {
@@ -25,12 +26,13 @@ function getStrength(password: string): Strength {
   const hasNumber = /[0-9]/.test(password);
   const count = [hasLength, hasUpper, hasNumber].filter(Boolean).length;
 
-  if (count <= 1) return "Faible";
-  if (count === 2) return "Moyen";
-  return password.length >= 12 ? "Très fort" : "Fort";
+  if (count <= 1) return "weak";
+  if (count === 2) return "medium";
+  return password.length >= 12 ? "veryStrong" : "strong";
 }
 
 export function SignupForm() {
+  const t = useT("auth");
   const router = useRouter();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -51,7 +53,7 @@ export function SignupForm() {
 
   const confirmError =
     confirmPassword.length > 0 && confirmPassword !== password
-      ? "Les mots de passe ne correspondent pas"
+      ? t.common.mismatch
       : undefined;
 
   const canSubmit =
@@ -77,7 +79,7 @@ export function SignupForm() {
       await apiLogin(email, password);
       router.push("/dashboard");
     } catch (error) {
-      setFormError(error instanceof ApiError ? error.message : "Une erreur est survenue.");
+      setFormError(error instanceof ApiError ? error.message : t.common.genericError);
       setSubmitting(false);
     }
   }
@@ -85,11 +87,11 @@ export function SignupForm() {
   return (
     <div>
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 className="text-3xl font-extrabold text-black">Créer un compte</h2>
+        <h2 className="text-3xl font-extrabold text-black">{t.signup.title}</h2>
         <p className="text-sm text-[#71717a]">
-          Déjà inscrit ?{" "}
+          {t.signup.already}{" "}
           <Link href="/connexion" className="font-semibold text-green-600">
-            Se connecter
+            {t.common.login}
           </Link>
         </p>
       </div>
@@ -108,8 +110,8 @@ export function SignupForm() {
           <div className="grid grid-cols-2 gap-4">
             <FormField
               id="firstName"
-              label="Prénom"
-              placeholder="Prénom"
+              label={t.signup.firstName}
+              placeholder={t.signup.firstName}
               icon={<User className="size-4" aria-hidden="true" />}
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
@@ -117,8 +119,8 @@ export function SignupForm() {
             />
             <FormField
               id="lastName"
-              label="Nom"
-              placeholder="Nom de famille"
+              label={t.signup.lastName}
+              placeholder={t.signup.lastNamePlaceholder}
               icon={<User className="size-4" aria-hidden="true" />}
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
@@ -128,9 +130,9 @@ export function SignupForm() {
 
           <FormField
             id="email"
-            label="Adresse email"
+            label={t.common.email}
             type="email"
-            placeholder="votre@email.com"
+            placeholder={t.common.emailPlaceholder}
             icon={<Mail className="size-4" aria-hidden="true" />}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -139,7 +141,7 @@ export function SignupForm() {
 
           <FormField
             id="phone"
-            label="Téléphone"
+            label={t.signup.phone}
             type="tel"
             placeholder="+225 07 00 00 00 00"
             icon={<Phone className="size-4" aria-hidden="true" />}
@@ -151,9 +153,9 @@ export function SignupForm() {
           <div>
             <FormField
               id="password"
-              label="Mot de passe"
+              label={t.common.password}
               type={showPassword ? "text" : "password"}
-              placeholder="Minimum 8 caractères"
+              placeholder={t.common.minChars}
               icon={<Lock className="size-4" aria-hidden="true" />}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -162,7 +164,7 @@ export function SignupForm() {
                 <button
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
-                  aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                  aria-label={showPassword ? t.common.hidePassword : t.common.showPassword}
                   className="text-[#a1a1aa] transition hover:text-[#3f3f46]"
                 >
                   {showPassword ? (
@@ -178,13 +180,13 @@ export function SignupForm() {
               <div className="mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-1.5">
                 {strength && (
                   <span className={`text-xs font-semibold ${strengthStyles[strength]}`}>
-                    {strength}
+                    {t.signup.strength[strength]}
                   </span>
                 )}
                 {[
-                  { met: hasLength, label: "8+ caractères" },
-                  { met: hasUpper, label: "Majuscule" },
-                  { met: hasNumber, label: "Chiffre" },
+                  { met: hasLength, label: t.signup.rules.length },
+                  { met: hasUpper, label: t.signup.rules.upper },
+                  { met: hasNumber, label: t.signup.rules.number },
                 ].map((c) => (
                   <span
                     key={c.label}
@@ -206,9 +208,9 @@ export function SignupForm() {
 
           <FormField
             id="confirmPassword"
-            label="Confirmer le mot de passe"
+            label={t.common.confirmPassword}
             type={showConfirm ? "text" : "password"}
-            placeholder="Répétez le mot de passe"
+            placeholder={t.common.confirmPlaceholder}
             icon={<Lock className="size-4" aria-hidden="true" />}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
@@ -218,7 +220,7 @@ export function SignupForm() {
               <button
                 type="button"
                 onClick={() => setShowConfirm((v) => !v)}
-                aria-label={showConfirm ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                aria-label={showConfirm ? t.common.hidePassword : t.common.showPassword}
                 className="text-[#a1a1aa] transition hover:text-[#3f3f46]"
               >
                 {showConfirm ? (
@@ -231,15 +233,15 @@ export function SignupForm() {
           />
 
           <Checkbox checked={acceptTerms} onChange={setAcceptTerms}>
-            J&apos;accepte les{" "}
+            {t.signup.acceptStart}{" "}
             <Link href="/conditions-utilisation" className="font-semibold text-black underline">
-              Conditions d&apos;utilisation
+              {t.common.terms}
             </Link>{" "}
-            et la{" "}
+            {t.signup.acceptAnd}{" "}
             <Link href="/politique-confidentialite" className="font-semibold text-black underline">
-              Politique de confidentialité
-            </Link>{" "}
-            de KIYANZA.
+              {t.common.privacy}
+            </Link>
+            {t.signup.acceptEnd === "." ? "." : ` ${t.signup.acceptEnd}`}
           </Checkbox>
 
           <button
@@ -251,21 +253,19 @@ export function SignupForm() {
               <Loader2 className="size-4 animate-spin" aria-hidden="true" />
             ) : (
               <>
-                Créer mon compte gratuitement
+                {t.signup.submit}
                 <ArrowRight className="size-4" aria-hidden="true" />
               </>
             )}
           </button>
 
           <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-[#71717a]">
-            <span className="flex items-center gap-1.5">
-              <Check className="size-3.5 text-green-accent-dark" aria-hidden="true" />
-              Gratuit sans carte
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Check className="size-3.5 text-green-accent-dark" aria-hidden="true" />
-              Annulez à tout moment
-            </span>
+            {t.signup.perks.map((perk) => (
+              <span key={perk} className="flex items-center gap-1.5">
+                <Check className="size-3.5 text-green-accent-dark" aria-hidden="true" />
+                {perk}
+              </span>
+            ))}
           </div>
         </form>
       </div>

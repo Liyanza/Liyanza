@@ -1,5 +1,6 @@
 import type { Locale } from "../config";
 import type frCommon from "./fr/common";
+import type frAuth from "./fr/auth";
 import type frResources from "./fr/resources";
 import type frAbout from "./fr/about";
 import type frPricing from "./fr/pricing";
@@ -16,6 +17,7 @@ import type frPlans from "./fr/plans";
 const loaders = {
   fr: {
     common: () => import("./fr/common").then((m) => m.default),
+    auth: () => import("./fr/auth").then((m) => m.default),
     resources: () => import("./fr/resources").then((m) => m.default),
     about: () => import("./fr/about").then((m) => m.default),
     pricing: () => import("./fr/pricing").then((m) => m.default),
@@ -25,6 +27,7 @@ const loaders = {
   },
   en: {
     common: () => import("./en/common").then((m) => m.default),
+    auth: () => import("./en/auth").then((m) => m.default),
     resources: () => import("./en/resources").then((m) => m.default),
     about: () => import("./en/about").then((m) => m.default),
     pricing: () => import("./en/pricing").then((m) => m.default),
@@ -38,6 +41,7 @@ export type Namespace = keyof (typeof loaders)["fr"];
 
 export type Messages = {
   common: typeof frCommon;
+  auth: typeof frAuth;
   resources: typeof frResources;
   about: typeof frAbout;
   pricing: typeof frPricing;

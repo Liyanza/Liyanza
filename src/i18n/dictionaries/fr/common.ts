@@ -76,6 +76,23 @@ const common = {
     secondary: "Voir comment ça marche",
     points: ["Annulation à tout moment", "Support inclus"],
   },
+  chatbot: {
+    label: "Posez vos questions",
+    open: "Ouvrir le chat marketing",
+    close: "Fermer le chat",
+    dialog: "Assistant marketing KIYANZA",
+    name: "Assistant KIYANZA",
+    status: "Expert Marketing IA · En ligne",
+    welcome:
+      "Bonjour ! 👋 Je suis votre assistant marketing KIYANZA. Posez-moi toutes vos questions sur vos campagnes, budgets, audiences ou stratégies marketing !",
+    reply:
+      "Merci pour votre question ! Un expert KIYANZA analysera votre demande et reviendra vers vous avec des recommandations personnalisées.",
+    quickActions: ["Améliorer mon ROI", "Stratégie réseaux sociaux ?", "Comment optimiser mon budget ?"],
+    inputLabel: "Votre question marketing",
+    placeholder: "Posez votre question marketing…",
+    send: "Envoyer le message",
+    poweredBy: "Propulsé par KIYANZA IA",
+  },
   notFound: {
     title: "Page introuvable",
     text: "La page que vous cherchez n'existe pas ou a été déplacée.",

@@ -6,19 +6,28 @@ import { SecurityNote } from "@/components/auth/SecurityNote";
 import { BrandVisual } from "@/components/auth/BrandVisual";
 import { HeroIntro } from "@/components/motion/HeroIntro";
 import { PageTransition } from "@/components/motion/PageTransition";
+import { MessagesProvider } from "@/i18n/client";
+import { getMessages } from "@/i18n/server";
 
-export function AuthShell({
-  brandHeading,
-  brandParagraph,
+/**
+ * Cadre des pages d'authentification. Charge le dictionnaire « auth » et le
+ * fournit aux formulaires (composants client) qu'il contient.
+ */
+export async function AuthShell({
+  brand,
   backVariant = "text",
   children,
 }: {
-  brandHeading: string;
-  brandParagraph: string;
+  /** Textes du panneau de marque (auth.brand.*). */
+  brand: "login" | "signup" | "forgot" | "reset";
   backVariant?: "icon" | "text" | "none";
   children: ReactNode;
 }) {
+  const t = await getMessages("auth");
+  const { heading: brandHeading, paragraph: brandParagraph } = t.brand[brand];
+
   return (
+    <MessagesProvider messages={{ auth: t }}>
     <PageTransition>
       <div className="flex min-h-screen w-full bg-white">
         <HeroIntro className="relative hidden w-1/2 max-w-[767px] shrink-0 flex-col overflow-hidden bg-gradient-to-b from-green-accent-dark to-green-600 px-12 pb-12 pt-[58px] lg:flex">
@@ -47,7 +56,7 @@ export function AuthShell({
           {backVariant === "icon" ? (
             <Link
               href="/"
-              aria-label="Retour à l'accueil"
+              aria-label={t.shell.backHome}
               className="absolute right-6 top-6 flex items-center justify-center border border-[#e4e4e7] p-3 text-black transition hover:bg-[#f4f4f5] sm:right-12 sm:top-12"
             >
               <ArrowLeft className="size-4" aria-hidden="true" />
@@ -58,7 +67,7 @@ export function AuthShell({
               className="absolute right-6 top-6 flex items-center gap-1.5 border border-[#e4e4e7] px-4 py-2 text-xs font-medium text-[#71717a] transition hover:bg-[#f4f4f5] sm:right-12 sm:top-12"
             >
               <ArrowLeft className="size-3.5" aria-hidden="true" />
-              Retour au site
+              {t.shell.backToSite}
             </Link>
           ) : null}
   
@@ -66,5 +75,6 @@ export function AuthShell({
         </div>
       </div>
     </PageTransition>
+    </MessagesProvider>
   );
 }

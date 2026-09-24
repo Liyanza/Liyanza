@@ -1,39 +1,24 @@
-import type { Metadata } from "next";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { LoginForm } from "@/components/sections/connexion/LoginForm";
+import { getMessages } from "@/i18n/server";
+import { localizedMetadata } from "@/i18n/metadata";
 
-const title = "Connexion";
-const description = "Accédez à votre cockpit marketing et reprenez le pilotage là où vous l'aviez laissé.";
-
-export const metadata: Metadata = {
-  title,
-  description,
-  alternates: {
-    canonical: "/connexion",
-  },
-  // Page de compte utilisateur : pas d'intérêt à l'indexer dans Google.
-  robots: {
-    index: false,
-    follow: true,
-  },
-  openGraph: {
-    title,
-    description,
-    url: "/connexion",
-  },
-  twitter: {
-    title,
-    description,
-  },
-};
+export async function generateMetadata() {
+  const t = await getMessages("auth");
+  return {
+    ...(await localizedMetadata({
+      path: "/connexion",
+      title: t.meta.login.title,
+      description: t.brand.login.paragraph,
+    })),
+    // Page de compte utilisateur : pas d'intérêt à l'indexer dans Google.
+    robots: { index: false, follow: true },
+  };
+}
 
 export default function ConnexionPage() {
   return (
-    <AuthShell
-      backVariant="none"
-      brandHeading="Bon retour parmi nous !"
-      brandParagraph="Accédez à votre cockpit marketing et reprenez le pilotage là où vous l'aviez laissé."
-    >
+    <AuthShell backVariant="none" brand="login">
       <LoginForm />
     </AuthShell>
   );

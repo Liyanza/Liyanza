@@ -1,39 +1,24 @@
-import type { Metadata } from "next";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { SignupForm } from "@/components/sections/inscription/SignupForm";
+import { getMessages } from "@/i18n/server";
+import { localizedMetadata } from "@/i18n/metadata";
 
-const title = "Créer un compte";
-const description = "Rejoignez 500+ équipes marketing qui pilotent leurs campagnes avec l'IA KIYANZA.";
-
-export const metadata: Metadata = {
-  title,
-  description,
-  alternates: {
-    canonical: "/inscription",
-  },
-  // Page de compte utilisateur : pas d'intérêt à l'indexer dans Google.
-  robots: {
-    index: false,
-    follow: true,
-  },
-  openGraph: {
-    title,
-    description,
-    url: "/inscription",
-  },
-  twitter: {
-    title,
-    description,
-  },
-};
+export async function generateMetadata() {
+  const t = await getMessages("auth");
+  return {
+    ...(await localizedMetadata({
+      path: "/inscription",
+      title: t.meta.signup.title,
+      description: t.brand.signup.paragraph,
+    })),
+    // Page de compte utilisateur : pas d'intérêt à l'indexer dans Google.
+    robots: { index: false, follow: true },
+  };
+}
 
 export default function InscriptionPage() {
   return (
-    <AuthShell
-      backVariant="text"
-      brandHeading="Lancez-vous. C'est gratuit !"
-      brandParagraph="Rejoignez 500+ équipes marketing qui pilotent leurs campagnes avec l'IA KIYANZA."
-    >
+    <AuthShell backVariant="text" brand="signup">
       <SignupForm />
     </AuthShell>
   );

@@ -71,6 +71,23 @@ const common: typeof fr = {
     secondary: "See how it works",
     points: ["Cancel anytime", "Support included"],
   },
+  chatbot: {
+    label: "Ask us anything",
+    open: "Open the marketing chat",
+    close: "Close the chat",
+    dialog: "KIYANZA marketing assistant",
+    name: "KIYANZA assistant",
+    status: "AI marketing expert · Online",
+    welcome:
+      "Hello! 👋 I'm your KIYANZA marketing assistant. Ask me anything about your campaigns, budgets, audiences or marketing strategies!",
+    reply:
+      "Thanks for your question! A KIYANZA expert will look into it and get back to you with personalised recommendations.",
+    quickActions: ["Improve my ROI", "Social media strategy?", "How can I optimise my budget?"],
+    inputLabel: "Your marketing question",
+    placeholder: "Ask your marketing question…",
+    send: "Send message",
+    poweredBy: "Powered by KIYANZA AI",
+  },
   notFound: {
     title: "Page not found",
     text: "The page you are looking for does not exist or has been moved.",

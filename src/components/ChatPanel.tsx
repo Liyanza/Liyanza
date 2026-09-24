@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Send } from "lucide-react";
+import { useT } from "@/i18n/client";
 
 interface Message {
   id: number;
@@ -10,25 +11,11 @@ interface Message {
   text: string;
 }
 
-const quickActions = [
-  "Améliorer mon ROI",
-  "Stratégie réseaux sociaux ?",
-  "Comment optimiser mon budget ?",
-];
-
-const BOT_REPLY =
-  "Merci pour votre question ! Un expert KIYANZA analysera votre demande et reviendra vers vous avec des recommandations personnalisées.";
-
 let nextId = 1;
 
 export function ChatPanel() {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: nextId++,
-      role: "bot",
-      text: "Bonjour ! 👋 Je suis votre assistant marketing KIYANZA. Posez-moi toutes vos questions sur vos campagnes, budgets, audiences ou stratégies marketing !",
-    },
-  ]);
+  const t = useT("common").chatbot;
+  const [messages, setMessages] = useState<Message[]>(() => [{ id: nextId++, role: "bot", text: t.welcome }]);
   const [input, setInput] = useState("");
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -42,14 +29,14 @@ export function ChatPanel() {
     setMessages((prev) => [...prev, { id: nextId++, role: "user", text: trimmed }]);
     setInput("");
     window.setTimeout(() => {
-      setMessages((prev) => [...prev, { id: nextId++, role: "bot", text: BOT_REPLY }]);
+      setMessages((prev) => [...prev, { id: nextId++, role: "bot", text: t.reply }]);
     }, 600);
   }
 
   return (
     <div
       role="dialog"
-      aria-label="Assistant marketing KIYANZA"
+      aria-label={t.dialog}
       className="flex h-[min(520px,calc(100vh-6rem))] w-[min(384px,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-border-light bg-white shadow-[0_16px_16px_-4px_rgba(0,0,0,0.08),0_20px_60px_-10px_rgba(13,31,60,0.18)]"
     >
       <div className="flex items-center gap-3 bg-gradient-to-r from-blue-500 to-[#1a3460] px-4 py-3.5">
@@ -58,13 +45,13 @@ export function ChatPanel() {
           <span className="absolute -bottom-0.5 -right-0.5 size-2 rounded-full bg-green-accent ring-2 ring-[#296bd6]" />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-bold text-white">Assistant KIYANZA</p>
-          <p className="text-[11px] text-[#8fafd4]">Expert Marketing IA · En ligne</p>
+          <p className="text-sm font-bold text-white">{t.name}</p>
+          <p className="text-[11px] text-[#8fafd4]">{t.status}</p>
         </div>
       </div>
 
       <div className="flex flex-wrap gap-2 p-3">
-        {quickActions.map((action) => (
+        {t.quickActions.map((action) => (
           <button
             key={action}
             type="button"
@@ -106,19 +93,19 @@ export function ChatPanel() {
       >
         <div className="flex items-center gap-2 rounded-full border border-border bg-slate-50 py-2 pl-4 pr-2 has-[input:focus-visible]:ring-2 has-[input:focus-visible]:ring-green-accent">
           <label htmlFor="chat-input" className="sr-only">
-            Votre question marketing
+            {t.inputLabel}
           </label>
           <input
             id="chat-input"
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Posez votre question marketing…"
+            placeholder={t.placeholder}
             className="min-w-0 flex-1 bg-transparent text-xs text-black placeholder:text-gray-text-light focus:outline-none"
           />
           <button
             type="submit"
-            aria-label="Envoyer le message"
+            aria-label={t.send}
             disabled={!input.trim()}
             className={`flex size-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-navy to-[#1a3460] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-accent ${
               input.trim() ? "opacity-100" : "opacity-40"
@@ -128,7 +115,7 @@ export function ChatPanel() {
           </button>
         </div>
         <p className="mt-1.5 text-center text-[10px] text-gray-text-light">
-          Propulsé par KIYANZA IA
+          {t.poweredBy}
         </p>
       </form>
     </div>
