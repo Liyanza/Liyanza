@@ -1,40 +1,36 @@
 "use client";
 
 import { useEffect } from "react";
-import { resourceIndex, type ResourceEntry } from "@/data/resources";
+import type { ResourceEntry } from "@/data/resources";
+import { normalize } from "@/lib/text";
 
 const FOCUS_EVENT = "resources:focus";
 
-/** Mots vides ignorés : « Créer une campagne » doit trouver « créer sa première campagne ». */
+/**
+ * Mots vides ignorés (français et anglais) : « Créer une campagne » doit
+ * trouver « créer sa première campagne », « Create a campaign » aussi.
+ */
 const STOP_WORDS = new Set([
   "un", "une", "le", "la", "les", "de", "des", "du", "et", "en", "au", "aux",
   "pour", "sur", "par", "sa", "son", "ses", "mon", "ma", "mes", "vos", "votre",
   "avec", "comment", "est", "il", "je", "on",
+  "the", "an", "of", "to", "for", "and", "in", "on", "my", "your", "how", "is",
+  "with", "do", "it", "can",
 ]);
-
-/** Minuscules, sans accents ni ponctuation : « Scénarios » trouve « scenario ». */
-export function normalize(value: string): string {
-  return value
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, " ")
-    .trim();
-}
 
 /**
  * Recherche plein texte locale : chaque mot de la requête doit apparaître
  * (en début de mot) dans le titre ou le texte. Les correspondances dans le
  * titre pèsent plus lourd.
  */
-export function searchResources(query: string, limit = 8): ResourceEntry[] {
+export function searchResources(index: ResourceEntry[], query: string, limit = 8): ResourceEntry[] {
   const terms = normalize(query)
     .split(" ")
     .filter((t) => t.length > 1 && !STOP_WORDS.has(t));
   if (!terms.length) return [];
 
   const scored: { entry: ResourceEntry; score: number }[] = [];
-  for (const entry of resourceIndex) {
+  for (const entry of index) {
     const title = ` ${normalize(entry.title)}`;
     const text = ` ${normalize(`${entry.text} ${entry.keywords ?? ""}`)}`;
     let score = 0;

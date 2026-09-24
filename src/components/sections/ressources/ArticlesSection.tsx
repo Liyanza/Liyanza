@@ -2,25 +2,29 @@ import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
 import { Reveal } from "@/components/motion/Reveal";
-import { articles, featuredArticle, resourceId } from "@/data/resources";
+import { resourceId } from "@/data/resources";
+import { getMessages } from "@/i18n/server";
 
 
-export function ArticlesSection() {
+export async function ArticlesSection() {
+  const t = (await getMessages("resources")).articles;
+  const { featured: featuredArticle, items: articles } = t;
+
   return (
     <section className="bg-white py-20">
       <Container>
         <Reveal className="flex flex-wrap items-center justify-between gap-6">
           <div>
-            <SectionEyebrow variant="pill" tone="orange">Blog</SectionEyebrow>
+            <SectionEyebrow variant="pill" tone="orange">{t.eyebrow}</SectionEyebrow>
             <h2 className="mt-5 text-4xl font-extrabold text-black sm:text-5xl">
-              Derniers articles &amp; conseils
+              {t.title}
             </h2>
           </div>
           <button
             type="button"
             className="flex items-center gap-2 rounded-full border border-[#e4e4e7] px-5 py-3 text-sm font-semibold text-[#3f3f46] transition hover:bg-[#fafafa]"
           >
-            Voir tous les articles
+            {t.seeAll}
             <ArrowRight className="size-3.5" aria-hidden="true" />
           </button>
         </Reveal>
@@ -32,7 +36,7 @@ export function ArticlesSection() {
             className="scroll-mt-24 rounded-[5px] border border-[#e4e4e7] lg:col-start-1 lg:row-span-2 lg:row-start-1">
             <div className="relative flex h-[200px] items-center justify-center bg-green-accent-dark">
               <span className="absolute left-4 top-4 rounded-full bg-orange-500 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wide text-white">
-                À la une
+                {t.featuredBadge}
               </span>
               <span className="text-5xl font-black text-white/10">BLOG</span>
             </div>
@@ -52,7 +56,7 @@ export function ArticlesSection() {
                   type="button"
                   className="flex items-center gap-1 text-sm font-semibold text-green-accent-dark"
                 >
-                  Lire
+                  {t.read}
                   <ArrowRight className="size-3.5" aria-hidden="true" />
                 </button>
               </div>

@@ -5,31 +5,9 @@ import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
 import { Reveal } from "@/components/motion/Reveal";
 import { Collapse, ToggleIcon } from "@/components/motion/Disclosure";
+import type { Messages } from "@/i18n/dictionaries";
 
-const faqs = [
-  {
-    question: "KIYANZA est-il conçu spécifiquement pour l'Afrique ?",
-    answer:
-      "Oui, KIYANZA est pensé pour répondre aux réalités des équipes marketing africaines et de la diaspora, tout en restant utilisable partout.",
-  },
-  {
-    question: "Êtes-vous une startup ou une entreprise établie ?",
-    answer:
-      "KIYANZA est une jeune structure née lors de l'Orange Summer Challenge 2026, actuellement en phase de croissance.",
-  },
-  {
-    question: "Puis-je contacter l'équipe fondatrice ?",
-    answer:
-      "Oui, vous pouvez nous contacter directement via la page Contact ou notre formulaire dédié.",
-  },
-  {
-    question: "Proposez-vous des partenariats ou intégrations ?",
-    answer:
-      "Nous sommes ouverts aux partenariats et intégrations — contactez notre équipe pour en discuter.",
-  },
-];
-
-export function AboutFAQ() {
+export function AboutFAQ({ t }: { t: Messages["about"]["faq"] }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const baseId = useId();
 
@@ -38,18 +16,17 @@ export function AboutFAQ() {
       <Container>
         <div className="grid grid-cols-1 gap-16 lg:grid-cols-[1fr_2fr]">
           <Reveal>
-            <SectionEyebrow variant="pill" tone="orange">FAQ</SectionEyebrow>
+            <SectionEyebrow variant="pill" tone="orange">{t.eyebrow}</SectionEyebrow>
             <h2 className="mt-5 text-4xl font-extrabold text-black">
-              Questions sur KIYANZA
+              {t.title}
             </h2>
             <p className="mt-4 text-sm leading-relaxed text-gray-text">
-              Des doutes sur qui nous sommes ou comment nous travaillons ?
-              Voici les réponses.
+              {t.text}
             </p>
           </Reveal>
 
           <Reveal stagger className="divide-y divide-[#e4e4e7] border-t border-[#e4e4e7]">
-            {faqs.map((faq, i) => {
+            {t.items.map((faq, i) => {
               const isOpen = openIndex === i;
               return (
                 <div key={faq.question} data-reveal-item>

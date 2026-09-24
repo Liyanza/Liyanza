@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
 import { ChatbotWidget } from "@/components/ChatbotWidget";
@@ -9,34 +8,20 @@ import { ValuesSection } from "@/components/sections/apropos/ValuesSection";
 import { TeamSection } from "@/components/sections/apropos/TeamSection";
 import { AboutFAQ } from "@/components/sections/apropos/AboutFAQ";
 import { AboutFinalCTA } from "@/components/sections/apropos/AboutFinalCTA";
-import { aboutFaqs } from "@/data/faqs";
 import { faqPageJsonLd } from "@/lib/structured-data";
 import { PageTransition } from "@/components/motion/PageTransition";
 import { SplashScreen } from "@/components/motion/SplashScreen";
+import { getMessages, href } from "@/i18n/server";
+import { localizedMetadata } from "@/i18n/metadata";
 
-const title = "À propos";
-const description =
-  "Nous rendons le marketing lisible par tous. Découvrez la mission, les valeurs, l'histoire et l'équipe derrière KIYANZA.";
+export async function generateMetadata() {
+  const { meta } = await getMessages("about");
+  return localizedMetadata({ path: "/a-propos", title: meta.title, description: meta.description });
+}
 
-export const metadata: Metadata = {
-  title,
-  description,
-  alternates: {
-    canonical: "/a-propos",
-  },
-  openGraph: {
-    title,
-    description,
-    url: "/a-propos",
-  },
-  twitter: {
-    title,
-    description,
-  },
-};
-
-export default function AProposPage() {
-  const jsonLd = faqPageJsonLd(aboutFaqs, "/a-propos");
+export default async function AProposPage() {
+  const t = await getMessages("about");
+  const jsonLd = faqPageJsonLd(t.faq.items, await href("/a-propos"));
 
   return (
     <>
@@ -49,7 +34,7 @@ export default function AProposPage() {
           <ChallengesSection />
           <ValuesSection />
           <TeamSection />
-          <AboutFAQ />
+          <AboutFAQ t={t.faq} />
           <AboutFinalCTA />
         </main>
       </PageTransition>

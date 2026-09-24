@@ -22,7 +22,7 @@ const plans: typeof fr = {
     {
       tier: "PRO",
       tagline: "For marketing teams",
-      price: "XX,XXX FCFA/month",
+      price: "XX,XXX FCFA",
       priceNote: "per month",
       cta: "Start with PRO",
       featured: true,
@@ -39,7 +39,7 @@ const plans: typeof fr = {
     {
       tier: "BUSINESS",
       tagline: "For growing companies",
-      price: "XX,XXX FCFA/month",
+      price: "XX,XXX FCFA",
       priceNote: "per month",
       cta: "Choose Business",
       featured: false,

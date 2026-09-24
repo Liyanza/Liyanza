@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
 import { ChatbotWidget } from "@/components/ChatbotWidget";
@@ -11,37 +10,25 @@ import { VideosSection } from "@/components/sections/ressources/VideosSection";
 import { ResourcesFAQ } from "@/components/sections/ressources/ResourcesFAQ";
 import { NewsletterSection } from "@/components/sections/ressources/NewsletterSection";
 import { ResourcesFinalCTA } from "@/components/sections/ressources/ResourcesFinalCTA";
-import { resourcesFaqs } from "@/data/faqs";
 import { faqPageJsonLd } from "@/lib/structured-data";
 import { PageTransition } from "@/components/motion/PageTransition";
 import { SplashScreen } from "@/components/motion/SplashScreen";
+import { MessagesProvider } from "@/i18n/client";
+import { getMessages, href } from "@/i18n/server";
+import { localizedMetadata } from "@/i18n/metadata";
 
-const title = "Ressources";
-const description =
-  "Guides, tutoriels, vidéos et FAQ — tout ce qu'il faut pour piloter vos campagnes comme un expert avec KIYANZA.";
+export async function generateMetadata() {
+  const { meta } = await getMessages("resources");
+  return localizedMetadata({ path: "/ressources", title: meta.title, description: meta.description });
+}
 
-export const metadata: Metadata = {
-  title,
-  description,
-  alternates: {
-    canonical: "/ressources",
-  },
-  openGraph: {
-    title,
-    description,
-    url: "/ressources",
-  },
-  twitter: {
-    title,
-    description,
-  },
-};
-
-export default function RessourcesPage() {
-  const jsonLd = faqPageJsonLd(resourcesFaqs, "/ressources");
+export default async function RessourcesPage() {
+  const t = await getMessages("resources");
+  const jsonLd = faqPageJsonLd(t.faq.items, await href("/ressources"));
 
   return (
-    <>
+    // La recherche, les filtres, la FAQ et la newsletter (composants client) lisent ce dictionnaire.
+    <MessagesProvider messages={{ resources: t }}>
       <SplashScreen />
       <Navbar />
       <PageTransition>
@@ -63,6 +50,6 @@ export default function RessourcesPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-    </>
+    </MessagesProvider>
   );
 }

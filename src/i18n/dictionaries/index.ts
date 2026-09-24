@@ -1,5 +1,7 @@
 import type { Locale } from "../config";
 import type frCommon from "./fr/common";
+import type frResources from "./fr/resources";
+import type frAbout from "./fr/about";
 import type frPricing from "./fr/pricing";
 import type frFeatures from "./fr/features";
 import type frHome from "./fr/home";
@@ -14,6 +16,8 @@ import type frPlans from "./fr/plans";
 const loaders = {
   fr: {
     common: () => import("./fr/common").then((m) => m.default),
+    resources: () => import("./fr/resources").then((m) => m.default),
+    about: () => import("./fr/about").then((m) => m.default),
     pricing: () => import("./fr/pricing").then((m) => m.default),
     features: () => import("./fr/features").then((m) => m.default),
     home: () => import("./fr/home").then((m) => m.default),
@@ -21,6 +25,8 @@ const loaders = {
   },
   en: {
     common: () => import("./en/common").then((m) => m.default),
+    resources: () => import("./en/resources").then((m) => m.default),
+    about: () => import("./en/about").then((m) => m.default),
     pricing: () => import("./en/pricing").then((m) => m.default),
     features: () => import("./en/features").then((m) => m.default),
     home: () => import("./en/home").then((m) => m.default),
@@ -32,6 +38,8 @@ export type Namespace = keyof (typeof loaders)["fr"];
 
 export type Messages = {
   common: typeof frCommon;
+  resources: typeof frResources;
+  about: typeof frAbout;
   pricing: typeof frPricing;
   features: typeof frFeatures;
   home: typeof frHome;

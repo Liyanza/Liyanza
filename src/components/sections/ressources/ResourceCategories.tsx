@@ -2,46 +2,22 @@ import { ArrowRight, BookOpen, FileText, HelpCircle, PlayCircle } from "lucide-r
 import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
 import { Reveal } from "@/components/motion/Reveal";
+import { getMessages } from "@/i18n/server";
 
-const categories = [
-  {
-    number: "01",
-    icon: HelpCircle,
-    title: "Centre d'aide",
-    description: "Obtenez rapidement des réponses à vos questions les plus fréquentes.",
-    cta: "Consulter",
-  },
-  {
-    number: "02",
-    icon: FileText,
-    title: "Documentation",
-    description: "Découvrez en détail toutes les fonctionnalités de KIYANZA.",
-    cta: "Lire la doc",
-  },
-  {
-    number: "03",
-    icon: BookOpen,
-    title: "Guides & Tutoriels",
-    description: "Apprenez à mieux piloter vos campagnes pas à pas.",
-    cta: "Voir les guides",
-  },
-  {
-    number: "04",
-    icon: PlayCircle,
-    title: "Vidéos",
-    description: "Regardez des démonstrations et tutoriels en quelques minutes.",
-    cta: "Regarder",
-  },
-];
+/** Icônes des catégories, dans l'ordre de resources.categories.items. */
+const categoryIcons = [HelpCircle, FileText, BookOpen, PlayCircle];
 
-export function ResourceCategories() {
+export async function ResourceCategories() {
+  const t = (await getMessages("resources")).categories;
+  const categories = t.items.map((item, i) => ({ ...item, icon: categoryIcons[i], number: String(i + 1).padStart(2, "0") }));
+
   return (
     <section className="bg-white py-20">
       <Container>
         <Reveal className="mx-auto max-w-2xl text-center">
-          <SectionEyebrow variant="pill" tone="orange">Accès rapide</SectionEyebrow>
+          <SectionEyebrow variant="pill" tone="orange">{t.eyebrow}</SectionEyebrow>
           <h2 className="mt-5 text-4xl font-extrabold text-black sm:text-5xl">
-            Trouvez ce dont vous avez besoin
+            {t.title}
           </h2>
         </Reveal>
 

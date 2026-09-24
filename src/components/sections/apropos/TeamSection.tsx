@@ -2,6 +2,8 @@ import { FaLinkedinIn } from "react-icons/fa6";
 import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
 import { Reveal } from "@/components/motion/Reveal";
+import { getMessages } from "@/i18n/server";
+import { fill } from "@/i18n/format";
 
 const team = [
   "Cedric K.",
@@ -22,18 +24,19 @@ function initials(name: string) {
     .toUpperCase();
 }
 
-export function TeamSection() {
+export async function TeamSection() {
+  const t = (await getMessages("about")).team;
+
   return (
     <section id="equipe" className="border-t border-[#e4e4e7] bg-[#fafafa] py-24">
       <Container>
         <Reveal className="mx-auto max-w-2xl text-center">
-          <SectionEyebrow variant="pill" tone="orange">L&apos;équipe</SectionEyebrow>
+          <SectionEyebrow variant="pill" tone="orange">{t.eyebrow}</SectionEyebrow>
           <h2 className="mt-5 text-4xl font-extrabold text-black sm:text-5xl">
-            Les personnes derrière KIYANZA
+            {t.title}
           </h2>
           <p className="mt-3 text-base text-gray-text">
-            Une équipe passionnée par la donnée, le marketing et l&apos;impact.
-            Basés à Douala, avec une vision panafricaine.
+            {t.text}
           </p>
         </Reveal>
 
@@ -49,15 +52,14 @@ export function TeamSection() {
               </div>
               <h3 className="mt-4 text-base font-bold text-black">{name}</h3>
               <p className="mt-0.5 text-xs font-semibold uppercase tracking-wide text-orange-500">
-                Équipe fondatrice
+                {t.role}
               </p>
               <p className="mt-3 text-sm leading-relaxed text-gray-text">
-                Membre de l&apos;équipe fondatrice de KIYANZA, engagé·e à
-                rendre le marketing plus intelligent et accessible.
+                {t.bio}
               </p>
               <a
                 href="#"
-                aria-label={`Profil LinkedIn de ${name}`}
+                aria-label={fill(t.linkedin, { name })}
                 className="mt-4 flex size-10 items-center justify-center rounded-full bg-navy text-white transition hover:brightness-110"
               >
                 <FaLinkedinIn className="size-4" aria-hidden="true" />
