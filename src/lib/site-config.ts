@@ -17,8 +17,8 @@ export const siteConfig = {
   // Doit toujours être une URL absolue, sans slash final.
   url: (process.env.NEXT_PUBLIC_SITE_URL ?? FALLBACK_SITE_URL).replace(/\/$/, ""),
   locale: "fr_FR",
-  defaultTitle: "KIYANZA — Pilotez vos campagnes avec l'intelligence artificielle",
-  titleTemplate: "%s — KIYANZA",
+  defaultTitle: "KIYANZA - Pilotez vos campagnes avec l'intelligence artificielle",
+  titleTemplate: "%s - KIYANZA",
   defaultDescription:
     "KIYANZA centralise la création, le monitoring et l'optimisation de vos campagnes marketing grâce à l'IA.",
   keywords: [
