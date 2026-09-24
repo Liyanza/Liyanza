@@ -1,3 +1,5 @@
+import { Link } from "@/i18n/navigation";
+
 type FooterLink = string | { label: string; href: string };
 
 export function FooterColumn({
@@ -18,12 +20,15 @@ export function FooterColumn({
           const href = typeof link === "string" ? "#" : link.href;
           return (
             <li key={label}>
-              <a
-                href={href}
-                className="text-xs text-[#6b8ab0] transition hover:text-white"
-              >
-                {label}
-              </a>
+              {href === "#" ? (
+                <a href={href} className="text-xs text-[#6b8ab0] transition hover:text-white">
+                  {label}
+                </a>
+              ) : (
+                <Link href={href} className="text-xs text-[#6b8ab0] transition hover:text-white">
+                  {label}
+                </Link>
+              )}
             </li>
           );
         })}

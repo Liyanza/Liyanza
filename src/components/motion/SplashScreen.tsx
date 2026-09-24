@@ -6,6 +6,7 @@ import { gsap } from "@/lib/motion/gsap";
 import { MEDIA } from "@/lib/motion/tokens";
 import { splashConfig as cfg, SPLASH_DONE_EVENT } from "@/config/splash";
 import { HummingbirdMark } from "@/components/motion/HummingbirdMark";
+import { useT } from "@/i18n/client";
 
 gsap.registerPlugin(MotionPathPlugin);
 
@@ -50,6 +51,7 @@ export function SplashScreen() {
   const skipBtnRef = useRef<HTMLButtonElement>(null);
   const skipRef = useRef<() => void>(() => {});
   const [gone, setGone] = useState(false);
+  const t = useT("common").splash;
 
   useEffect(() => {
     const html = document.documentElement;
@@ -476,7 +478,7 @@ export function SplashScreen() {
         ref={logoRef}
         className="splash-logo relative aspect-[165/55.67]"
         role="img"
-        aria-label="KIYANZA — Light your future"
+        aria-label={t.logoLabel}
       >
         {/* Place du colibri dans le logo : cible de l'atterrissage. */}
         <span ref={slotRef} className="absolute left-0 top-0 aspect-[85/56] h-full" />
@@ -519,7 +521,7 @@ export function SplashScreen() {
         }}
         className="absolute bottom-5 right-5 rounded-full px-4 py-2 text-sm font-semibold text-black/60 transition hover:bg-black/5 hover:text-black"
       >
-        Passer
+        {t.skip}
       </button>
     </div>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { Briefcase, Building2, Loader2, MapPin } from "lucide-react";
 import { TopBar } from "@/components/dashboard/layout/TopBar";
 import { useAuth } from "@/context/AuthContext";

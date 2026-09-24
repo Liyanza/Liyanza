@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { ChevronRight, X } from "lucide-react";
 import { TopBar } from "@/components/dashboard/layout/TopBar";
 import { WizardStepper } from "./WizardStepper";

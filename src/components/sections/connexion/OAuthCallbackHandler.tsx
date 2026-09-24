@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
-import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { AlertTriangle, Loader2 } from "lucide-react";
 import { exchangeOAuthCode, ApiError } from "@/lib/api/client";
 

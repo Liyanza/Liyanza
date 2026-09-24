@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { ArrowLeft } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { SecurityNote } from "@/components/auth/SecurityNote";

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { AlertTriangle, CheckCircle2, RefreshCw } from "lucide-react";
 import { simulationChecklist } from "@/data/dashboard";
 import { CircularProgress } from "./CircularProgress";

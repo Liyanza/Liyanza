@@ -1,0 +1,78 @@
+/**
+ * Textes partagés par tout le site (en-tête, pied de page, splash, SEO par
+ * défaut). Le français est la référence : les autres langues doivent avoir
+ * exactement les mêmes clés (vérifié à la compilation).
+ */
+const common = {
+  meta: {
+    defaultTitle: "KIYANZA — Plateforme marketing intelligente propulsée par l'IA",
+    description:
+      "KIYANZA centralise la création, le monitoring et l'optimisation de vos campagnes marketing grâce à l'IA.",
+  },
+  nav: {
+    label: "Navigation principale",
+    mobileLabel: "Navigation principale mobile",
+    home: "Accueil",
+    features: "Fonctionnalités",
+    pricing: "Tarifs",
+    resources: "Ressources",
+    about: "À propos",
+    homeAria: "KIYANZA — Accueil",
+    login: "Se connecter",
+    tryFree: "Essayer gratuitement",
+    openMenu: "Ouvrir le menu",
+    closeMenu: "Fermer le menu",
+  },
+  language: {
+    /** Libellé accessible du bouton : {current} = langue actuelle. */
+    switcher: "Changer de langue, actuellement {current}",
+    menu: "Choisir la langue",
+  },
+  footer: {
+    tagline:
+      "La plateforme intelligente qui vous aide à planifier, suivre et optimiser vos campagnes marketing grâce à la puissance de l'IA.",
+    columns: {
+      product: "Produit",
+      resources: "Ressources",
+      company: "Entreprise",
+      legal: "Légal",
+    },
+    links: {
+      features: "Fonctionnalités",
+      pricing: "Tarifs",
+      aiScenarios: "Scénarios IA",
+      updates: "Mises à jour",
+      blog: "Blog",
+      guides: "Guides",
+      caseStudies: "Études de cas",
+      helpCenter: "Centre d'aide",
+      about: "À propos",
+      contact: "Contact",
+      terms: "Conditions d'utilisation",
+      privacy: "Politique de confidentialité",
+      dataDeletion: "Suppression des données",
+      legalNotice: "Mentions légales",
+      cookies: "Cookies",
+    },
+    newsletter: {
+      title: "Restez informé",
+      text: "Recevez nos conseils et nouveautés chaque semaine.",
+      emailLabel: "Votre adresse email",
+      placeholder: "Votre email",
+      submit: "S'inscrire à la newsletter",
+    },
+    /** {year} = année en cours. */
+    copyright: "© {year} Kiyanza. Tous droits réservés.",
+  },
+  splash: {
+    skip: "Passer",
+    logoLabel: "KIYANZA — Light your future",
+  },
+  notFound: {
+    title: "Page introuvable",
+    text: "La page que vous cherchez n'existe pas ou a été déplacée.",
+    back: "Retour à l'accueil",
+  },
+};
+
+export default common;

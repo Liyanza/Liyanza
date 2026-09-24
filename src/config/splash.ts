@@ -1,3 +1,6 @@
+import { locales } from "@/i18n/config";
+import { localizePath } from "@/i18n/paths";
+
 /**
  * Écran d'introduction (splash) : tous les réglages sont ici.
  * Composant : src/components/motion/SplashScreen.tsx
@@ -6,7 +9,11 @@ export const splashConfig = {
   /** Interrupteur général. false : le splash ne s'affiche plus nulle part. */
   enabled: true,
 
-  /** Pages d'entrée où il peut s'afficher (jamais /dashboard, /connexion…). */
+  /**
+   * Pages d'entrée où il peut s'afficher (jamais /dashboard, /connexion…).
+   * Chemins canoniques (slugs français) : leurs équivalents dans les autres
+   * langues (/en, /en/pricing…) sont inclus automatiquement.
+   */
   routes: ["/", "/fonctionnalites", "/tarifs", "/ressources", "/a-propos"],
 
   /** Clé sessionStorage : une fois vu, le splash ne rejoue plus de la session. */
@@ -192,7 +199,7 @@ export const SPLASH_DONE_EVENT = "splash:done";
  * blanc, et tout flash du splash quand il ne doit pas jouer.
  */
 export const splashBootScript = splashConfig.enabled
-  ? `try{var r=${JSON.stringify(splashConfig.routes)},p=location.pathname.replace(/\\/+$/,"")||"/";` +
+  ? `try{var r=${JSON.stringify(locales.flatMap((l) => splashConfig.routes.map((r) => localizePath(r, l))))},p=location.pathname.replace(/\\/+$/,"")||"/";` +
     `if(r.indexOf(p)>-1&&!sessionStorage.getItem(${JSON.stringify(splashConfig.storageKey)})){` +
     `var d=document.documentElement;d.dataset.splash="on";` +
     `window.__splashFailsafe=setTimeout(function(){if(d.dataset.splash==="on")d.dataset.splash="done"},${splashConfig.failsafeMs})}}catch(e){}`
