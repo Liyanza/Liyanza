@@ -57,6 +57,8 @@ const plans = {
       price: "Sur devis",
       priceNote: "",
       cta: "Contacter l'équipe",
+      /** Le bouton ouvre un email plutôt que l'inscription. */
+      contact: true,
       featured: false,
       features: [
         "Solution personnalisée",

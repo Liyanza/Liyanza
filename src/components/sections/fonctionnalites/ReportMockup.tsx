@@ -1,3 +1,4 @@
+import { Link } from "@/i18n/navigation";
 import { CountUp } from "@/components/motion/CountUp";
 import { getMessages } from "@/i18n/server";
 
@@ -71,18 +72,18 @@ export async function ReportMockup() {
         </div>
 
         <div className="mt-4 flex gap-2">
-          <button
-            type="button"
-            className="flex-1 rounded-full border-2 border-green-accent py-2.5 text-xs font-semibold text-green-accent"
+          <Link
+            href="/connexion"
+            className="flex-1 rounded-full border-2 text-center border-green-accent py-2.5 text-xs font-semibold text-green-accent"
           >
             {t.export}
-          </button>
-          <button
-            type="button"
-            className="flex-1 rounded-full bg-green-accent py-2.5 text-xs font-semibold text-white"
+          </Link>
+          <Link
+            href="/connexion"
+            className="flex-1 rounded-full bg-green-accent text-center py-2.5 text-xs font-semibold text-white"
           >
             {t.share}
-          </button>
+          </Link>
         </div>
       </div>
     </div>

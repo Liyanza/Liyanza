@@ -1,5 +1,6 @@
 "use client";
 
+import { Link } from "@/i18n/navigation";
 import { useCallback, useState } from "react";
 import { ArrowRight, Clock } from "lucide-react";
 import { Container } from "@/components/ui/Container";
@@ -42,13 +43,13 @@ export function GuidesSection() {
               {t.title}
             </h2>
           </div>
-          <button
-            type="button"
+          <Link
+            href="/inscription"
             className="flex items-center gap-2 rounded-full border border-[#e4e4e7] px-5 py-3 text-sm font-semibold text-[#3f3f46] transition hover:bg-white"
           >
             {t.seeAll}
             <ArrowRight className="size-3.5" aria-hidden="true" />
-          </button>
+          </Link>
         </Reveal>
 
         <div className="mt-10 flex flex-wrap gap-2">
@@ -98,13 +99,13 @@ export function GuidesSection() {
                   <Clock className="size-3" aria-hidden="true" />
                   {guide.readingTime}
                 </span>
-                <button
-                  type="button"
+                <Link
+                  href="/inscription"
                   className="flex items-center gap-1 text-xs font-semibold text-green-accent-dark"
                 >
                   {t.read}
                   <ArrowRight className="size-3" aria-hidden="true" />
-                </button>
+                </Link>
               </div>
             </div>
           ))}

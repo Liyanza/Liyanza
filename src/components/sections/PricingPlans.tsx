@@ -1,3 +1,4 @@
+import { Link } from "@/i18n/navigation";
 import { CircleCheck } from "lucide-react";
 import { Reveal } from "@/components/motion/Reveal";
 import { getMessages } from "@/i18n/server";
@@ -51,16 +52,16 @@ function PlanCard({ plan, labels }: { plan: Plan; labels: { recommended: string;
           </div>
         </div>
 
-        <button
-          type="button"
-          className={`mt-6 w-full rounded-full py-3 text-sm font-bold transition ${
+        <Link
+          href={plan.contact ? "mailto:contact@kiyanza.com" : "/inscription"}
+          className={`mt-6 block w-full rounded-full py-3 text-center text-sm font-bold transition ${
             plan.featured
               ? "bg-green-600 text-white hover:bg-green-accent-dark"
               : "border border-green-600 text-green-600 hover:bg-green-600/5"
           }`}
         >
           {plan.cta}
-        </button>
+        </Link>
 
         <div className="mt-6 flex-1">
           <p

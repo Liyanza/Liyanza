@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useRouter } from "@/i18n/navigation";
 import { ArrowRight, Check, Circle, Eye, EyeOff, Loader2, Lock, Mail, Phone, User } from "lucide-react";
 import { FormField } from "@/components/auth/FormField";
@@ -37,6 +37,14 @@ export function SignupForm() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
+
+  // Arrivée depuis un formulaire newsletter (?email=…) : on préremplit.
+  // Lu après l'hydratation (la page est statique) ; setState dans un .then()
+  // pour respecter react-hooks/set-state-in-effect.
+  useEffect(() => {
+    const fromUrl = new URLSearchParams(window.location.search).get("email");
+    if (fromUrl) void Promise.resolve().then(() => setEmail((current) => current || fromUrl));
+  }, []);
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");

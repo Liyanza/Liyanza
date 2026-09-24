@@ -1,3 +1,4 @@
+import { Link } from "@/i18n/navigation";
 import { CircleCheck } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
@@ -129,16 +130,16 @@ export async function ComparisonTable() {
                 <td className="p-5" />
                 {t.buttons.map((label, i) => ({ label, variant: i === 1 ? "solid" : "outline" })).map((btn, i) => (
                   <td key={i} className={`p-5 text-center ${i === 1 ? "bg-[#f0fdf4]" : ""}`}>
-                    <button
-                      type="button"
-                      className={`rounded-full px-5 py-2.5 text-sm font-bold ${
+                    <Link
+                      href={i === 3 ? "mailto:contact@kiyanza.com" : "/inscription"}
+                      className={`inline-block rounded-full px-5 py-2.5 text-sm font-bold ${
                         btn.variant === "solid"
                           ? "bg-green-600 text-white"
                           : "border-2 border-green-600 text-green-600"
                       }`}
                     >
                       {btn.label}
-                    </button>
+                    </Link>
                   </td>
                 ))}
               </tr>

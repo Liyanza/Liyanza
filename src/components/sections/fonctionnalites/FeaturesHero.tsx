@@ -45,7 +45,7 @@ export async function FeaturesHero() {
               <Button
                 variant="outline"
                 size="md"
-                href="#demo"
+                href="/inscription"
                 className="!border-green-accent !text-green-accent hover:!bg-green-accent/5"
                 icon={<PlayCircle className="size-[18px]" aria-hidden="true" />}
                 iconPosition="left"

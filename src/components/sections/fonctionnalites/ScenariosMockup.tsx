@@ -1,3 +1,4 @@
+import { Link } from "@/i18n/navigation";
 import { CountUp } from "@/components/motion/CountUp";
 import { getMessages } from "@/i18n/server";
 
@@ -95,12 +96,12 @@ export async function ScenariosMockup() {
       </div>
 
       <div className="border-t border-border-light bg-slate-50 p-4">
-        <button
-          type="button"
-          className="w-full rounded-full border-2 border-green-accent py-2.5 text-sm font-semibold text-green-accent"
+        <Link
+          href="/connexion"
+          className="block w-full rounded-full border-2 text-center border-green-accent py-2.5 text-sm font-semibold text-green-accent"
         >
           {t.seeAll}
-        </button>
+        </Link>
       </div>
     </div>
   );

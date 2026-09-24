@@ -45,7 +45,7 @@ export async function FeaturesFinalCTA() {
             <Button
               variant="outline"
               size="lg"
-              href="#demo"
+              href="/inscription"
               className="!border-[3px] !border-green-accent !text-green-accent hover:!bg-green-accent/5 sm:w-[300px]"
               icon={<PlayCircle className="size-[18px]" aria-hidden="true" />}
               iconPosition="left"
