@@ -1,6 +1,7 @@
 export interface NavItem {
   href: string;
-  label: string;
+  /** Clé du libellé dans dash.nav (dictionnaire). */
+  key: "home" | "campaigns" | "monitoring" | "terrain" | "recommendations" | "reports" | "teams" | "company" | "profile" | "notifications" | "help";
   icon: "home" | "campaigns" | "monitoring" | "terrain" | "ai" | "reports" | "teams" | "company" | "profile" | "notifications" | "help";
 }
 
@@ -15,20 +16,20 @@ export interface NavItem {
 // une UI de saisie manuelle du constat (`PATCH /diffusions/:id/constat`
 // n'est appelé par aucune page pour l'instant).
 export const mainNavItems: NavItem[] = [
-  { href: "/dashboard", label: "Accueil", icon: "home" },
-  { href: "/dashboard/campagnes", label: "Campagnes", icon: "campaigns" },
-  { href: "/dashboard/monitoring", label: "Monitoring", icon: "monitoring" },
-  { href: "/dashboard/terrain", label: "Terrain", icon: "terrain" },
-  { href: "/dashboard/recommandations", label: "Recommandations IA", icon: "ai" },
-  { href: "/dashboard/rapports", label: "Rapports", icon: "reports" },
-  { href: "/dashboard/equipes", label: "Equipes", icon: "teams" },
+  { href: "/dashboard", key: "home", icon: "home" },
+  { href: "/dashboard/campagnes", key: "campaigns", icon: "campaigns" },
+  { href: "/dashboard/monitoring", key: "monitoring", icon: "monitoring" },
+  { href: "/dashboard/terrain", key: "terrain", icon: "terrain" },
+  { href: "/dashboard/recommandations", key: "recommendations", icon: "ai" },
+  { href: "/dashboard/rapports", key: "reports", icon: "reports" },
+  { href: "/dashboard/equipes", key: "teams", icon: "teams" },
 ];
 
 export const settingsNavItems: NavItem[] = [
-  { href: "/dashboard/entreprise", label: "Mon entreprise", icon: "company" },
-  { href: "/dashboard/profil", label: "Profil", icon: "profile" },
-  { href: "/dashboard/notifications", label: "Notifications", icon: "notifications" },
-  { href: "/dashboard/aide", label: "Aide", icon: "help" },
+  { href: "/dashboard/entreprise", key: "company", icon: "company" },
+  { href: "/dashboard/profil", key: "profile", icon: "profile" },
+  { href: "/dashboard/notifications", key: "notifications", icon: "notifications" },
+  { href: "/dashboard/aide", key: "help", icon: "help" },
 ];
 
 // ---------------------------------------------------------------------------

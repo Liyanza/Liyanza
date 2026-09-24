@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
+import { getMessages } from "@/i18n/server";
 import { CampagnesListClient } from "@/components/dashboard/campagnes/CampagnesListClient";
 import { RoleGate } from "@/components/dashboard/RoleGate";
 
-export const metadata: Metadata = {
-  title: "Campagnes",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: (await getMessages("dash")).titles.campaigns };
+}
 
 export default function CampagnesPage() {
   return (

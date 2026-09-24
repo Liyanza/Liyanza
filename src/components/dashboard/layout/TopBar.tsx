@@ -5,11 +5,12 @@ import { Link } from "@/i18n/navigation";
 import { ChevronDown, LogOut, Search } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { apiListNotifications } from "@/lib/api/client";
-import { ROLE_LABELS } from "@/lib/api/types";
+import { useT } from "@/i18n/client";
+import { fill } from "@/i18n/format";
 
 export function TopBar({
   title,
-  searchPlaceholder = "Rechercher une campagne...",
+  searchPlaceholder,
   showPeriodFilter = false,
 }: {
   title: string;
@@ -17,6 +18,8 @@ export function TopBar({
   showPeriodFilter?: boolean;
 }) {
   const { user, logout } = useAuth();
+  const dash = useT("dash");
+  const t = dash.topBar;
   const [menuOpen, setMenuOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
 
@@ -36,7 +39,7 @@ export function TopBar({
     user?.firstName && user?.lastName
       ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase()
       : (user?.email?.[0] ?? "?").toUpperCase();
-  const roleLabel = user ? ROLE_LABELS[user.role] : "";
+  const roleLabel = user ? dash.roles[user.role] : "";
 
   return (
     <header className="flex h-16 shrink-0 items-center justify-between border-b border-border bg-white px-8">
@@ -46,7 +49,7 @@ export function TopBar({
           <Search className="size-3.5 shrink-0 text-gray-text-light" aria-hidden="true" />
           <input
             type="search"
-            placeholder={searchPlaceholder}
+            placeholder={searchPlaceholder ?? t.searchCampaign}
             className="w-full bg-transparent text-xs text-gray-text placeholder:text-gray-text outline-none"
           />
         </div>
@@ -55,13 +58,13 @@ export function TopBar({
             type="button"
             className="hidden items-center gap-1.5 rounded-full border border-border bg-dash-canvas px-3 py-2 text-xs font-medium text-dash-body md:flex"
           >
-            7 derniers jours
+            {t.period}
             <ChevronDown className="size-3.5" aria-hidden="true" />
           </button>
         )}
         <Link
           href="/dashboard/notifications"
-          aria-label={unreadCount > 0 ? `Notifications (${unreadCount} non lues)` : "Notifications"}
+          aria-label={unreadCount > 0 ? fill(t.notificationsUnread, { count: unreadCount }) : t.notifications}
           className="relative flex size-12 shrink-0 items-center justify-center rounded-full border border-border bg-dash-canvas"
         >
           <svg viewBox="0 0 24 24" fill="none" className="size-4 text-dash-body" aria-hidden="true">
@@ -101,7 +104,7 @@ export function TopBar({
             <>
               <button
                 type="button"
-                aria-label="Fermer le menu"
+                aria-label={t.closeMenu}
                 className="fixed inset-0 z-10 cursor-default"
                 onClick={() => setMenuOpen(false)}
               />
@@ -119,7 +122,7 @@ export function TopBar({
                   className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-xs font-semibold text-red-600 hover:bg-red-50"
                 >
                   <LogOut className="size-3.5" aria-hidden="true" />
-                  Se déconnecter
+                  {t.logout}
                 </button>
               </div>
             </>

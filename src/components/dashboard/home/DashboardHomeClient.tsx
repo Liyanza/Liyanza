@@ -11,8 +11,12 @@ import { AiRecommendations } from "@/components/dashboard/home/AiRecommendations
 import { apiGetDashboard, apiListCampagnes, ApiError } from "@/lib/api/client";
 import type { CampagneRecord, DashboardSummary } from "@/lib/api/types";
 import { SkeletonKpis, SkeletonPanel } from "@/components/dashboard/ui/Skeleton";
+import { useT } from "@/i18n/client";
 
 export function DashboardHomeClient() {
+  const dash = useT("dash");
+  const t = dash.home;
+  const loadErrorText = t.loadError;
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [recentCampaigns, setRecentCampaigns] = useState<CampagneRecord[]>([]);
   const [loading, setLoading] = useState(true);
@@ -26,11 +30,11 @@ export function DashboardHomeClient() {
         setLoading(false);
       },
       (error: unknown) => {
-        setLoadError(error instanceof ApiError ? error.message : "Impossible de charger le tableau de bord.");
+        setLoadError(error instanceof ApiError ? error.message : loadErrorText);
         setLoading(false);
       }
     );
-  }, []);
+  }, [loadErrorText]);
 
   useEffect(() => {
     void fetchDashboard();
@@ -38,14 +42,14 @@ export function DashboardHomeClient() {
 
   return (
     <>
-      <TopBar title="Accueil" searchPlaceholder="Rechercher une campagne, un rapport..." showPeriodFilter />
+      <TopBar title={dash.titles.home} searchPlaceholder={t.searchPlaceholder} showPeriodFilter />
       <main className="flex-1 overflow-y-auto bg-dash-canvas">
         <div className="flex flex-col gap-6 px-8 py-6">
           <WelcomeBanner />
 
           {loading && (
             <div className="flex flex-col gap-6">
-              <SkeletonKpis label="Chargement du tableau de bord…" />
+              <SkeletonKpis label={t.loading} />
               <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_340px]">
                 <SkeletonPanel lines={4} />
                 <SkeletonPanel lines={4} />

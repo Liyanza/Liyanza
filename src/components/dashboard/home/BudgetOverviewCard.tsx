@@ -1,8 +1,8 @@
-import type { DashboardSummary } from "@/lib/api/types";
+"use client";
 
-function formatBudget(amount: number) {
-  return `${Math.round(amount).toLocaleString("fr-FR")} FCFA`;
-}
+import type { DashboardSummary } from "@/lib/api/types";
+import { useFormat, useT } from "@/i18n/client";
+import { fill } from "@/i18n/format";
 
 /**
  * Remplace l'ancien PerformanceChart (courbe quotidienne portée/clics/
@@ -12,6 +12,8 @@ function formatBudget(amount: number) {
  * un vrai indicateur, cumulé sur toutes les campagnes de l'entreprise.
  */
 export function BudgetOverviewCard({ summary }: { summary: DashboardSummary }) {
+  const t = useT("dash").home.budget;
+  const f = useFormat();
   const { totalPlannedBudget, totalActualBudget, budgetDeviation } = summary;
   const max = Math.max(totalPlannedBudget, totalActualBudget, 1);
   const overBudget = budgetDeviation < 0;
@@ -19,16 +21,16 @@ export function BudgetOverviewCard({ summary }: { summary: DashboardSummary }) {
     totalPlannedBudget > 0 ? Math.round((Math.abs(budgetDeviation) / totalPlannedBudget) * 100) : 0;
 
   const bars = [
-    { label: "Budget prévu", value: totalPlannedBudget, color: "#3b82f6" },
-    { label: "Budget réel", value: totalActualBudget, color: overBudget ? "#ef4444" : "#00c853" },
+    { label: t.planned, value: totalPlannedBudget, color: "#3b82f6" },
+    { label: t.actual, value: totalActualBudget, color: overBudget ? "#ef4444" : "#00c853" },
   ];
 
   return (
     <div className="rounded-[5px] border border-border bg-white p-5">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h2 className="text-sm font-bold text-black">Budget prévu vs réel</h2>
-          <p className="mt-0.5 text-[11px] text-gray-text">Cumulé sur l&apos;ensemble de vos campagnes.</p>
+          <h2 className="text-sm font-bold text-black">{t.title}</h2>
+          <p className="mt-0.5 text-[11px] text-gray-text">{t.subtitle}</p>
         </div>
         {totalPlannedBudget > 0 && (
           <span
@@ -36,7 +38,7 @@ export function BudgetOverviewCard({ summary }: { summary: DashboardSummary }) {
               overBudget ? "bg-red-600/10 text-red-600" : "bg-green-accent-dark/10 text-green-accent-dark"
             }`}
           >
-            {overBudget ? "↑" : "↓"} {deviationPercent}% {overBudget ? "au-dessus du prévu" : "sous le prévu"}
+            {overBudget ? "↑" : "↓"} {fill(overBudget ? t.over : t.under, { percent: deviationPercent })}
           </span>
         )}
       </div>
@@ -46,7 +48,7 @@ export function BudgetOverviewCard({ summary }: { summary: DashboardSummary }) {
           <div key={bar.label}>
             <div className="mb-1.5 flex items-center justify-between text-xs">
               <span className="font-medium text-gray-text">{bar.label}</span>
-              <span className="font-semibold text-black">{formatBudget(bar.value)}</span>
+              <span className="font-semibold text-black">{f.money(bar.value)}</span>
             </div>
             <div className="h-2.5 w-full overflow-hidden rounded-full bg-slate-100">
               <div
