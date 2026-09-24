@@ -10,12 +10,15 @@ export function Pagination({
   total,
   pageSize,
   onChange,
+  summary,
 }: {
   page: number;
   pageCount: number;
   total: number;
   pageSize: number;
   onChange: (page: number) => void;
+  /** Modèle du résumé ({start}, {end}, {total}) ; par défaut, des campagnes. */
+  summary?: string;
 }) {
   const t = useT("dashCampaigns").pagination;
   if (total === 0) return null;
@@ -26,7 +29,7 @@ export function Pagination({
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 rounded-full bg-dash-pill-bg/50 px-4 py-3">
       <p className="text-xs font-semibold text-dash-muted">
-        {fill(t.summary, { start, end, total })}
+        {fill(summary ?? t.summary, { start, end, total })}
       </p>
       <div className="flex items-center gap-2">
         <button

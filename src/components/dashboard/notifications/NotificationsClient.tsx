@@ -7,6 +7,10 @@ import { Pagination } from "@/components/dashboard/campagnes/Pagination";
 import { apiListNotifications, apiMarkNotificationRead, ApiError } from "@/lib/api/client";
 import type { NotificationReadStatus, NotificationRecord } from "@/lib/api/types";
 import { SkeletonRows } from "@/components/dashboard/ui/Skeleton";
+import { useLocale, useT } from "@/i18n/client";
+import { fill, formatDate } from "@/i18n/format";
+import type { Locale } from "@/i18n/config";
+import type { Messages } from "@/i18n/dictionaries";
 
 const PAGE_SIZE = 10;
 
@@ -19,25 +23,25 @@ const TYPE_META: Record<NotificationRecord["type"], { icon: typeof Info; classNa
   SUCCESS: { icon: CheckCircle2, className: "bg-green-accent-dark/10 text-green-accent-dark" },
 };
 
-const FILTERS: { label: string; value: NotificationReadStatus | "ALL" }[] = [
-  { label: "Toutes", value: "ALL" },
-  { label: "Non lues", value: "UNREAD" },
-  { label: "Lues", value: "READ" },
-];
+// Libellés : dashAccount.notifications.filters.
+const FILTERS: (NotificationReadStatus | "ALL")[] = ["ALL", "UNREAD", "READ"];
 
-function formatSentAt(value: string) {
+function formatSentAt(value: string, t: Messages["dashAccount"]["notifications"], locale: Locale) {
   const date = new Date(value);
   const diffMinutes = Math.floor((Date.now() - date.getTime()) / 60000);
-  if (diffMinutes < 1) return "À l'instant";
-  if (diffMinutes < 60) return `Il y a ${diffMinutes} min`;
+  if (diffMinutes < 1) return t.justNow;
+  if (diffMinutes < 60) return fill(t.minutesAgo, { count: diffMinutes });
   const diffHours = Math.floor(diffMinutes / 60);
-  if (diffHours < 24) return `Il y a ${diffHours} h`;
+  if (diffHours < 24) return fill(t.hoursAgo, { count: diffHours });
   const diffDays = Math.floor(diffHours / 24);
-  if (diffDays < 7) return `Il y a ${diffDays} j`;
-  return new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "short", year: "numeric" }).format(date);
+  if (diffDays < 7) return fill(t.daysAgo, { count: diffDays });
+  return formatDate(date, locale, { day: "numeric", month: "short", year: "numeric" });
 }
 
 export function NotificationsClient() {
+  const t = useT("dashAccount").notifications;
+  const dash = useT("dash");
+  const locale = useLocale();
   const [filter, setFilter] = useState<NotificationReadStatus | "ALL">("ALL");
   const [page, setPage] = useState(1);
   const [items, setItems] = useState<NotificationRecord[]>([]);
@@ -54,11 +58,11 @@ export function NotificationsClient() {
         setLoading(false);
       },
       (error: unknown) => {
-        setLoadError(error instanceof ApiError ? error.message : "Impossible de charger les notifications.");
+        setLoadError(error instanceof ApiError ? error.message : t.loadError);
         setLoading(false);
       }
     );
-  }, [filter, page]);
+  }, [filter, page, t]);
 
   useEffect(() => {
     void fetchData();
@@ -94,23 +98,23 @@ export function NotificationsClient() {
 
   return (
     <>
-      <TopBar title="Notifications" />
+      <TopBar title={dash.titles.notifications} />
       <main className="flex-1 overflow-y-auto bg-dash-canvas">
         <div className="flex flex-col gap-6 px-8 py-6">
           <div className="flex w-fit flex-wrap items-center gap-1 rounded-full border border-border bg-white p-1">
             {FILTERS.map((item) => (
               <button
-                key={item.value}
+                key={item}
                 type="button"
-                aria-pressed={filter === item.value}
-                onClick={() => handleFilterChange(item.value)}
+                aria-pressed={filter === item}
+                onClick={() => handleFilterChange(item)}
                 className={`rounded-full px-3 py-1.5 text-[11px] font-medium transition-colors ${
-                  filter === item.value
+                  filter === item
                     ? "bg-green-accent-dark text-white shadow-sm"
                     : "text-gray-text hover:bg-slate-50"
                 }`}
               >
-                {item.label}
+                {t.filters[item]}
               </button>
             ))}
           </div>
@@ -119,11 +123,11 @@ export function NotificationsClient() {
 
           <div className="overflow-hidden rounded-[5px] border border-border bg-white">
             {loading ? (
-              <SkeletonRows rows={5} label="Chargement des notifications…" />
+              <SkeletonRows rows={5} label={t.loading} />
             ) : items.length === 0 ? (
               <div className="flex flex-col items-center justify-center gap-2 px-6 py-16 text-center">
                 <Bell className="size-8 text-gray-text-light" aria-hidden="true" />
-                <p className="text-sm font-semibold text-black">Aucune notification</p>
+                <p className="text-sm font-semibold text-black">{t.empty}</p>
               </div>
             ) : (
               items.map((item) => {
@@ -148,7 +152,7 @@ export function NotificationsClient() {
                         )}
                       </div>
                       <p className="mt-0.5 text-xs text-gray-text">{item.message}</p>
-                      <p className="mt-1.5 text-[10px] text-gray-text-light">{formatSentAt(item.sentAt)}</p>
+                      <p className="mt-1.5 text-[10px] text-gray-text-light">{formatSentAt(item.sentAt, t, locale)}</p>
                     </div>
                     {isUnread && (
                       <button
@@ -157,7 +161,7 @@ export function NotificationsClient() {
                         onClick={() => handleMarkRead(item.id)}
                         className="shrink-0 rounded-full border border-border px-3 py-1.5 text-[11px] font-semibold text-dash-body hover:bg-slate-50 disabled:opacity-50"
                       >
-                        {markingId === item.id ? "..." : "Marquer comme lue"}
+                        {markingId === item.id ? "..." : t.markRead}
                       </button>
                     )}
                   </div>
@@ -166,7 +170,7 @@ export function NotificationsClient() {
             )}
           </div>
 
-          <Pagination page={page} pageCount={pageCount} total={total} pageSize={PAGE_SIZE} onChange={handlePageChange} />
+          <Pagination page={page} pageCount={pageCount} total={total} pageSize={PAGE_SIZE} onChange={handlePageChange} summary={t.pagination} />
         </div>
       </main>
     </>
