@@ -2,27 +2,8 @@ import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
 import { Reveal } from "@/components/motion/Reveal";
+import { articles, featuredArticle, resourceId } from "@/data/resources";
 
-const articles = [
-  {
-    tag: "IA & Marketing",
-    title: "Comment l'IA transforme la gestion des campagnes marketing",
-    date: "28 août 2026",
-    readingTime: "8 min",
-  },
-  {
-    tag: "Cas d'usage",
-    title: "Comment une PME camerounaise a doublé son ROI en 3 mois",
-    date: "20 août 2026",
-    readingTime: "5 min",
-  },
-  {
-    tag: "Stratégie",
-    title: "Budget marketing : les indicateurs clés à suivre chaque semaine",
-    date: "15 août 2026",
-    readingTime: "7 min",
-  },
-];
 
 export function ArticlesSection() {
   return (
@@ -45,7 +26,10 @@ export function ArticlesSection() {
         </Reveal>
 
         <Reveal stagger className="mt-10 grid grid-cols-1 gap-5 lg:grid-cols-3 lg:grid-rows-2">
-          <div data-reveal-item className="rounded-[5px] border border-[#e4e4e7] lg:col-start-1 lg:row-span-2 lg:row-start-1">
+          <div
+            id={resourceId(featuredArticle.title)}
+            data-reveal-item
+            className="scroll-mt-24 rounded-[5px] border border-[#e4e4e7] lg:col-start-1 lg:row-span-2 lg:row-start-1">
             <div className="relative flex h-[200px] items-center justify-center bg-green-accent-dark">
               <span className="absolute left-4 top-4 rounded-full bg-orange-500 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wide text-white">
                 À la une
@@ -55,15 +39,15 @@ export function ArticlesSection() {
             <div className="p-6">
               <div className="flex items-center justify-between gap-2">
                 <span className="rounded-full bg-orange-500/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-orange-500">
-                  Stratégie
+                  {featuredArticle.tag}
                 </span>
-                <span className="text-xs text-[#a1a1aa]">6 min de lecture</span>
+                <span className="text-xs text-[#a1a1aa]">{featuredArticle.readingTime}</span>
               </div>
               <h3 className="mt-4 text-lg font-bold leading-snug text-black">
-                5 erreurs à éviter dans vos campagnes Facebook Ads en Afrique
+                {featuredArticle.title}
               </h3>
               <div className="mt-4 flex items-center justify-between border-t border-[#f4f4f5] pt-4">
-                <span className="text-xs text-[#a1a1aa]">3 sept. 2026</span>
+                <span className="text-xs text-[#a1a1aa]">{featuredArticle.date}</span>
                 <button
                   type="button"
                   className="flex items-center gap-1 text-sm font-semibold text-green-accent-dark"
@@ -78,8 +62,9 @@ export function ArticlesSection() {
           {articles.map((article, i) => (
             <div
               key={article.title}
+              id={resourceId(article.title)}
               data-reveal-item
-              className={`rounded-[5px] border border-[#e4e4e7] p-5 ${
+              className={`scroll-mt-24 rounded-[5px] border border-[#e4e4e7] p-5 ${
                 i === 0
                   ? "lg:col-start-2 lg:row-start-1"
                   : i === 1

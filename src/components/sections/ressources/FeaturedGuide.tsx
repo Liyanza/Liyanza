@@ -1,14 +1,14 @@
 import { BookOpen, Clock, Download, Tag } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/motion/Reveal";
+import { featuredGuide, resourceId } from "@/data/resources";
 
-const tags = ["Stratégie", "Budgets", "KPIs", "IA", "Multi-canaux"];
 
 export function FeaturedGuide() {
   return (
     <section className="bg-[#f4f4f4] py-20">
       <Container>
-        <Reveal className="grid grid-cols-1 overflow-hidden border border-black/5 lg:grid-cols-2">
+        <Reveal id={resourceId(featuredGuide.title)} className="scroll-mt-24 grid grid-cols-1 overflow-hidden border border-black/5 lg:grid-cols-2">
           <div className="flex items-center justify-center rounded-[5px] bg-white p-12">
             <div className="flex flex-col items-center text-center">
               <div className="flex size-20 items-center justify-center rounded-full bg-green-accent/20">
@@ -37,15 +37,13 @@ export function FeaturedGuide() {
               Guide vedette
             </span>
             <h3 className="mt-4 text-3xl font-black leading-tight text-black">
-              Le guide complet du pilotage de campagnes marketing
+              {featuredGuide.title}
             </h3>
             <p className="mt-4 text-sm leading-relaxed text-black/45">
-              De la stratégie à l&apos;analyse des performances, ce guide
-              complet vous accompagne à chaque étape pour tirer le meilleur
-              de KIYANZA et de vos investissements marketing.
+              {featuredGuide.description}
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
-              {tags.map((tag) => (
+              {featuredGuide.tags.map((tag) => (
                 <span
                   key={tag}
                   className="rounded-full border border-black/10 px-3 py-1 text-xs font-medium text-black/40"

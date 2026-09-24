@@ -54,15 +54,6 @@ export function Navbar() {
         </nav>
 
         <div className="hidden items-center gap-3 lg:flex">
-          <button
-            type="button"
-            className="flex items-center gap-1 rounded-full px-4 py-2 text-sm font-semibold text-black transition hover:bg-black/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-accent"
-            aria-label="Changer de langue, actuellement Français"
-          >
-            <Globe className="size-4" aria-hidden="true" />
-            FR
-            <ChevronDown className="size-4" aria-hidden="true" />
-          </button>
           <Button variant="outline" size="sm" href="/connexion">
             Se connecter
           </Button>
@@ -74,6 +65,15 @@ export function Navbar() {
           >
             Essayer gratuitement
           </Button>
+          <button
+            type="button"
+            className="flex items-center gap-1 rounded-full px-4 py-2 text-sm font-semibold text-black transition hover:bg-black/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-accent"
+            aria-label="Changer de langue, actuellement Français"
+          >
+            <Globe className="size-4" aria-hidden="true" />
+            FR
+            <ChevronDown className="size-4" aria-hidden="true" />
+          </button>
         </div>
 
         <button
