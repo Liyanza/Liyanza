@@ -6,9 +6,13 @@ import { Briefcase, Building2, Loader2, MapPin } from "lucide-react";
 import { TopBar } from "@/components/dashboard/layout/TopBar";
 import { useAuth } from "@/context/AuthContext";
 import { apiCreateEntreprise, ApiError } from "@/lib/api/client";
+import { useT } from "@/i18n/client";
 
 export function CreateCompanyForm() {
   const router = useRouter();
+  const t = useT("dashAccount");
+  const tc = t.createCompany;
+  const dash = useT("dash");
   const { refresh } = useAuth();
   const [name, setName] = useState("");
   const [businessSector, setBusinessSector] = useState("");
@@ -35,21 +39,20 @@ export function CreateCompanyForm() {
       await refresh();
       router.push("/dashboard");
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Impossible de créer votre entreprise.");
+      setError(err instanceof ApiError ? err.message : tc.error);
       setSubmitting(false);
     }
   }
 
   return (
     <>
-      <TopBar title="Créer mon entreprise" searchPlaceholder="Rechercher..." />
+      <TopBar title={dash.titles.createCompany} searchPlaceholder={t.search} />
       <main className="flex-1 overflow-y-auto bg-dash-canvas">
         <div className="mx-auto flex max-w-[640px] flex-col gap-6 px-8 py-8">
           <div>
-            <h1 className="text-2xl font-bold text-dash-heading">Bienvenue sur KIYANZA</h1>
+            <h1 className="text-2xl font-bold text-dash-heading">{tc.welcome}</h1>
             <p className="mt-1 text-sm text-dash-body">
-              Avant de créer des campagnes, renseignez les informations de votre entreprise. Vous en
-              deviendrez automatiquement l&apos;administrateur.
+              {tc.intro}
             </p>
           </div>
 
@@ -59,7 +62,7 @@ export function CreateCompanyForm() {
           >
             <div>
               <label htmlFor="company-name" className="text-sm font-semibold text-dash-heading">
-                Nom de l&apos;entreprise <span className="text-green-accent-dark">*</span>
+                {tc.name} <span className="text-green-accent-dark">*</span>
               </label>
               <div className="relative mt-1">
                 <Building2
@@ -72,7 +75,7 @@ export function CreateCompanyForm() {
                   maxLength={200}
                   value={name}
                   onChange={(event) => setName(event.target.value)}
-                  placeholder="Ex : Kiyanza SARL"
+                  placeholder={tc.namePlaceholder}
                   className="w-full rounded-lg border-2 border-green-accent bg-dash-canvas py-3 pl-11 pr-4 text-sm text-black outline-none"
                 />
               </div>
@@ -80,7 +83,7 @@ export function CreateCompanyForm() {
 
             <div>
               <label htmlFor="company-sector" className="text-sm font-semibold text-dash-heading">
-                Secteur d&apos;activité <span className="text-green-accent-dark">*</span>
+                {tc.sector} <span className="text-green-accent-dark">*</span>
               </label>
               <div className="relative mt-1">
                 <Briefcase
@@ -93,7 +96,7 @@ export function CreateCompanyForm() {
                   maxLength={200}
                   value={businessSector}
                   onChange={(event) => setBusinessSector(event.target.value)}
-                  placeholder="Ex : Commerce de détail"
+                  placeholder={tc.sectorPlaceholder}
                   className="w-full rounded-lg border-2 border-green-accent bg-dash-canvas py-3 pl-11 pr-4 text-sm text-black outline-none"
                 />
               </div>
@@ -101,7 +104,7 @@ export function CreateCompanyForm() {
 
             <div>
               <label htmlFor="company-address" className="text-sm font-semibold text-dash-heading">
-                Adresse <span className="text-green-accent-dark">*</span>
+                {tc.address} <span className="text-green-accent-dark">*</span>
               </label>
               <div className="relative mt-1">
                 <MapPin
@@ -114,7 +117,7 @@ export function CreateCompanyForm() {
                   maxLength={300}
                   value={address}
                   onChange={(event) => setAddress(event.target.value)}
-                  placeholder="Ex : Douala, Cameroun"
+                  placeholder={tc.addressPlaceholder}
                   className="w-full rounded-lg border-2 border-green-accent bg-dash-canvas py-3 pl-11 pr-4 text-sm text-black outline-none"
                 />
               </div>
@@ -132,7 +135,7 @@ export function CreateCompanyForm() {
               className="flex items-center justify-center gap-2 self-start rounded-full bg-green-accent px-8 py-3 text-sm font-semibold text-white shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)] transition-opacity hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {submitting && <Loader2 className="size-4 animate-spin" aria-hidden="true" />}
-              Créer mon entreprise
+              {tc.submit}
             </button>
           </form>
         </div>

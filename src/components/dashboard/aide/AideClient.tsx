@@ -3,25 +3,27 @@
 import { useState } from "react";
 import { ChevronDown, Mail, MessageCircle } from "lucide-react";
 import { TopBar } from "@/components/dashboard/layout/TopBar";
-import { faqEntries } from "@/data/faq";
+import { useT } from "@/i18n/client";
 
 export function AideClient() {
+  const t = useT("dashAccount").help;
+  const dash = useT("dash");
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
     <>
-      <TopBar title="Aide" />
+      <TopBar title={dash.titles.help} />
       <main className="flex-1 overflow-y-auto bg-dash-canvas">
         <div className="mx-auto flex max-w-[720px] flex-col gap-6 px-8 py-6">
           <div>
-            <h1 className="text-lg font-bold text-dash-heading">Questions fréquentes</h1>
+            <h1 className="text-lg font-bold text-dash-heading">{t.title}</h1>
             <p className="mt-1 text-sm text-dash-muted">
-              Retrouvez ici les réponses aux questions les plus courantes sur Liyanza.
+              {t.subtitle}
             </p>
           </div>
 
           <div className="flex flex-col gap-2">
-            {faqEntries.map((entry, index) => {
+            {t.faq.map((entry, index) => {
               const isOpen = openIndex === index;
               return (
                 <div key={entry.question} className="overflow-hidden rounded-2xl border border-border bg-white">
@@ -52,8 +54,8 @@ export function AideClient() {
               <MessageCircle className="size-5 text-green-accent-dark" aria-hidden="true" />
             </span>
             <div>
-              <h2 className="text-sm font-semibold text-dash-heading">Besoin d&apos;aide supplémentaire ?</h2>
-              <p className="mt-1 text-sm text-dash-muted">Notre équipe vous répond rapidement par email.</p>
+              <h2 className="text-sm font-semibold text-dash-heading">{t.moreHelp}</h2>
+              <p className="mt-1 text-sm text-dash-muted">{t.moreHelpText}</p>
             </div>
             <a
               href="mailto:contact@kiyanza.com"

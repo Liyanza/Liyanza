@@ -1,4 +1,7 @@
+"use client";
+
 import { Lightbulb } from "lucide-react";
+import { useFormat, useT } from "@/i18n/client";
 import { BudgetDonutChart } from "./charts";
 import type { DigitalSimulationRecord } from "@/lib/api/types";
 
@@ -13,23 +16,25 @@ const PLATFORM_COLOR: Record<string, string> = {
 };
 
 export function ResumeTab({ simulation }: { simulation: DigitalSimulationRecord }) {
+  const t = useT("dashCampaigns").results.resume;
+  const f = useFormat();
   const totalBudget = simulation.channelBreakdown.reduce((sum, c) => sum + c.budgetAmount, 0);
 
   return (
     <div className="flex flex-col gap-6">
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {[
-          { label: "Portée estimée", value: simulation.predictedReach },
-          { label: "Taux d'engagement", value: simulation.predictedEngagementRate ? `${simulation.predictedEngagementRate}%` : null },
-          { label: "CTR estimé", value: simulation.predictedCtr ? `${simulation.predictedCtr}%` : null },
-          { label: "ROAS estimé", value: simulation.predictedRoas ? `${simulation.predictedRoas}x` : null },
+          { label: t.reach, value: simulation.predictedReach },
+          { label: t.engagement, value: simulation.predictedEngagementRate ? `${simulation.predictedEngagementRate}%` : null },
+          { label: t.ctr, value: simulation.predictedCtr ? `${simulation.predictedCtr}%` : null },
+          { label: t.roas, value: simulation.predictedRoas ? `${simulation.predictedRoas}x` : null },
         ].map((metric) => (
           <div key={metric.label} className="rounded-lg border border-border-light p-3">
             <p className="text-[11px] text-dash-muted">{metric.label}</p>
             <p className="mt-1 text-lg font-bold text-dash-heading">
               {metric.value !== null && metric.value !== undefined
                 ? typeof metric.value === "number"
-                  ? metric.value.toLocaleString("fr-FR")
+                  ? f.number(metric.value)
                   : metric.value
                 : "—"}
             </p>
@@ -39,10 +44,10 @@ export function ResumeTab({ simulation }: { simulation: DigitalSimulationRecord 
 
       {simulation.channelBreakdown.length > 0 && (
         <div>
-          <h3 className="text-sm font-semibold text-dash-heading">Répartition du budget</h3>
+          <h3 className="text-sm font-semibold text-dash-heading">{t.budgetSplit}</h3>
           <div className="mt-4">
             <BudgetDonutChart
-              totalLabel={Math.round(totalBudget).toLocaleString("fr-FR")}
+              totalLabel={f.number(Math.round(totalBudget))}
               segments={simulation.channelBreakdown.map((channel) => ({
                 label: PLATFORM_LABEL[channel.platform] ?? channel.platform,
                 value: channel.budgetAmount,
@@ -60,7 +65,7 @@ export function ResumeTab({ simulation }: { simulation: DigitalSimulationRecord 
             <Lightbulb className="size-4 text-green-accent-dark" aria-hidden="true" />
           </span>
           <div>
-            <p className="text-xs font-bold text-dash-heading">Pourquoi ce scénario ?</p>
+            <p className="text-xs font-bold text-dash-heading">{t.why}</p>
             <p className="mt-1 text-xs leading-relaxed text-dash-body">{simulation.narrativeSummary}</p>
           </div>
         </div>

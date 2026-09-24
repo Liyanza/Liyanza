@@ -64,6 +64,27 @@ function extractMessage(body: unknown, fallback: string): string {
   return fallback;
 }
 
+// Messages d'erreur produits côté navigateur (les messages métier viennent
+// du backend, en français). La langue est lue sur <html lang>, posée par la
+// mise en page racine : ce module n'a pas accès au contexte React.
+const NETWORK_MESSAGES = {
+  fr: {
+    offline: "Impossible de contacter le serveur. Vérifiez votre connexion.",
+    tooMany: "Trop de tentatives. Réessayez dans une minute.",
+    generic: "Une erreur est survenue.",
+  },
+  en: {
+    offline: "Unable to reach the server. Check your connection.",
+    tooMany: "Too many attempts. Try again in a minute.",
+    generic: "Something went wrong.",
+  },
+};
+
+function networkMessages() {
+  const lang = typeof document !== "undefined" ? document.documentElement.lang : "fr";
+  return lang.startsWith("en") ? NETWORK_MESSAGES.en : NETWORK_MESSAGES.fr;
+}
+
 async function request<T>(url: string, init?: RequestInit): Promise<T> {
   let response: Response;
   try {
@@ -72,7 +93,7 @@ async function request<T>(url: string, init?: RequestInit): Promise<T> {
       headers: { "Content-Type": "application/json", ...init?.headers },
     });
   } catch {
-    throw new ApiError(0, "Impossible de contacter le serveur. Vérifiez votre connexion.");
+    throw new ApiError(0, networkMessages().offline);
   }
 
   const text = await response.text();
@@ -80,9 +101,9 @@ async function request<T>(url: string, init?: RequestInit): Promise<T> {
 
   if (!response.ok) {
     if (response.status === 429) {
-      throw new ApiError(429, "Trop de tentatives. Réessayez dans une minute.");
+      throw new ApiError(429, networkMessages().tooMany);
     }
-    throw new ApiError(response.status, extractMessage(body, "Une erreur est survenue."));
+    throw new ApiError(response.status, extractMessage(body, networkMessages().generic));
   }
 
   return body as T;

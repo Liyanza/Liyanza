@@ -1,4 +1,8 @@
+"use client";
+
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import { useT } from "@/i18n/client";
+import { fill } from "@/i18n/format";
 
 export function Pagination({
   page,
@@ -6,13 +10,17 @@ export function Pagination({
   total,
   pageSize,
   onChange,
+  summary,
 }: {
   page: number;
   pageCount: number;
   total: number;
   pageSize: number;
   onChange: (page: number) => void;
+  /** Modèle du résumé ({start}, {end}, {total}) ; par défaut, des campagnes. */
+  summary?: string;
 }) {
+  const t = useT("dashCampaigns").pagination;
   if (total === 0) return null;
 
   const start = (page - 1) * pageSize + 1;
@@ -21,14 +29,14 @@ export function Pagination({
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 rounded-full bg-dash-pill-bg/50 px-4 py-3">
       <p className="text-xs font-semibold text-dash-muted">
-        Affichage de {start} à {end} sur {total} campagnes
+        {fill(summary ?? t.summary, { start, end, total })}
       </p>
       <div className="flex items-center gap-2">
         <button
           type="button"
           disabled={page === 1}
           onClick={() => onChange(page - 1)}
-          aria-label="Page précédente"
+          aria-label={t.previous}
           className="flex size-[38px] items-center justify-center rounded-full bg-[#e4ede7] text-dash-body disabled:opacity-40"
         >
           <ArrowLeft className="size-4" aria-hidden="true" />
@@ -50,7 +58,7 @@ export function Pagination({
           type="button"
           disabled={page === pageCount}
           onClick={() => onChange(page + 1)}
-          aria-label="Page suivante"
+          aria-label={t.next}
           className="flex size-[38px] items-center justify-center rounded-full bg-[#e4ede7] text-dash-body disabled:opacity-40"
         >
           <ArrowRight className="size-4" aria-hidden="true" />

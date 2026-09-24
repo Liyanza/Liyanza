@@ -1,13 +1,10 @@
 "use client";
 
-const TABS = [
-  { id: "resume", label: "Résumé" },
-  { id: "canaux", label: "Canaux" },
-  { id: "budget", label: "Budget" },
-  { id: "performances", label: "Performances" },
-] as const;
+import { useT } from "@/i18n/client";
 
-export type ResultsTabId = (typeof TABS)[number]["id"];
+const TABS = ["resume", "canaux", "budget", "performances"] as const;
+
+export type ResultsTabId = (typeof TABS)[number];
 
 export function ResultsTabs({
   active,
@@ -16,20 +13,21 @@ export function ResultsTabs({
   active: ResultsTabId;
   onChange: (tab: ResultsTabId) => void;
 }) {
+  const t = useT("dashCampaigns").results.tabs;
   return (
     <div className="flex gap-6 border-b border-border-light">
       {TABS.map((tab) => (
         <button
-          key={tab.id}
+          key={tab}
           type="button"
-          onClick={() => onChange(tab.id)}
+          onClick={() => onChange(tab)}
           className={`pb-2.5 pt-1 text-sm font-medium transition-colors ${
-            active === tab.id
+            active === tab
               ? "border-b-2 border-green-accent-dark text-green-accent-dark"
               : "text-dash-muted hover:text-dash-heading"
           }`}
         >
-          {tab.label}
+          {t[tab]}
         </button>
       ))}
     </div>

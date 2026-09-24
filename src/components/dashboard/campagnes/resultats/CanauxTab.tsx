@@ -1,4 +1,7 @@
+"use client";
+
 import { FaFacebook, FaInstagram } from "react-icons/fa6";
+import { useFormat, useT } from "@/i18n/client";
 import type { DigitalSimulationChannelResult } from "@/lib/api/types";
 
 const PLATFORM_META: Record<string, { label: string; Icon: typeof FaFacebook; iconClassName: string }> = {
@@ -7,6 +10,8 @@ const PLATFORM_META: Record<string, { label: string; Icon: typeof FaFacebook; ic
 };
 
 function ChannelCard({ channel }: { channel: DigitalSimulationChannelResult }) {
+  const t = useT("dashCampaigns").results.metrics;
+  const f = useFormat();
   const meta = PLATFORM_META[channel.platform];
   const Icon = meta?.Icon;
 
@@ -19,7 +24,7 @@ function ChannelCard({ channel }: { channel: DigitalSimulationChannelResult }) {
           </span>
           <div>
             <p className="text-sm font-semibold text-dash-heading">{meta?.label ?? channel.platform}</p>
-            <p className="text-[11px] text-dash-muted">{Math.round(channel.budgetAmount).toLocaleString("fr-FR")} FCFA</p>
+            <p className="text-[11px] text-dash-muted">{f.money(channel.budgetAmount)}</p>
           </div>
         </div>
         <span className="rounded-full bg-blue-500/10 px-2.5 py-1 text-[11.5px] font-bold text-blue-500">
@@ -28,14 +33,14 @@ function ChannelCard({ channel }: { channel: DigitalSimulationChannelResult }) {
       </div>
       <div className="mt-3 grid grid-cols-4 gap-1">
         {[
-          { label: "Portée", value: channel.predictedReach },
-          { label: "Clics", value: channel.predictedClicks },
-          { label: "Conv.", value: channel.predictedConversions },
-          { label: "ROI", value: `${channel.predictedRoas}x` },
+          { label: t.reach, value: channel.predictedReach },
+          { label: t.clicks, value: channel.predictedClicks },
+          { label: t.conversionsShort, value: channel.predictedConversions },
+          { label: t.roi, value: `${channel.predictedRoas}x` },
         ].map((metric) => (
           <div key={metric.label} className="text-center">
             <p className="text-sm font-bold text-dash-heading">
-              {typeof metric.value === "number" ? metric.value.toLocaleString("fr-FR") : metric.value}
+              {typeof metric.value === "number" ? f.number(metric.value) : metric.value}
             </p>
             <p className="text-[10px] text-dash-muted">{metric.label}</p>
           </div>
@@ -46,17 +51,18 @@ function ChannelCard({ channel }: { channel: DigitalSimulationChannelResult }) {
 }
 
 export function CanauxTab({ channels }: { channels: DigitalSimulationChannelResult[] }) {
+  const t = useT("dashCampaigns").results.channels;
   if (channels.length === 0) {
     return (
       <p className="rounded-xl border border-border-light bg-white p-6 text-center text-sm text-dash-muted">
-        Aucun canal sélectionné pour cette simulation.
+        {t.empty}
       </p>
     );
   }
 
   return (
     <div>
-      <h3 className="mb-4 text-center text-sm font-semibold text-dash-heading">Répartition par canal</h3>
+      <h3 className="mb-4 text-center text-sm font-semibold text-dash-heading">{t.title}</h3>
       <div className="mx-auto flex max-w-xl flex-col gap-3">
         {channels.map((channel) => (
           <ChannelCard key={channel.platform} channel={channel} />

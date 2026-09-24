@@ -12,23 +12,27 @@ import { CampaignsTable } from "@/components/dashboard/campagnes/CampaignsTable"
 import { Pagination } from "@/components/dashboard/campagnes/Pagination";
 import { apiGetDashboard, apiListCampagnes, ApiError } from "@/lib/api/client";
 import type { CampagneRecord, CampaignStatus, DashboardSummary } from "@/lib/api/types";
+import { useT } from "@/i18n/client";
 
 const PAGE_SIZE = 4;
 
 // "En pause"/"Suspendu" (maquette d'origine) retirés : aucun statut backend
 // ne les représente (CampaignStatus = DRAFT|PLANNED|IN_PROGRESS|COMPLETED|
 // CANCELLED). Ces 6 onglets reflètent exactement l'enum réel + "Toutes".
-const FILTERS: { label: string; status?: CampaignStatus }[] = [
-  { label: "Toutes" },
-  { label: "Brouillons", status: "DRAFT" },
-  { label: "Programmées", status: "PLANNED" },
-  { label: "En cours", status: "IN_PROGRESS" },
-  { label: "Terminées", status: "COMPLETED" },
-  { label: "Annulées", status: "CANCELLED" },
+// Libellés : dashCampaigns.list.filters, indexés par id.
+const FILTERS: { id: "all" | CampaignStatus; status?: CampaignStatus }[] = [
+  { id: "all" },
+  { id: "DRAFT", status: "DRAFT" },
+  { id: "PLANNED", status: "PLANNED" },
+  { id: "IN_PROGRESS", status: "IN_PROGRESS" },
+  { id: "COMPLETED", status: "COMPLETED" },
+  { id: "CANCELLED", status: "CANCELLED" },
 ];
 
 export function CampagnesListClient() {
-  const [activeFilter, setActiveFilter] = useState(FILTERS[0].label);
+  const t = useT("dashCampaigns").list;
+  const dash = useT("dash");
+  const [activeFilter, setActiveFilter] = useState<string>(FILTERS[0].id);
   const [page, setPage] = useState(1);
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [campaigns, setCampaigns] = useState<CampagneRecord[]>([]);
@@ -36,7 +40,7 @@ export function CampagnesListClient() {
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
 
-  const activeStatus = FILTERS.find((filter) => filter.label === activeFilter)?.status;
+  const activeStatus = FILTERS.find((filter) => filter.id === activeFilter)?.status;
 
   // Le chargement (setLoading(true)/setLoadError(null)) est déclenché par les
   // handlers utilisateur ci-dessous, jamais depuis l'effet lui-même : la règle
@@ -56,11 +60,11 @@ export function CampagnesListClient() {
         setLoading(false);
       },
       (error: unknown) => {
-        setLoadError(error instanceof ApiError ? error.message : "Impossible de charger les campagnes.");
+        setLoadError(error instanceof ApiError ? error.message : t.loadError);
         setLoading(false);
       }
     );
-  }, [page, activeStatus]);
+  }, [page, activeStatus, t]);
 
   useEffect(() => {
     void fetchData();
@@ -80,7 +84,7 @@ export function CampagnesListClient() {
   }
 
   function handleReset() {
-    setActiveFilter(FILTERS[0].label);
+    setActiveFilter(FILTERS[0].id);
     setPage(1);
     setLoading(true);
     setLoadError(null);
@@ -90,7 +94,7 @@ export function CampagnesListClient() {
 
   return (
     <>
-      <TopBar title="Campagnes" />
+      <TopBar title={dash.titles.campaigns} />
       <main className="flex-1 overflow-y-auto bg-dash-canvas">
         <div className="flex flex-col gap-6 px-8 py-6">
           <div className="flex justify-end">
@@ -101,7 +105,7 @@ export function CampagnesListClient() {
               icon={<Plus className="size-4" aria-hidden="true" />}
               iconPosition="left"
             >
-              Nouvelle campagne
+              {t.newCampaign}
             </Button>
           </div>
 
@@ -111,7 +115,8 @@ export function CampagnesListClient() {
             <div className="flex flex-wrap items-center justify-between gap-3">
               <CampaignsFilterTabs
                 filters={FILTERS.map((filter) => ({
-                  label: filter.label,
+                  id: filter.id,
+                  label: t.filters[filter.id],
                   count: filter.status
                     ? (summary?.campaignsByStatus[filter.status] ?? 0)
                     : (summary?.totalCampaigns ?? 0),
@@ -129,9 +134,9 @@ export function CampagnesListClient() {
           <Pagination page={page} pageCount={pageCount} total={total} pageSize={PAGE_SIZE} onChange={handlePageChange} />
 
           <p className="text-center text-[11px] text-gray-text-light">
-            Besoin de plus de détails ?{" "}
+            {t.moreDetails}{" "}
             <Link href="/dashboard/rapports" className="font-semibold text-green-accent-dark">
-              Consultez les rapports
+              {t.seeReports}
             </Link>
           </p>
         </div>

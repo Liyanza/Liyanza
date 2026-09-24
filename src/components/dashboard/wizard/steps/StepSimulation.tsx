@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { AlertTriangle, CheckCircle2, RefreshCw } from "lucide-react";
-import { simulationChecklist } from "@/data/dashboard";
 import { CircularProgress } from "./CircularProgress";
+import { useT } from "@/i18n/client";
 import {
   apiCreateCampagne,
   apiCreateDigitalSimulation,
@@ -34,12 +34,15 @@ export function StepSimulation({
   channelsPayload: SelectDigitalChannelsPayload | null;
 }) {
   const router = useRouter();
+  const t = useT("dashWizard");
+  const common = useT("dash").common;
+  const checklist = t.simulation.checklist;
   const [percent, setPercent] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const runningRef = useRef(false);
 
   const isDigital = Boolean(digitalDetailsPayload && channelsPayload);
-  const completedSteps = Math.floor((percent / 100) * simulationChecklist.length);
+  const completedSteps = Math.floor((percent / 100) * checklist.length);
 
   // Chaînage `.then()` plutôt qu'async/await : appelée depuis l'effet de
   // montage, une fonction `async` dont le corps enchaîne directement
@@ -53,7 +56,7 @@ export function StepSimulation({
 
     if (!payload) {
       return Promise.resolve().then(() => {
-        setError("Formulaire incomplet : revenez aux étapes précédentes.");
+        setError(t.errors.incomplete);
         runningRef.current = false;
       });
     }
@@ -82,7 +85,7 @@ export function StepSimulation({
         router.push("/dashboard/campagnes");
       })
       .catch((err: unknown) => {
-        setError(err instanceof ApiError ? err.message : "Une erreur est survenue.");
+        setError(err instanceof ApiError ? err.message : common.genericError);
         runningRef.current = false;
       });
   }
@@ -96,7 +99,7 @@ export function StepSimulation({
     return (
       <div className="flex flex-col items-center gap-3 px-5 pb-6 pt-3.5 text-center">
         <AlertTriangle className="size-8 text-red-500" aria-hidden="true" />
-        <h2 className="text-lg font-semibold text-[#101828]">La création a échoué</h2>
+        <h2 className="text-lg font-semibold text-[#101828]">{t.simulation.failed}</h2>
         <p className="max-w-sm text-sm text-gray-text-light">{error}</p>
         <button
           type="button"
@@ -108,7 +111,7 @@ export function StepSimulation({
           className="mt-2 flex items-center gap-2 rounded-full bg-green-accent px-6 py-2.5 text-sm font-semibold text-white transition hover:brightness-105"
         >
           <RefreshCw className="size-4" aria-hidden="true" />
-          Réessayer
+          {common.retry}
         </button>
       </div>
     );
@@ -117,22 +120,22 @@ export function StepSimulation({
   return (
     <div className="flex flex-col items-center px-5 pb-6 pt-3.5 text-center">
       <h2 className="text-[22px] font-semibold text-[#101828]">
-        Nous analysons et simulons
+        {t.simulation.title1}
         <br />
-        vos scénarios...
+        {t.simulation.title2}
       </h2>
       <p className="mt-2 text-[13px] text-gray-text-light">
-        Notre IA compare les performances prévisionnelles
+        {t.simulation.text1}
         <br />
-        pour vous proposer la meilleure stratégie.
+        {t.simulation.text2}
       </p>
 
       <div className="mt-8">
-        <CircularProgress percent={percent} label="Analyse en cours" />
+        <CircularProgress percent={percent} label={t.simulation.analysing} />
       </div>
 
       <div className="mt-8 flex flex-col items-start gap-3.5">
-        {simulationChecklist.map((item, index) => {
+        {checklist.map((item, index) => {
           const isDone = index < completedSteps;
           return (
             <div key={item} className="flex items-center gap-3">

@@ -1,10 +1,9 @@
+"use client";
+
 import { CheckCircle2, FileEdit, Megaphone, Wallet } from "lucide-react";
 import type { DashboardSummary } from "@/lib/api/types";
 import { KpiCard } from "@/components/dashboard/ui/KpiCard";
-
-function formatBudget(amount: number) {
-  return `${Math.round(amount).toLocaleString("fr-FR")} FCFA`;
-}
+import { useFormat, useT } from "@/i18n/client";
 
 /**
  * Remplace les anciens HomeKpiRow/CampagnesKpiRow (données 100% fictives,
@@ -15,40 +14,42 @@ function formatBudget(amount: number) {
  * calculer honnêtement.
  */
 export function CampaignKpiRow({ summary }: { summary: DashboardSummary }) {
+  const t = useT("dash").home.kpis;
+  const f = useFormat();
   const byStatus = summary.campaignsByStatus;
 
   const items = [
     {
-      label: "Campagnes totales",
+      label: t.total,
       value: String(summary.totalCampaigns),
       icon: Megaphone,
       iconBg: "bg-green-accent-dark/10",
       iconColor: "text-green-accent-dark",
     },
     {
-      label: "En cours",
+      label: t.inProgress,
       value: String(byStatus.IN_PROGRESS ?? 0),
       icon: CheckCircle2,
       iconBg: "bg-blue-500/10",
       iconColor: "text-blue-500",
     },
     {
-      label: "Terminées",
+      label: t.completed,
       value: String(byStatus.COMPLETED ?? 0),
       icon: CheckCircle2,
       iconBg: "bg-slate-100",
       iconColor: "text-slate-500",
     },
     {
-      label: "Brouillons",
+      label: t.drafts,
       value: String(byStatus.DRAFT ?? 0),
       icon: FileEdit,
       iconBg: "bg-amber-500/10",
       iconColor: "text-amber-500",
     },
     {
-      label: "Budget prévu total",
-      value: formatBudget(summary.totalPlannedBudget),
+      label: t.plannedBudget,
+      value: f.money(summary.totalPlannedBudget),
       icon: Wallet,
       iconBg: "bg-green-accent-dark/10",
       iconColor: "text-green-accent-dark",

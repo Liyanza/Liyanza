@@ -3,6 +3,7 @@
 import { createContext, useContext, useMemo, type ReactNode } from "react";
 import type { Locale } from "./config";
 import type { Messages, Namespace } from "./dictionaries";
+import { formatDate, formatMoney, formatNumber } from "./format";
 
 /**
  * Traductions côté client. Le serveur charge les espaces de noms utiles et
@@ -43,6 +44,24 @@ function useI18n() {
 
 export function useLocale(): Locale {
   return useI18n().locale;
+}
+
+/**
+ * Formateurs liés à la langue courante (nombres, montants FCFA, dates).
+ *   const f = useFormat(); f.money(150000) → « 150 000 FCFA » / « 150,000 FCFA »
+ */
+export function useFormat() {
+  const locale = useLocale();
+  return useMemo(
+    () => ({
+      locale,
+      number: (value: number, options?: Intl.NumberFormatOptions) => formatNumber(value, locale, options),
+      money: (amount: number) => formatMoney(amount, locale),
+      date: (value: string | number | Date, options: Intl.DateTimeFormatOptions) =>
+        formatDate(value, locale, options),
+    }),
+    [locale],
+  );
 }
 
 export function useT<N extends Namespace>(ns: N): Messages[N] {

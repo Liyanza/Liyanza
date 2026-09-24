@@ -1,12 +1,5 @@
 export type Role = "ADMIN" | "MARKETING_MANAGER" | "COMMUNITY_MANAGER" | "PROVIDER";
 
-export const ROLE_LABELS: Record<Role, string> = {
-  ADMIN: "Administrateur",
-  MARKETING_MANAGER: "Responsable Marketing",
-  COMMUNITY_MANAGER: "Community Manager",
-  PROVIDER: "Prestataire",
-};
-
 export type CampaignType = "DIGITAL" | "RADIO" | "POSTER";
 
 export type CampaignStatus = "DRAFT" | "PLANNED" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED";

@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
+import { getMessages } from "@/i18n/server";
 import { DigitalResultsPage } from "@/components/dashboard/campagnes/resultats/DigitalResultsPage";
 import { RoleGate } from "@/components/dashboard/RoleGate";
 
-export const metadata: Metadata = {
-  title: "Résultats de simulation",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: (await getMessages("dash")).titles.results };
+}
 
 interface PageProps {
   params: Promise<{ id: string }>;

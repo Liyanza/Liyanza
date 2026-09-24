@@ -5,6 +5,8 @@ import { interestTags } from "@/data/dashboard";
 import { AgeRangeSlider } from "./AgeRangeSlider";
 
 import type { TargetGender } from "@/lib/api/types";
+import { useT } from "@/i18n/client";
+import { fill } from "@/i18n/format";
 
 export interface AudienceData {
   ageMin: number;
@@ -15,11 +17,7 @@ export interface AudienceData {
   interests: string[];
 }
 
-const genderOptions: { id: AudienceData["gender"]; label: string }[] = [
-  { id: "ALL", label: "Tous (Hommes/Femmes)" },
-  { id: "MALE", label: "Hommes uniquement" },
-  { id: "FEMALE", label: "Femmes uniquement" },
-];
+const genderOptions: AudienceData["gender"][] = ["ALL", "MALE", "FEMALE"];
 
 export function StepAudience({
   data,
@@ -28,6 +26,7 @@ export function StepAudience({
   data: AudienceData;
   onChange: (data: AudienceData) => void;
 }) {
+  const t = useT("dashWizard").audience;
   function toggleInterest(tag: string) {
     const isActive = data.interests.includes(tag);
     onChange({
@@ -40,17 +39,17 @@ export function StepAudience({
     <div>
       <div className="max-w-[768px]">
         <h1 className="text-[40px] font-semibold leading-9 tracking-[-1px] text-dash-heading">
-          Qui souhaitez-vous atteindre ?
+          {t.title}
         </h1>
         <p className="mt-3 text-base leading-[26px] text-dash-body">
-          Définissez les segments démographiques et affinitaires prioritaires.
+          {t.subtitle}
         </p>
       </div>
 
       <div className="mt-6 flex flex-col gap-6 rounded-t-xl bg-white p-6 shadow-[0_1px_1px_rgba(0,0,0,0.05)]">
         <h2 className="flex items-center gap-2 text-lg font-semibold text-dash-heading">
           <UsersRound className="size-[18px] text-green-accent-dark" aria-hidden="true" />
-          Démographie &amp; Tranche d&apos;Âge
+          {t.demographics}
         </h2>
 
         <AgeRangeSlider
@@ -60,22 +59,22 @@ export function StepAudience({
         />
 
         <div>
-          <p className="text-xs font-medium text-dash-body">Répartition par genre</p>
+          <p className="text-xs font-medium text-dash-body">{t.gender}</p>
           <div className="mt-2 flex flex-wrap gap-2">
             {genderOptions.map((option) => {
-              const selected = data.gender === option.id;
+              const selected = data.gender === option;
               return (
                 <button
-                  key={option.id}
+                  key={option}
                   type="button"
                   aria-pressed={selected}
-                  onClick={() => onChange({ ...data, gender: option.id })}
+                  onClick={() => onChange({ ...data, gender: option })}
                   className={`flex h-[52px] flex-1 basis-[200px] items-center justify-center gap-1.5 rounded-full text-xs font-medium transition-colors ${
                     selected ? "bg-blue-500 text-white shadow-[0_1px_1px_rgba(0,0,0,0.05)]" : "bg-dash-pill-bg text-dash-heading"
                   }`}
                 >
                   {selected && <Check className="size-3" aria-hidden="true" />}
-                  {option.label}
+                  {t.genders[option]}
                 </button>
               );
             })}
@@ -87,16 +86,15 @@ export function StepAudience({
         <div className="flex items-center justify-between">
           <h2 className="flex items-center gap-2 text-lg font-semibold text-dash-heading">
             <Users className="size-[18px] text-green-accent-dark" aria-hidden="true" />
-            Centres d&apos;intérêt &amp; Comportements
+            {t.interests}
           </h2>
-          <span className="text-[11px] font-semibold text-green-accent">{data.interests.length} sélectionné{data.interests.length > 1 ? "s" : ""}</span>
+          <span className="text-[11px] font-semibold text-green-accent">{fill(data.interests.length > 1 ? t.selectedMany : t.selectedOne, { count: data.interests.length })}</span>
         </div>
         <p className="text-[13px] leading-[18px] text-dash-body">
-          Affinez la sélection pour toucher les utilisateurs ayant montré une intention d&apos;achat ou une
-          interaction vérifiée sur ces verticaux.
+          {t.interestsHint}
         </p>
         <div className="flex flex-wrap gap-2">
-          {interestTags.map((tag) => {
+          {interestTags.map((tag, index) => {
             const selected = data.interests.includes(tag);
             return (
               <button
@@ -109,7 +107,7 @@ export function StepAudience({
                 }`}
               >
                 {selected ? <Check className="size-3" aria-hidden="true" /> : <Plus className="size-3" aria-hidden="true" />}
-                {tag}
+                {t.interestLabels[index] ?? tag}
               </button>
             );
           })}

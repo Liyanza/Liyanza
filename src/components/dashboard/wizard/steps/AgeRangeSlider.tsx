@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useRef } from "react";
+import { useT } from "@/i18n/client";
+import { fill } from "@/i18n/format";
 
 const MIN = 18;
 const MAX = 65;
@@ -19,6 +21,8 @@ export function AgeRangeSlider({
   max: number;
   onChange: (range: [number, number]) => void;
 }) {
+  const t = useT("dashWizard").audience.age;
+  const years = (age: number) => (age === MAX ? t.max : fill(t.years, { age }));
   const trackRef = useRef<HTMLDivElement>(null);
 
   const valueFromClientX = useCallback((clientX: number) => {
@@ -58,9 +62,9 @@ export function AgeRangeSlider({
   return (
     <div className="w-full">
       <div className="flex items-center justify-between">
-        <p className="text-xs font-semibold text-dash-body">Tranche d&apos;âge sélectionnée</p>
+        <p className="text-xs font-semibold text-dash-body">{t.selected}</p>
         <p className="text-[15px] font-semibold text-orange-500">
-          {min} ans — {max === MAX ? "65+ ans" : `${max} ans`}
+          {years(min)} — {years(max)}
         </p>
       </div>
 
@@ -78,7 +82,7 @@ export function AgeRangeSlider({
             key={thumb.key}
             type="button"
             role="slider"
-            aria-label={thumb.key === "min" ? "Âge minimum" : "Âge maximum"}
+            aria-label={thumb.key === "min" ? t.minLabel : t.maxLabel}
             aria-valuemin={MIN}
             aria-valuemax={MAX}
             aria-valuenow={thumb.value}
@@ -93,7 +97,7 @@ export function AgeRangeSlider({
 
       <div className="mt-1.5 flex justify-between text-[11px] font-semibold text-dash-muted">
         {MARKS.map((mark) => (
-          <span key={mark}>{mark === MAX ? "65+ ans" : `${mark} ans`}</span>
+          <span key={mark}>{years(mark)}</span>
         ))}
       </div>
     </div>

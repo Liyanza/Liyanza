@@ -1,5 +1,11 @@
 import type { Locale } from "../config";
 import type frCommon from "./fr/common";
+import type frDashField from "./fr/dashField";
+import type frDashAccount from "./fr/dashAccount";
+import type frDashInsights from "./fr/dashInsights";
+import type frDashWizard from "./fr/dashWizard";
+import type frDashCampaigns from "./fr/dashCampaigns";
+import type frDash from "./fr/dash";
 import type frOg from "./fr/og";
 import type frLegal from "./fr/legal";
 import type frAuth from "./fr/auth";
@@ -19,6 +25,12 @@ import type frPlans from "./fr/plans";
 const loaders = {
   fr: {
     common: () => import("./fr/common").then((m) => m.default),
+    dashField: () => import("./fr/dashField").then((m) => m.default),
+    dashAccount: () => import("./fr/dashAccount").then((m) => m.default),
+    dashInsights: () => import("./fr/dashInsights").then((m) => m.default),
+    dashWizard: () => import("./fr/dashWizard").then((m) => m.default),
+    dashCampaigns: () => import("./fr/dashCampaigns").then((m) => m.default),
+    dash: () => import("./fr/dash").then((m) => m.default),
     og: () => import("./fr/og").then((m) => m.default),
     legal: () => import("./fr/legal").then((m) => m.default),
     auth: () => import("./fr/auth").then((m) => m.default),
@@ -31,6 +43,12 @@ const loaders = {
   },
   en: {
     common: () => import("./en/common").then((m) => m.default),
+    dashField: () => import("./en/dashField").then((m) => m.default),
+    dashAccount: () => import("./en/dashAccount").then((m) => m.default),
+    dashInsights: () => import("./en/dashInsights").then((m) => m.default),
+    dashWizard: () => import("./en/dashWizard").then((m) => m.default),
+    dashCampaigns: () => import("./en/dashCampaigns").then((m) => m.default),
+    dash: () => import("./en/dash").then((m) => m.default),
     og: () => import("./en/og").then((m) => m.default),
     legal: () => import("./en/legal").then((m) => m.default),
     auth: () => import("./en/auth").then((m) => m.default),
@@ -47,6 +65,12 @@ export type Namespace = keyof (typeof loaders)["fr"];
 
 export type Messages = {
   common: typeof frCommon;
+  dashField: typeof frDashField;
+  dashAccount: typeof frDashAccount;
+  dashInsights: typeof frDashInsights;
+  dashWizard: typeof frDashWizard;
+  dashCampaigns: typeof frDashCampaigns;
+  dash: typeof frDash;
   og: typeof frOg;
   legal: typeof frLegal;
   auth: typeof frAuth;

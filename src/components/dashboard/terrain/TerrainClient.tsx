@@ -14,10 +14,17 @@ import {
 } from "@/lib/api/client";
 import type { CampagneRecord, CompanyMember, InstallationRecord } from "@/lib/api/types";
 import { SkeletonRows } from "@/components/dashboard/ui/Skeleton";
+import { useT } from "@/i18n/client";
+import { fill } from "@/i18n/format";
+
+function MapLoading() {
+  const t = useT("dashField").terrain;
+  return <div className="flex h-full items-center justify-center text-sm text-dash-muted">{t.mapLoading}</div>;
+}
 
 const TerrainMap = dynamic(() => import("./TerrainMap").then((mod) => mod.TerrainMap), {
   ssr: false,
-  loading: () => <div className="flex h-full items-center justify-center text-sm text-dash-muted">Chargement de la carte...</div>,
+  loading: () => <MapLoading />,
 });
 
 const DOUALA_CENTER: [number, number] = [4.0483, 9.7]; // Centre par défaut — aucune installation n'existe encore au premier lancement.
@@ -32,6 +39,8 @@ interface NewPrestationForm {
 const EMPTY_FORM: NewPrestationForm = { location: "", campaignId: "", providerId: "", plannedInstallationDate: "" };
 
 export function TerrainClient() {
+  const t = useT("dashField").terrain;
+  const dash = useT("dash");
   const [installations, setInstallations] = useState<InstallationRecord[]>([]);
   const [campaigns, setCampaigns] = useState<CampagneRecord[]>([]);
   const [providers, setProviders] = useState<CompanyMember[]>([]);
@@ -57,10 +66,11 @@ export function TerrainClient() {
         setLoading(false);
       },
       (error: unknown) => {
-        setLoadError(error instanceof ApiError ? error.message : "Impossible de charger le suivi terrain.");
+        setLoadError(error instanceof ApiError ? error.message : t.loadError);
         setLoading(false);
       }
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- messages stables, chargement unique
   }, []);
 
   function refreshInstallations() {
@@ -81,7 +91,7 @@ export function TerrainClient() {
 
   function handleCreate() {
     if (!pendingPoint || !form.campaignId || !form.providerId || !form.location.trim() || !form.plannedInstallationDate) {
-      setFormError("Remplissez tous les champs et placez un point sur la carte.");
+      setFormError(t.missingFields);
       return;
     }
     setCreating(true);
@@ -99,7 +109,7 @@ export function TerrainClient() {
         refreshInstallations();
       },
       (error: unknown) => {
-        setFormError(error instanceof ApiError ? error.message : "Impossible de créer ce panneau.");
+        setFormError(error instanceof ApiError ? error.message : t.createError);
         setCreating(false);
       }
     );
@@ -125,14 +135,14 @@ export function TerrainClient() {
 
   return (
     <>
-      <TopBar title="Terrain" searchPlaceholder="Rechercher un panneau..." />
+      <TopBar title={dash.titles.terrain} searchPlaceholder={t.searchPlaceholder} />
       <main className="flex-1 overflow-y-auto bg-dash-canvas">
         <div className="mx-auto flex max-w-[1295px] flex-col gap-5 px-8 py-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h1 className="text-lg font-bold text-dash-heading">Suivi terrain</h1>
+              <h1 className="text-lg font-bold text-dash-heading">{t.title}</h1>
               <p className="mt-0.5 text-sm text-dash-muted">
-                Panneaux/affiches suivis par géolocalisation — vert : emplacement confirmé, orange : écart détecté, gris : en attente de preuve.
+                {t.subtitle}
               </p>
             </div>
             {!addMode ? (
@@ -142,7 +152,7 @@ export function TerrainClient() {
                 className="flex items-center gap-2 rounded-full bg-green-accent px-5 py-2.5 text-sm font-semibold text-white"
               >
                 <Plus className="size-4" aria-hidden="true" />
-                Ajouter un panneau
+                {t.add}
               </button>
             ) : (
               <button
@@ -151,7 +161,7 @@ export function TerrainClient() {
                 className="flex items-center gap-2 rounded-full bg-dash-pill-bg px-5 py-2.5 text-sm font-semibold text-dash-heading"
               >
                 <X className="size-4" aria-hidden="true" />
-                Annuler
+                {dash.common.cancel}
               </button>
             )}
           </div>
@@ -159,8 +169,8 @@ export function TerrainClient() {
           {addMode && (
             <div className="rounded-2xl border border-blue-500/30 bg-blue-500/5 p-4 text-sm text-dash-body">
               {pendingPoint
-                ? `Point placé (${pendingPoint.lat.toFixed(4)}, ${pendingPoint.lng.toFixed(4)}) — complétez le formulaire ci-dessous.`
-                : "Cliquez sur la carte à l'endroit exact où le panneau doit être installé."}
+                ? fill(t.pointPlaced, { lat: pendingPoint.lat.toFixed(4), lng: pendingPoint.lng.toFixed(4) })
+                : t.clickMap}
             </div>
           )}
 
@@ -186,11 +196,11 @@ export function TerrainClient() {
             <div className="flex flex-col gap-4">
               {pendingPoint && (
                 <div className="flex flex-col gap-3 rounded-2xl border border-border bg-white p-4">
-                  <h2 className="text-sm font-semibold text-dash-heading">Nouveau panneau</h2>
+                  <h2 className="text-sm font-semibold text-dash-heading">{t.newPanel}</h2>
                   {formError && <p className="text-xs font-medium text-red-600">{formError}</p>}
                   <input
                     type="text"
-                    placeholder="Lieu (ex: Rond-point Akwa)"
+                    placeholder={t.locationPlaceholder}
                     value={form.location}
                     onChange={(event) => setForm((prev) => ({ ...prev, location: event.target.value }))}
                     className="rounded-lg border border-border px-3 py-2 text-sm outline-none focus:border-green-accent-dark"
@@ -200,7 +210,7 @@ export function TerrainClient() {
                     onChange={(event) => setForm((prev) => ({ ...prev, campaignId: event.target.value }))}
                     className="rounded-lg border border-border px-3 py-2 text-sm outline-none focus:border-green-accent-dark"
                   >
-                    <option value="">Campagne...</option>
+                    <option value="">{t.campaignPlaceholder}</option>
                     {campaigns.map((campaign) => (
                       <option key={campaign.id} value={campaign.id}>
                         {campaign.name}
@@ -212,7 +222,7 @@ export function TerrainClient() {
                     onChange={(event) => setForm((prev) => ({ ...prev, providerId: event.target.value }))}
                     className="rounded-lg border border-border px-3 py-2 text-sm outline-none focus:border-green-accent-dark"
                   >
-                    <option value="">Prestataire...</option>
+                    <option value="">{t.providerPlaceholder}</option>
                     {providers.map((provider) => (
                       <option key={provider.id} value={provider.id}>
                         {provider.firstName} {provider.lastName}
@@ -221,7 +231,7 @@ export function TerrainClient() {
                   </select>
                   {providers.length === 0 && (
                     <p className="text-xs text-dash-muted">
-                      Aucun prestataire — invitez-en un avec le rôle Prestataire depuis Équipes.
+                      {t.noProvider}
                     </p>
                   )}
                   <input
@@ -236,17 +246,17 @@ export function TerrainClient() {
                     onClick={handleCreate}
                     className="rounded-full bg-green-accent-dark px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50"
                   >
-                    {creating ? "Création..." : "Créer le panneau"}
+                    {creating ? t.creating : t.create}
                   </button>
                 </div>
               )}
 
               <div className="flex flex-col gap-3 rounded-2xl border border-border bg-white p-4">
-                <h2 className="text-sm font-semibold text-dash-heading">Panneaux ({installations.length})</h2>
+                <h2 className="text-sm font-semibold text-dash-heading">{fill(t.panels, { count: installations.length })}</h2>
                 {loading ? (
-                  <SkeletonRows rows={3} label="Chargement des panneaux…" />
+                  <SkeletonRows rows={3} label={t.loading} />
                 ) : installations.length === 0 ? (
-                  <p className="text-sm text-dash-muted">Aucun panneau pour le moment.</p>
+                  <p className="text-sm text-dash-muted">{t.empty}</p>
                 ) : (
                   <div className="flex max-h-[380px] flex-col gap-2 overflow-y-auto">
                     {installations.map((installation) => {
@@ -267,7 +277,7 @@ export function TerrainClient() {
                                     : "bg-orange-500/10 text-orange-500"
                               }`}
                             >
-                              {!installation.proof ? "En attente" : installation.locationMatch ? "Confirmé" : "Écart"}
+                              {!installation.proof ? t.pending : installation.locationMatch ? t.confirmed : t.gap}
                             </span>
                           </div>
                           <p className="mt-0.5 text-[11px] text-dash-muted">{installation.campaignName}</p>
@@ -277,7 +287,7 @@ export function TerrainClient() {
                               {link ? (
                                 <div className="flex items-center gap-1.5 rounded-lg bg-dash-canvas px-2 py-1.5">
                                   <span className="min-w-0 flex-1 truncate text-[10px] text-dash-muted">{link}</span>
-                                  <button type="button" onClick={() => handleCopy(installation.id, link)} className="shrink-0 text-dash-muted">
+                                  <button type="button" onClick={() => handleCopy(installation.id, link)} aria-label={t.copyLink} className="shrink-0 text-dash-muted">
                                     {copiedId === installation.id ? (
                                       <Check className="size-3.5 text-green-accent-dark" aria-hidden="true" />
                                     ) : (
@@ -292,7 +302,7 @@ export function TerrainClient() {
                                   onClick={() => handleGenerateLink(installation.id)}
                                   className="text-[11px] font-semibold text-green-accent-dark disabled:opacity-50"
                                 >
-                                  {generatingId === installation.id ? "Génération..." : "Générer le lien de preuve →"}
+                                  {generatingId === installation.id ? t.generating : t.generateLink}
                                 </button>
                               )}
                             </div>

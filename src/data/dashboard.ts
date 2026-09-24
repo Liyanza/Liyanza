@@ -1,6 +1,7 @@
 export interface NavItem {
   href: string;
-  label: string;
+  /** Clé du libellé dans dash.nav (dictionnaire). */
+  key: "home" | "campaigns" | "monitoring" | "terrain" | "recommendations" | "reports" | "teams" | "company" | "profile" | "notifications" | "help";
   icon: "home" | "campaigns" | "monitoring" | "terrain" | "ai" | "reports" | "teams" | "company" | "profile" | "notifications" | "help";
 }
 
@@ -15,20 +16,20 @@ export interface NavItem {
 // une UI de saisie manuelle du constat (`PATCH /diffusions/:id/constat`
 // n'est appelé par aucune page pour l'instant).
 export const mainNavItems: NavItem[] = [
-  { href: "/dashboard", label: "Accueil", icon: "home" },
-  { href: "/dashboard/campagnes", label: "Campagnes", icon: "campaigns" },
-  { href: "/dashboard/monitoring", label: "Monitoring", icon: "monitoring" },
-  { href: "/dashboard/terrain", label: "Terrain", icon: "terrain" },
-  { href: "/dashboard/recommandations", label: "Recommandations IA", icon: "ai" },
-  { href: "/dashboard/rapports", label: "Rapports", icon: "reports" },
-  { href: "/dashboard/equipes", label: "Equipes", icon: "teams" },
+  { href: "/dashboard", key: "home", icon: "home" },
+  { href: "/dashboard/campagnes", key: "campaigns", icon: "campaigns" },
+  { href: "/dashboard/monitoring", key: "monitoring", icon: "monitoring" },
+  { href: "/dashboard/terrain", key: "terrain", icon: "terrain" },
+  { href: "/dashboard/recommandations", key: "recommendations", icon: "ai" },
+  { href: "/dashboard/rapports", key: "reports", icon: "reports" },
+  { href: "/dashboard/equipes", key: "teams", icon: "teams" },
 ];
 
 export const settingsNavItems: NavItem[] = [
-  { href: "/dashboard/entreprise", label: "Mon entreprise", icon: "company" },
-  { href: "/dashboard/profil", label: "Profil", icon: "profile" },
-  { href: "/dashboard/notifications", label: "Notifications", icon: "notifications" },
-  { href: "/dashboard/aide", label: "Aide", icon: "help" },
+  { href: "/dashboard/entreprise", key: "company", icon: "company" },
+  { href: "/dashboard/profil", key: "profile", icon: "profile" },
+  { href: "/dashboard/notifications", key: "notifications", icon: "notifications" },
+  { href: "/dashboard/aide", key: "help", icon: "help" },
 ];
 
 // ---------------------------------------------------------------------------
@@ -44,20 +45,13 @@ export const settingsNavItems: NavItem[] = [
 // Assistant de création (wizard)
 // ---------------------------------------------------------------------------
 
-export const wizardSteps = [
-  "Choix de la campagne",
-  "Définition de la campagne",
-  "Objectif principal",
-  "Cibles",
-  "Budget",
-  "Canal",
-  "Simulation",
-] as const;
+/** Nombre d'étapes du flux Digital — libellés dans dashWizard.steps. */
+export const WIZARD_STEP_COUNT = 7;
 
+// Les libellés (titres, descriptions) de ces options vivent dans le
+// dictionnaire dashWizard, indexés par id.
 export interface CampaignTypeOption {
-  id: string;
-  title: string;
-  description: string;
+  id: "digital" | "radio" | "print";
   icon: "digital" | "radio" | "print";
   // "print" (Affichage) reste grisé : aucun flux dédié n'a été maquetté pour
   // ce type. "radio" a désormais son propre flux (StepRadioStation et
@@ -68,27 +62,9 @@ export interface CampaignTypeOption {
 }
 
 export const campaignTypeOptions: CampaignTypeOption[] = [
-  {
-    id: "digital",
-    title: "Campagne Digitale",
-    description: "Facebook, Instagram, Google Ads & Email",
-    icon: "digital",
-    supported: true,
-  },
-  {
-    id: "radio",
-    title: "Campagne Radio",
-    description: "Diffusion sur les radios locales et nationales",
-    icon: "radio",
-    supported: true,
-  },
-  {
-    id: "print",
-    title: "Supports Publicitaires",
-    description: "Affiches, bâches, roll-ups, street marketing",
-    icon: "print",
-    supported: false,
-  },
+  { id: "digital", icon: "digital", supported: true },
+  { id: "radio", icon: "radio", supported: true },
+  { id: "print", icon: "print", supported: false },
 ];
 
 import type { DigitalObjective } from "@/lib/api/types";
@@ -98,57 +74,23 @@ export interface ObjectiveOption {
   // (DigitalObjective côté backend) — jamais une transformation à faire au
   // moment de la soumission.
   id: DigitalObjective;
-  title: string;
-  description: string;
-  optimization: string;
   icon: "awareness" | "sales" | "leads" | "conversions" | "traffic" | "engagement";
 }
 
 export const objectiveOptions: ObjectiveOption[] = [
-  {
-    id: "AWARENESS",
-    title: "Notoriété",
-    description: "Faire connaître votre marque et maximiser la mémorisation publicitaire sur l'ensemble de vos canaux.",
-    optimization: "OPTIMISATION CPM",
-    icon: "awareness",
-  },
-  {
-    id: "LEADS",
-    title: "Génération de leads",
-    description: "Obtenir des contacts qualifiés et des intentions d'achat directes pour alimenter vos équipes commerciales.",
-    optimization: "OPTIMISATION CPM",
-    icon: "leads",
-  },
-  {
-    id: "CONVERSION",
-    title: "Conversions",
-    description: "Transformer davantage de prospects en utilisateurs actifs d'un service ou testeurs d'une application.",
-    optimization: "OPTIMISATION CPA",
-    icon: "conversions",
-  },
-  {
-    id: "SALES",
-    title: "Ventes directes",
-    description: "Accélérer les transactions directes et maximiser le chiffre d'affaires immédiat sur boutique ou catalogue.",
-    optimization: "OPTIMISATION ROAS",
-    icon: "sales",
-  },
-  {
-    id: "TRAFFIC",
-    title: "Trafic qualifié",
-    description: "Augmenter massivement les visites sur votre site web, page produit ou application avec un rebond minimal.",
-    optimization: "OPTIMISATION CPC",
-    icon: "traffic",
-  },
-  {
-    id: "ENGAGEMENT",
-    title: "Engagement",
-    description: "Créer des interactions fortes, des partages, des commentaires et un dialogue communautaire pérenne.",
-    optimization: "OPTIMISATION CPE",
-    icon: "engagement",
-  },
+  { id: "AWARENESS", icon: "awareness" },
+  { id: "LEADS", icon: "leads" },
+  { id: "CONVERSION", icon: "conversions" },
+  { id: "SALES", icon: "sales" },
+  { id: "TRAFFIC", icon: "traffic" },
+  { id: "ENGAGEMENT", icon: "engagement" },
 ];
 
+/**
+ * Valeurs envoyées au backend (`targetInterests`), gardées en français quelle
+ * que soit la langue pour que les données restent homogènes. Libellés
+ * affichés : dashWizard.audience.interestLabels (même ordre).
+ */
 export const interestTags = [
   "Fintech & Mobile Money",
   "Entrepreneuriat",
@@ -159,74 +101,3 @@ export const interestTags = [
 ];
 
 export const budgetPresets = [250000, 500000, 1000000, 2500000];
-
-export interface ChannelOption {
-  id: string;
-  label: string;
-  description: string;
-  icon: "facebook" | "instagram" | "whatsapp" | "tiktok" | "youtube";
-}
-
-export const channelOptions: ChannelOption[] = [
-  { id: "facebook", label: "Facebook", description: "Atteignez votre audience sur Facebook", icon: "facebook" },
-  { id: "instagram", label: "Instagram", description: "Touchez votre communauté", icon: "instagram" },
-  { id: "whatsapp", label: "WhatsApp", description: "Communiquez directement", icon: "whatsapp" },
-  { id: "tiktok", label: "TikTok", description: "Captez une audience engagée", icon: "tiktok" },
-  { id: "youtube", label: "YouTube", description: "Vidéo et visibilité maximale", icon: "youtube" },
-];
-
-export const simulationChecklist = [
-  "Analyse de l'audience",
-  "Performance par canal",
-  "Optimisation du budget",
-  "Recommandations IA",
-];
-
-export interface ScenarioResult {
-  id: string;
-  label: string;
-  tag?: string;
-  description: string;
-  score: number;
-  reach: string;
-  clicks: string;
-  conversions: string;
-  roi: string;
-}
-
-export const scenarioResults: ScenarioResult[] = [
-  {
-    id: "a",
-    label: "Scénario A",
-    tag: "Recommandé",
-    description: "Acquisition clients",
-    score: 92,
-    reach: "125K",
-    clicks: "8,4K",
-    conversions: "2,1K",
-    roi: "3,2x",
-  },
-  {
-    id: "b",
-    label: "Scénario B",
-    description: "Notoriété élargie",
-    score: 78,
-    reach: "98K",
-    clicks: "6,1K",
-    conversions: "1,6K",
-    roi: "2,4x",
-  },
-  {
-    id: "c",
-    label: "Scénario C",
-    description: "Budget optimisé",
-    score: 65,
-    reach: "72K",
-    clicks: "4,2K",
-    conversions: "1,1K",
-    roi: "1,8x",
-  },
-];
-
-export const scenarioInsight =
-  "Le Scénario A offre le meilleur retour sur investissement avec le coût par acquisition le plus faible.";

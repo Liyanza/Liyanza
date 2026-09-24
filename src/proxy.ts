@@ -15,6 +15,9 @@ import { hasTranslatedSlug, localizePath, parsePath } from "@/i18n/paths";
  * 3. Première visite sur « / » sans choix mémorisé : un navigateur qui
  *    préfère l'anglais est envoyé vers /en. Les liens profonds ne sont
  *    jamais redirigés.
+ * 3 bis. Pages ouvertes depuis un lien produit par le backend (retour OAuth,
+ *    lien de preuve d'installation), qui ne connaît pas la langue : sans
+ *    préfixe, on suit le choix mémorisé, sinon la langue du navigateur.
  * 4. Garde-fou grossier sur le dashboard : sans cookie de session, renvoi
  *    vers la page de connexion (dans la langue courante). Il ne valide PAS
  *    le token (impossible sans le secret JWT) ; l'autorisation réelle est
@@ -44,6 +47,12 @@ export function proxy(request: NextRequest) {
 
   const { locale, canonical } = parsePath(url.pathname);
 
+  if (!prefixed && isExternalEntry(canonical)) {
+    const saved = request.cookies.get(LOCALE_COOKIE)?.value;
+    const target = isLocale(saved) ? saved : preferredLocale(request.headers.get("accept-language"));
+    if (target !== defaultLocale) return redirect(request, localizePath(canonical, target), 307);
+  }
+
   if (url.pathname === "/" && !request.cookies.has(LOCALE_COOKIE)) {
     const preferred = preferredLocale(request.headers.get("accept-language"));
     if (preferred !== defaultLocale) return redirect(request, localizePath("/", preferred));
@@ -63,6 +72,10 @@ function redirect(request: NextRequest, pathname: string, status = 308) {
   const target = request.nextUrl.clone();
   target.pathname = pathname;
   return NextResponse.redirect(target, status);
+}
+
+function isExternalEntry(canonical: string) {
+  return canonical === "/social-accounts/callback" || canonical.startsWith("/preuve-installation/");
 }
 
 /** Langue préférée du navigateur parmi celles du site (en-tête Accept-Language). */

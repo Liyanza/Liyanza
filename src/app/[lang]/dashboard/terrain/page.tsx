@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
+import { getMessages } from "@/i18n/server";
 import { TerrainClient } from "@/components/dashboard/terrain/TerrainClient";
 import { RoleGate } from "@/components/dashboard/RoleGate";
 
-export const metadata: Metadata = {
-  title: "Terrain",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: (await getMessages("dash")).titles.terrain };
+}
 
 export default function TerrainPage() {
   return (

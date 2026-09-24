@@ -14,6 +14,9 @@ import {
 } from "@/lib/api/client";
 import type { SocialAccountRecord, SocialPlatform } from "@/lib/api/types";
 import { SkeletonRows } from "@/components/dashboard/ui/Skeleton";
+import { useT } from "@/i18n/client";
+import { fill } from "@/i18n/format";
+import type { Messages } from "@/i18n/dictionaries";
 
 const PLATFORM_LABEL: Record<SocialPlatform, string> = {
   FACEBOOK: "Facebook",
@@ -26,18 +29,13 @@ const STATUS_STYLE: Record<SocialAccountRecord["status"], string> = {
   REVOKED: "bg-slate-100 text-slate-500",
 };
 
-const STATUS_LABEL: Record<SocialAccountRecord["status"], string> = {
-  ACTIVE: "Actif",
-  EXPIRED: "Expiré",
-  REVOKED: "Déconnecté",
-};
 
-function formatLastSync(value: string | null) {
-  if (!value) return "Jamais synchronisé";
+function formatLastSync(value: string | null, ts: Messages["dashAccount"]["social"]) {
+  if (!value) return ts.neverSynced;
   const days = Math.floor((Date.now() - new Date(value).getTime()) / (1000 * 60 * 60 * 24));
-  if (days <= 0) return "Synchronisé aujourd'hui";
-  if (days === 1) return "Synchronisé hier";
-  return `Synchronisé il y a ${days} jours`;
+  if (days <= 0) return ts.syncedToday;
+  if (days === 1) return ts.syncedYesterday;
+  return fill(ts.syncedDaysAgo, { days });
 }
 
 // GET /social-accounts renvoie {items, total, page, limit, totalPages}
@@ -48,6 +46,9 @@ function normalizeList(result: SocialAccountRecord[] | { items: SocialAccountRec
 }
 
 export function SocialAccountsPanel() {
+  const t = useT("dashAccount");
+  const ts = t.social;
+  const dash = useT("dash");
   const { user } = useAuth();
   const canManage = user?.role === "ADMIN" || user?.role === "MARKETING_MANAGER";
 
@@ -66,11 +67,11 @@ export function SocialAccountsPanel() {
         setLoading(false);
       },
       (error) => {
-        setLoadError(error instanceof ApiError ? error.message : "Impossible de charger les comptes.");
+        setLoadError(error instanceof ApiError ? error.message : ts.loadError);
         setLoading(false);
       }
     );
-  }, []);
+  }, [ts]);
 
   const loadAccounts = useCallback(() => {
     setLoading(true);
@@ -92,7 +93,7 @@ export function SocialAccountsPanel() {
       const { authorizationUrl } = await apiStartSocialOAuth(platform);
       const popup = window.open(authorizationUrl, "_blank", "width=600,height=720");
       if (!popup) {
-        setActionError("Votre navigateur a bloqué la fenêtre d'autorisation. Autorisez les popups pour ce site.");
+        setActionError(ts.popupBlocked);
         setConnectingPlatform(null);
         return;
       }
@@ -108,7 +109,7 @@ export function SocialAccountsPanel() {
         }
       }, 700);
     } catch (error) {
-      setActionError(error instanceof ApiError ? error.message : "Impossible de démarrer la connexion.");
+      setActionError(error instanceof ApiError ? error.message : ts.connectError);
       setConnectingPlatform(null);
     }
   }
@@ -120,7 +121,7 @@ export function SocialAccountsPanel() {
       await apiRevokeSocialAccount(id);
       await loadAccounts();
     } catch (error) {
-      setActionError(error instanceof ApiError ? error.message : "Impossible de déconnecter ce compte.");
+      setActionError(error instanceof ApiError ? error.message : ts.revokeError);
     } finally {
       setActionId(null);
     }
@@ -133,7 +134,7 @@ export function SocialAccountsPanel() {
       await apiSyncSocialAccount(id);
       await loadAccounts();
     } catch (error) {
-      setActionError(error instanceof ApiError ? error.message : "Impossible de resynchroniser ce compte.");
+      setActionError(error instanceof ApiError ? error.message : ts.syncError);
     } finally {
       setActionId(null);
     }
@@ -141,14 +142,13 @@ export function SocialAccountsPanel() {
 
   return (
     <>
-      <TopBar title="Mon entreprise" searchPlaceholder="Rechercher..." />
+      <TopBar title={dash.titles.company} searchPlaceholder={t.search} />
       <main className="flex-1 overflow-y-auto bg-dash-canvas">
         <div className="mx-auto flex max-w-[900px] flex-col gap-6 px-8 py-8">
           <div>
-            <h1 className="text-2xl font-bold text-dash-heading">Comptes Facebook &amp; Instagram</h1>
+            <h1 className="text-2xl font-bold text-dash-heading">{ts.title}</h1>
             <p className="mt-1 text-sm text-dash-body">
-              Liez les comptes professionnels Meta de votre entreprise pour diffuser et suivre vos
-              campagnes digitales.
+              {ts.intro}
             </p>
           </div>
 
@@ -165,7 +165,7 @@ export function SocialAccountsPanel() {
                 ) : (
                   <FaFacebook className="size-4 text-[#1877f2]" aria-hidden="true" />
                 )}
-                Connecter Facebook
+                {ts.connectFacebook}
               </button>
               <button
                 type="button"
@@ -178,7 +178,7 @@ export function SocialAccountsPanel() {
                 ) : (
                   <FaInstagram className="size-4 text-[#e1306c]" aria-hidden="true" />
                 )}
-                Connecter Instagram
+                {ts.connectInstagram}
               </button>
             </div>
           )}
@@ -191,7 +191,7 @@ export function SocialAccountsPanel() {
 
           <div className="rounded-xl bg-white p-2 shadow-[0_1px_1px_rgba(0,0,0,0.05)]">
             {loading ? (
-              <SkeletonRows rows={3} label="Chargement des comptes…" />
+              <SkeletonRows rows={3} label={ts.loading} />
             ) : loadError ? (
               <div className="flex flex-col items-center gap-2 p-8 text-center">
                 <ShieldAlert className="size-6 text-orange-500" aria-hidden="true" />
@@ -201,16 +201,14 @@ export function SocialAccountsPanel() {
                   onClick={loadAccounts}
                   className="mt-1 text-xs font-semibold text-green-600"
                 >
-                  Réessayer
+                  {dash.common.retry}
                 </button>
               </div>
             ) : accounts.length === 0 ? (
               <div className="flex flex-col items-center gap-1 p-10 text-center">
-                <p className="text-sm font-semibold text-dash-heading">Aucun compte lié</p>
+                <p className="text-sm font-semibold text-dash-heading">{ts.empty}</p>
                 <p className="text-xs text-dash-muted">
-                  {canManage
-                    ? "Connectez un compte Facebook ou Instagram pour commencer à diffuser vos campagnes digitales."
-                    : "Un administrateur ou un responsable marketing doit lier un compte Meta."}
+                  {canManage ? ts.emptyManager : ts.emptyReader}
                 </p>
               </div>
             ) : (
@@ -228,18 +226,18 @@ export function SocialAccountsPanel() {
                         <p className="truncate text-sm font-semibold text-dash-heading">
                           {account.externalAccountName || `${PLATFORM_LABEL[account.platform]} · ${account.externalAccountId}`}
                         </p>
-                        <p className="text-xs text-dash-muted">{formatLastSync(account.lastSyncedAt)}</p>
+                        <p className="text-xs text-dash-muted">{formatLastSync(account.lastSyncedAt, ts)}</p>
                       </div>
                       <span
                         className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold ${STATUS_STYLE[account.status]}`}
                       >
-                        {STATUS_LABEL[account.status]}
+                        {ts.statuses[account.status]}
                       </span>
                       {canManage && (
                         <div className="flex items-center gap-1">
                           <button
                             type="button"
-                            aria-label="Resynchroniser"
+                            aria-label={ts.resync}
                             disabled={busy}
                             onClick={() => handleSync(account.id)}
                             className="flex size-8 items-center justify-center rounded-full text-dash-muted transition hover:bg-dash-canvas hover:text-dash-heading disabled:opacity-50"
@@ -252,7 +250,7 @@ export function SocialAccountsPanel() {
                           </button>
                           <button
                             type="button"
-                            aria-label="Déconnecter"
+                            aria-label={ts.disconnect}
                             disabled={busy}
                             onClick={() => handleRevoke(account.id)}
                             className="flex size-8 items-center justify-center rounded-full text-dash-muted transition hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
@@ -271,8 +269,7 @@ export function SocialAccountsPanel() {
           {!canManage && (
             <p className="flex items-center gap-2 text-xs text-dash-muted">
               <Unplug className="size-3.5 shrink-0" aria-hidden="true" />
-              Lecture seule : seuls les rôles Administrateur et Responsable Marketing peuvent lier,
-              resynchroniser ou déconnecter un compte.
+              {ts.readOnly}
             </p>
           )}
         </div>
