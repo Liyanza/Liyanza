@@ -4,14 +4,11 @@ import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { FloatingStat, StatLine } from "@/components/ui/FloatingStat";
 import { HeroIntro } from "@/components/motion/HeroIntro";
+import { getMessages } from "@/i18n/server";
 
-const trustItems = [
-  "Aucune carte requise",
-  "Annulation à tout moment",
-  "IA incluse",
-];
+export async function LandingHero() {
+  const t = (await getMessages("home")).hero;
 
-export function LandingHero() {
   return (
     <section className="relative overflow-hidden bg-green-accent-dark/5">
       <Container className="relative py-16 lg:pb-[108px] lg:pt-[140px]">
@@ -22,20 +19,19 @@ export function LandingHero() {
               className="inline-flex items-center gap-2 rounded-full bg-orange-500/[0.08] px-4 py-2 text-xs font-semibold leading-4 text-orange-500"
             >
               <span aria-hidden="true">✦</span>
-              Découvrez l&apos;intelligence de KIYANZA
+              {t.badge}
               <span className="ml-1 rounded-full bg-blue-500 px-2 py-0.5 text-[10px] font-bold leading-[13px] text-white">
-                NOUVEAU
+                {t.badgeNew}
               </span>
             </span>
 
             <h1 data-intro="title" className="mt-6 text-4xl font-bold leading-[1.25] tracking-[-0.02em] text-black sm:text-5xl lg:text-6xl xl:text-[56px]">
-              Pilotez vos campagnes avec{" "}
-              <span className="text-orange-500">l&apos;intelligence artificielle</span>
+              {t.titleStart}{" "}
+              <span className="text-orange-500">{t.titleHighlight}</span>
             </h1>
 
             <p data-intro="text" className="mt-6 max-w-[480px] text-lg leading-[1.625] text-black/55">
-              KIYANZA centralise la création, le monitoring et l&apos;optimisation de
-              vos campagnes marketing. Prenez de meilleures décisions, plus vite.
+              {t.text}
             </p>
 
             <div data-intro="actions" className="mt-8 flex flex-wrap gap-4">
@@ -46,7 +42,7 @@ export function LandingHero() {
                 className="!bg-green-600 hover:!bg-green-accent-dark"
                 icon={<ArrowRight className="size-4" aria-hidden="true" />}
               >
-                Commencer gratuitement
+                {t.ctaPrimary}
               </Button>
               <Button
                 variant="outline"
@@ -54,12 +50,12 @@ export function LandingHero() {
                 href="/#fonctionnalites"
                 className="!border-green-600 !text-green-600 hover:!bg-green-600/5"
               >
-                Voir les fonctionnalités
+                {t.ctaSecondary}
               </Button>
             </div>
 
             <ul data-intro="meta" className="mt-10 flex flex-wrap gap-x-6 gap-y-3">
-              {trustItems.map((item) => (
+              {t.trust.map((item) => (
                 <li key={item} className="flex items-center gap-1.5 text-sm text-black/40">
                   <Check className="size-3.5 text-green-accent-dark" strokeWidth={2.5} aria-hidden="true" />
                   {item}
@@ -74,7 +70,7 @@ export function LandingHero() {
           >
             <Image
               src="/hero-home.png"
-              alt="Une professionnelle du marketing souriante, ordinateur portable à la main, prête à piloter ses campagnes avec KIYANZA"
+              alt={t.imageAlt}
               width={1285}
               height={1024}
               sizes="(min-width: 1280px) 773px, (min-width: 1024px) 50vw, (min-width: 640px) 640px, 100vw"
@@ -94,14 +90,14 @@ export function LandingHero() {
             />
 
             <FloatingStat
-              label="Conversions"
+              label={t.stats.conversions}
               value="+28%"
               valueClassName="text-green-accent"
               className="hidden left-[21%] top-[12%] sm:flex"
               index={0}
             />
             <FloatingStat
-              label="Répartition du budget"
+              label={t.stats.budgetSplit}
               className="hidden left-[70%] top-[11%] sm:flex"
               index={1}
             >
@@ -109,18 +105,18 @@ export function LandingHero() {
               <StatLine>Facebook 40%</StatLine>
             </FloatingStat>
             <FloatingStat
-              label="ROI"
+              label={t.stats.roi}
               value="320%"
               valueClassName="text-orange-500"
               className="hidden left-[12%] top-[41%] sm:flex"
               index={2}
             />
             <FloatingStat
-              label="Meilleure audience"
+              label={t.stats.bestAudience}
               className="hidden left-[75%] top-[35%] sm:flex"
               index={3}
             >
-              <StatLine>25 – 45 ans</StatLine>
+              <StatLine>{t.stats.audienceValue}</StatLine>
             </FloatingStat>
           </div>
         </HeroIntro>

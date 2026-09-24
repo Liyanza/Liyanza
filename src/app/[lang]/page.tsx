@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { Navbar } from "@/components/sections/Navbar";
 import { LandingHero } from "@/components/sections/accueil/LandingHero";
 import { LandingFeaturesOverview } from "@/components/sections/accueil/LandingFeaturesOverview";
@@ -11,31 +10,21 @@ import { LandingFAQ } from "@/components/sections/accueil/LandingFAQ";
 import { FeaturesFinalCTA } from "@/components/sections/fonctionnalites/FeaturesFinalCTA";
 import { Footer } from "@/components/sections/Footer";
 import { ChatbotWidget } from "@/components/ChatbotWidget";
-import { siteConfig } from "@/lib/site-config";
-import { homeFaqs } from "@/data/faqs";
 import { faqPageJsonLd } from "@/lib/structured-data";
 import { PageTransition } from "@/components/motion/PageTransition";
 import { SplashScreen } from "@/components/motion/SplashScreen";
+import { getMessages, href } from "@/i18n/server";
+import { localizedMetadata } from "@/i18n/metadata";
 
-export const metadata: Metadata = {
-  title: { absolute: siteConfig.defaultTitle },
-  description: siteConfig.defaultDescription,
-  alternates: {
-    canonical: "/",
-  },
-  openGraph: {
-    title: siteConfig.defaultTitle,
-    description: siteConfig.defaultDescription,
-    url: "/",
-  },
-  twitter: {
-    title: siteConfig.defaultTitle,
-    description: siteConfig.defaultDescription,
-  },
-};
+export async function generateMetadata() {
+  const { meta } = await getMessages("home");
+  return localizedMetadata({ path: "/", title: meta.title, description: meta.description, absoluteTitle: true });
+}
 
-export default function Home() {
-  const jsonLd = faqPageJsonLd(homeFaqs, "/");
+export default async function Home() {
+  const t = await getMessages("home");
+  const jsonLd = faqPageJsonLd(t.faq.items, await href("/"));
+  const { campaigns, ai, monitoring } = t.details;
 
   return (
     <>
@@ -45,54 +34,39 @@ export default function Home() {
         <main className="flex-1">
           <LandingHero />
           <LandingFeaturesOverview />
-  
+
           <LandingFeatureDetail
             bg="slate"
-            heading="Créez et pilotez vos campagnes en quelques minutes"
-            description="Un workflow guidé pour définir vos objectifs, sélectionner vos canaux et allouer votre budget."
-            items={[
-              "Planification multi-canaux centralisée",
-              "Suivi du budget en temps réel",
-              "Alertes automatiques sur les performances",
-              "Collaboration d'équipe intégrée",
-            ]}
-            ctaText="En savoir plus"
+            heading={campaigns.heading}
+            description={campaigns.description}
+            items={campaigns.items}
+            ctaText={campaigns.cta}
             ctaHref="/fonctionnalites#campagnes"
             mockup={<CampaignWizardMockup />}
           />
-  
+
           <LandingFeatureDetail
-            heading="L'IA comme copilote de vos décisions marketing"
-            description="KIYANZA génère et compare des scénarios marketing pour vous. Comprenez l'impact de chaque décision avant de l'appliquer."
-            items={[
-              "Génération de scénarios IA en un clic",
-              "Score de performance estimé par scénario",
-              "Recommandations de réallocation budgétaire",
-              "Aide à la décision — vous restez aux commandes",
-            ]}
-            ctaText="Explorer l'IA KIYANZA"
+            heading={ai.heading}
+            description={ai.description}
+            items={ai.items}
+            ctaText={ai.cta}
             ctaHref="/fonctionnalites#scenarios-ia"
             mockup={<AIScenarioMockup />}
             reverse
           />
-  
+
           <LandingFeatureDetail
             bg="zinc"
-            heading="Ne manquez plus aucun signal important"
-            description="KIYANZA surveille vos campagnes en continu et vous alerte immédiatement quand quelque chose nécessite votre attention."
-            items={[
-              "Dashboard de monitoring en temps réel",
-              "Alertes budget, performance et objectifs",
-              "Comparaison des canaux par ROAS",
-              "Historique et évolution des métriques",
-            ]}
-            ctaText="Voir le monitoring"
+            heading={monitoring.heading}
+            description={monitoring.description}
+            items={monitoring.items}
+            ctaText={monitoring.cta}
             ctaHref="/fonctionnalites#monitoring"
             mockup={<ChannelMonitoringMockup />}
           />
-  
+
           <LandingPricing />
-          <LandingFAQ />
+          <LandingFAQ {...t.faq} />
           <FeaturesFinalCTA />
         </main>
       </PageTransition>

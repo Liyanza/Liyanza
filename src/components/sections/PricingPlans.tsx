@@ -1,5 +1,7 @@
 import { CircleCheck } from "lucide-react";
 import { Reveal } from "@/components/motion/Reveal";
+import { getMessages } from "@/i18n/server";
+import type { Messages } from "@/i18n/dictionaries";
 
 /**
  * Formules et cartes de prix, partagées par l'accueil et /tarifs pour que
@@ -7,78 +9,9 @@ import { Reveal } from "@/components/motion/Reveal";
  * Modèle de référence : la section tarifs de l'accueil.
  */
 
-interface Plan {
-  tier: string;
-  tagline: string;
-  price: string;
-  priceNote?: string;
-  cta: string;
-  featured?: boolean;
-  items: string[];
-}
+type Plan = Messages["plans"]["items"][number];
 
-const plans: Plan[] = [
-  {
-    tier: "FREE",
-    tagline: "Pour découvrir KIYANZA",
-    price: "Gratuit",
-    cta: "Commencer gratuitement",
-    items: [
-      "Gestion de campagnes",
-      "Dashboard",
-      "Suivi des performances",
-      "Rapports de base",
-      "Accès limité à l'IA",
-    ],
-  },
-  {
-    tier: "PRO",
-    tagline: "Pour les équipes marketing",
-    price: "XX XXX FCFA/mois",
-    priceNote: "par mois",
-    cta: "Commencer avec PRO",
-    featured: true,
-    items: [
-      "Tout Free inclus",
-      "Scénarios IA",
-      "Recommandations IA avancées",
-      "Monitoring avancé",
-      "Rapports avancés",
-      "Multi-campagnes",
-      "Analyse des performances",
-    ],
-  },
-  {
-    tier: "BUSINESS",
-    tagline: "Pour les entreprises avancées",
-    price: "XX XXX FCFA/mois",
-    priceNote: "par mois",
-    cta: "Choisir Business",
-    items: [
-      "Tout PRO inclus",
-      "Collaboration d'équipe",
-      "Gestion des accès",
-      "Analyse approfondie",
-      "Reporting avancé",
-      "Monitoring avancé",
-    ],
-  },
-  {
-    tier: "ENTERPRISE",
-    tagline: "Pour les besoins spécifiques",
-    price: "Sur devis",
-    cta: "Contacter l'équipe",
-    items: [
-      "Solution personnalisée",
-      "Accompagnement dédié",
-      "Gestion avancée des équipes",
-      "Support personnalisé",
-      "Fonctionnalités sur mesure",
-    ],
-  },
-];
-
-function PlanCard({ plan }: { plan: Plan }) {
+function PlanCard({ plan, labels }: { plan: Plan; labels: { recommended: string; included: string } }) {
   return (
     <div
       data-reveal-item
@@ -90,7 +23,7 @@ function PlanCard({ plan }: { plan: Plan }) {
     >
       {plan.featured && (
         <p className="absolute left-1/2 top-[-16px] -translate-x-1/2 bg-blue-500 px-4 py-1.5 text-[10px] font-black uppercase leading-[15px] text-white">
-          Recommandé
+          {labels.recommended}
         </p>
       )}
 
@@ -135,10 +68,10 @@ function PlanCard({ plan }: { plan: Plan }) {
               plan.featured ? "text-black/40" : "text-black/25"
             }`}
           >
-            Inclus
+            {labels.included}
           </p>
           <ul className="mt-4 space-y-4">
-            {plan.items.map((item) => (
+            {plan.features.map((item) => (
               <li key={item} className="flex items-start gap-3">
                 <CircleCheck className="mt-0.5 size-4 shrink-0 text-green-accent-dark" aria-hidden="true" />
                 <span className="text-sm leading-5 text-black/60">{item}</span>
@@ -151,11 +84,13 @@ function PlanCard({ plan }: { plan: Plan }) {
   );
 }
 
-export function PricingPlanGrid({ className = "" }: { className?: string }) {
+export async function PricingPlanGrid({ className = "" }: { className?: string }) {
+  const t = await getMessages("plans");
+
   return (
     <Reveal stagger className={`grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2 lg:grid-cols-4 ${className}`}>
-      {plans.map((plan) => (
-        <PlanCard key={plan.tier} plan={plan} />
+      {t.items.map((plan) => (
+        <PlanCard key={plan.tier} plan={plan} labels={t} />
       ))}
     </Reveal>
   );

@@ -63,6 +63,14 @@ const common: typeof fr = {
     skip: "Skip",
     logoLabel: "KIYANZA — Light your future",
   },
+  finalCta: {
+    eyebrow: "Get started today",
+    title: "Ready to run your next campaign differently?",
+    text: "Join KIYANZA and turn your ideas into concrete results. Free to get started.",
+    primary: "Get started for free",
+    secondary: "See how it works",
+    points: ["Cancel anytime", "Support included"],
+  },
   notFound: {
     title: "Page not found",
     text: "The page you are looking for does not exist or has been moved.",

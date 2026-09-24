@@ -68,6 +68,14 @@ const common = {
     skip: "Passer",
     logoLabel: "KIYANZA — Light your future",
   },
+  finalCta: {
+    eyebrow: "Commencez dès aujourd'hui",
+    title: "Prêt à piloter votre prochaine campagne autrement ?",
+    text: "Rejoignez KIYANZA et transformez vos idées en résultats concrets. Gratuit pour commencer.",
+    primary: "Commencer gratuitement",
+    secondary: "Voir comment ça marche",
+    points: ["Annulation à tout moment", "Support inclus"],
+  },
   notFound: {
     title: "Page introuvable",
     text: "La page que vous cherchez n'existe pas ou a été déplacée.",
