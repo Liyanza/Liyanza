@@ -27,7 +27,8 @@ export function Navbar() {
       style={{ viewTransitionName: "site-header" }}
     >
       <Container className="flex h-20 items-center justify-between">
-        <Link href="/" className="shrink-0" aria-label={t.homeAria}>
+        {/* data-nav-logo : cible du « portail » du splash (indépendant de la langue). */}
+        <Link href="/" className="shrink-0" aria-label={t.homeAria} data-nav-logo>
           <Logo />
         </Link>
 

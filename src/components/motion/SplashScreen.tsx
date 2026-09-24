@@ -334,7 +334,7 @@ export function SplashScreen() {
       }
 
       // --- Sortie : portail ou fondu ------------------------------------------
-      const navLogo = document.querySelector<HTMLElement>("header a[aria-label$='Accueil'] > div");
+      const navLogo = document.querySelector<HTMLElement>("[data-nav-logo] > div");
       const exitAt = landAt + t.hold;
       if (cfg.portal.enabled && navLogo) {
         tl.add(() => portal(navLogo), exitAt);
