@@ -28,20 +28,24 @@ export const splashConfig = {
    * représente l'écran : x = 0 bord gauche, 100 bord droit ; y = 0 haut,
    * 100 bas. Des valeurs hors de 0–100 partent hors écran.
    *
-   * Le DERNIER point du tracé est remplacé à l'exécution par la position
-   * exacte du colibri dans le logo centré (garder ~50 50), et le dernier
-   * point de contrôle est aligné à l'horizontale pour que l'oiseau arrive
-   * bien droit, tête à droite. Tout le reste est libre : modifiez les
+   * Le DERNIER point du tracé est remplacé à l'exécution par le point
+   * d'amarrage (juste devant la place du colibri dans le logo centré — garder
+   * ~50 50), et le dernier point de contrôle est aligné à l'horizontale pour
+   * que l'oiseau arrive bien droit, tête à droite.
+   *
+   * Le nom KIYANZA est centré vers x ≈ 55 (desktop) / 60 (mobile), y ≈ 50 :
+   * les lettres que le tracé frôle s'allument au passage de l'oiseau. Tout le reste est libre : modifiez les
    * points, ajoutez des segments « C », testez dans un éditeur SVG
    * (ex. viewBox="0 0 100 100").
    */
   flightPath: {
     // Entrée en bas à gauche → grande courbe en S → petite boucle en haut à
-    // droite → retour par la gauche → arrivée.
+    // droite → passage au ras du nom, de droite à gauche (il l'allume) →
+    // demi-tour en bas à gauche → amarrage.
     desktop:
-      "M -8 112 C 10 86, 24 72, 40 68 C 60 63, 88 58, 84 36 C 82 26, 76 22, 72 24 C 66 27, 68 36, 76 34 C 84 32, 82 20, 74 18 C 60 14, 26 18, 26 38 C 26 46, 34 50, 50 50",
+      "M -8 112 C 10 86, 24 72, 40 68 C 60 63, 88 58, 84 36 C 82 26, 76 22, 72 24 C 66 27, 68 36, 76 34 C 84 32, 82 20, 74 18 C 64 16, 74 50, 66 50 C 58 50, 46 50, 36 52 C 26 55, 20 64, 27 66 C 34 68, 30 50, 50 50",
     mobile:
-      "M -15 105 C 10 88, 60 86, 80 72 C 104 56, 82 36, 56 38 C 34 40, 26 26, 42 22 C 56 19, 58 32, 46 32 C 36 32, 30 44, 50 50",
+      "M -15 105 C 10 88, 60 86, 80 72 C 104 56, 82 36, 56 38 C 34 40, 26 26, 42 22 C 56 19, 58 32, 46 32 C 38 32, 92 38, 86 50 C 80 50, 62 50, 44 51 C 24 52, 12 62, 20 65 C 28 68, 18 52, 50 50",
   },
 
   /** Taille de départ du colibri par rapport à sa taille finale. */
@@ -55,8 +59,8 @@ export const splashConfig = {
    */
   life: {
     hovers: [
-      { at: 0.3, duration: 0.45 },
-      { at: 0.7, duration: 0.4 },
+      { at: 0.22, duration: 0.4 },
+      { at: 0.5, duration: 0.35 },
     ],
     /** Effet de profondeur : l'oiseau grossit/rapetisse en vol (0 = aucun). */
     depth: 0.18,
@@ -81,6 +85,58 @@ export const splashConfig = {
   },
 
   /**
+   * AMARRAGE — le vol s'achève juste devant la place du colibri : il y reste
+   * un instant en vol stationnaire, puis s'y glisse ; une onde part du logo.
+   * `offset` : position du point d'amarrage par rapport à la place finale,
+   * en hauteurs de logo (x négatif = à gauche, y négatif = au-dessus).
+   */
+  dock: {
+    enabled: true,
+    offset: { x: -0.9, y: -0.3 },
+    /** Vol stationnaire devant la place, en s. */
+    hover: 0.4,
+    /** Glissade finale jusqu'à la place, en s. */
+    glide: 0.3,
+    /** Ondes : nombre, couleur, taille max (× hauteur du logo), durée. */
+    rings: 2,
+    ringColor: "#19A546",
+    ringScale: 2.6,
+    ringDuration: 0.9,
+  },
+
+  /**
+   * NOM DÉVOILÉ — chaque lettre de KIYANZA s'allume quand l'oiseau passe à
+   * moins de `reach` (× hauteur du logo) de son centre. Les lettres non
+   * frôlées apparaissent en cascade à l'amarrage.
+   */
+  nameReveal: {
+    reach: 0.55,
+    /** Cascade des lettres restantes à l'amarrage, en s entre deux lettres. */
+    stagger: 0.05,
+  },
+
+  /**
+   * AMBIANCE — grain très léger sur le fond, halo coloré qui suit l'oiseau,
+   * « pollen » lumineux semé derrière lui. Tout est discret par défaut.
+   */
+  ambience: {
+    /** Opacité du grain (0 = aucun). */
+    grain: 0.05,
+    /** Halo : `size` en hauteurs de logo (s'adapte au mobile). */
+    halo: { enabled: true, size: 3.5, color: "rgba(25, 165, 70, 0.14)" },
+    pollen: {
+      enabled: true,
+      /** Un grain de pollen toutes les N ms de vol. */
+      every: 45,
+      /** Nombre de particules réutilisées. */
+      pool: 28,
+      colors: ["#19A546", "#00AAFF", "#FF6600", "#FFC53D"],
+      /** Durée de vie d'une particule, en s. */
+      life: 0.9,
+    },
+  },
+
+  /**
    * PORTAIL — à la fin, le logo rejoint sa place dans la barre de navigation
    * pendant que l'écran blanc s'ouvre en cercle depuis le centre.
    * Désactivé : simple fondu + zoom (exitZoom).
@@ -97,14 +153,12 @@ export const splashConfig = {
   timing: {
     /** Attente avant le décollage. */
     flightDelay: 0.1,
-    /** Durée du vol. */
-    flight: 3.4,
-    /** Instant où « KIYANZA » apparaît (depuis le début de l'animation). */
-    nameAt: 2.5,
-    /** Décalage du slogan après le nom. */
-    sloganDelay: 0.3,
-    /** Durée de l'apparition du nom et du slogan. */
-    text: 0.6,
+    /** Durée du vol (arrêts compris, hors amarrage). */
+    flight: 3.8,
+    /** Décalage du slogan après l'amarrage. */
+    sloganDelay: 0.2,
+    /** Durée de l'apparition d'une lettre / du slogan. */
+    text: 0.5,
     /** Logo complet affiché avant de révéler le site (0,6 à 0,8 s). */
     hold: 0.8,
     /** Disparition de l'écran blanc. */

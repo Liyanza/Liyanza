@@ -20,12 +20,14 @@ declare global {
 
 type RawPath = ReturnType<typeof MotionPathPlugin.stringToRawPath>;
 
+const NAME = "KIYANZA";
+
 /**
  * Écran d'introduction : le colibri vole le long du tracé de config/splash.ts
- * — il fonce, marque des arrêts en vol stationnaire, laisse un sillage aux
- * couleurs du logo —, le nom et le slogan apparaissent, l'oiseau se pose à
- * sa place, puis le logo rejoint la barre de navigation pendant que l'écran
- * s'ouvre en cercle sur la page déjà chargée dessous (« portail »).
+ * — il fonce, marque des arrêts, laisse un sillage et du pollen, allume une à
+ * une les lettres du nom qu'il frôle —, s'arrête devant sa place, s'y glisse
+ * (une onde part du logo), puis le logo rejoint la barre de navigation
+ * pendant que l'écran s'ouvre en cercle sur la page déjà chargée (« portail »).
  *
  * - Affiché par le script de <head> (html[data-splash="on"]) : aucun flash,
  *   et rien du tout quand il ne doit pas jouer. Le contenu de la page reste
@@ -37,6 +39,9 @@ export function SplashScreen() {
   const rootRef = useRef<HTMLDivElement>(null);
   const veilRef = useRef<HTMLDivElement>(null);
   const trailRef = useRef<SVGSVGElement>(null);
+  const haloRef = useRef<HTMLDivElement>(null);
+  const pollenRef = useRef<HTMLDivElement>(null);
+  const ringsRef = useRef<HTMLDivElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
   const slotRef = useRef<HTMLSpanElement>(null);
   const birdRef = useRef<HTMLDivElement>(null);
@@ -48,23 +53,27 @@ export function SplashScreen() {
 
   useEffect(() => {
     const html = document.documentElement;
-    const root = rootRef.current;
-    const veil = veilRef.current;
-    const trail = trailRef.current;
-    const logo = logoRef.current;
-    const slot = slotRef.current;
-    const bird = birdRef.current;
-    const name = nameRef.current;
-    const slogan = sloganRef.current;
-    const skipBtn = skipBtnRef.current;
-    if (
-      html.dataset.splash !== "on" ||
-      !root || !veil || !trail || !logo || !slot || !bird || !name || !slogan || !skipBtn
-    ) {
+    const els = {
+      root: rootRef.current,
+      veil: veilRef.current,
+      trail: trailRef.current,
+      halo: haloRef.current,
+      pollen: pollenRef.current,
+      rings: ringsRef.current,
+      logo: logoRef.current,
+      slot: slotRef.current,
+      bird: birdRef.current,
+      name: nameRef.current,
+      slogan: sloganRef.current,
+      skipBtn: skipBtnRef.current,
+    };
+    if (html.dataset.splash !== "on" || Object.values(els).some((el) => !el)) {
       // Pas de splash pour cette visite (déjà vu, page interne…) : on se retire.
       const id = requestAnimationFrame(() => setGone(true));
       return () => cancelAnimationFrame(id);
     }
+    const { root, veil, trail, halo, pollen, rings, logo, slot, bird, name, slogan, skipBtn } =
+      els as { [K in keyof typeof els]: NonNullable<(typeof els)[K]> };
     clearTimeout(window.__splashFailsafe);
     const run = ++splashRun;
 
@@ -92,14 +101,20 @@ export function SplashScreen() {
     const ctx = gsap.context(() => {
       const t = cfg.timing;
       const reduced = !window.matchMedia(MEDIA.motionOk).matches;
-      const texts = [name, slogan];
+      const letters = Array.from(name.querySelectorAll<HTMLElement>("[data-letter]"));
+      const texts = [...letters, slogan];
       const body = bird.firstElementChild;
       const wings = bird.querySelector("[data-wings]");
+      const ribbons = Array.from(trail.querySelectorAll("path"));
+      const motes = Array.from(pollen.children) as HTMLElement[];
+      const ringEls = Array.from(rings.children) as HTMLElement[];
 
       // Où le colibri doit se poser : le centre de sa place dans le logo.
       const s = slot.getBoundingClientRect();
+      const logoH = s.height;
       const target = { x: s.left + s.width / 2, y: s.top + s.height / 2 };
       gsap.set(bird, { width: s.width, height: s.height, xPercent: -50, yPercent: -50, x: target.x, y: target.y });
+      gsap.set([halo, ...motes, ...ringEls], { xPercent: -50, yPercent: -50 });
 
       // Sortie simple (mouvement réduit, « Passer ») : fondu + léger zoom.
       const fadeOut = (duration: number) => {
@@ -120,18 +135,67 @@ export function SplashScreen() {
         return;
       }
 
+      // --- Lettres : centre de chacune, allumage une seule fois ----------------
+      const letterCenters = letters.map((el) => {
+        const r = el.getBoundingClientRect();
+        return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+      });
+      const lit = new Set<number>();
+      const light = (i: number, delay = 0) => {
+        if (lit.has(i)) return;
+        lit.add(i);
+        gsap.fromTo(
+          letters[i],
+          { opacity: 0, y: logoH * 0.12, scale: 0.6 },
+          { opacity: 1, y: 0, scale: 1, duration: t.text, delay, ease: "back.out(2.4)" },
+        );
+      };
+      const reach = logoH * cfg.nameReveal.reach;
+
+      // --- Pollen : particules réutilisées, semées derrière l'oiseau ----------
+      let mote = 0;
+      let lastMote = 0;
+      const sow = (x: number, y: number) => {
+        const el = motes[mote++ % motes.length];
+        const colors = cfg.ambience.pollen.colors;
+        gsap.killTweensOf(el);
+        gsap.fromTo(
+          el,
+          {
+            x: x + gsap.utils.random(-6, 6),
+            y: y + gsap.utils.random(-6, 6),
+            scale: gsap.utils.random(0.6, 1.3),
+            opacity: 0.9,
+            backgroundColor: colors[mote % colors.length],
+          },
+          {
+            x: `+=${gsap.utils.random(-24, 24)}`,
+            y: `+=${gsap.utils.random(6, 34)}`,
+            scale: 0,
+            opacity: 0,
+            duration: cfg.ambience.pollen.life,
+            ease: "power1.out",
+          },
+        );
+      };
+      const haloX = gsap.quickTo(halo, "x", { duration: 0.6, ease: "power3.out" });
+      const haloY = gsap.quickTo(halo, "y", { duration: 0.6, ease: "power3.out" });
+
       // --- Vol ---------------------------------------------------------------
-      const raw = buildFlightPath(target);
+      const dockPoint = cfg.dock.enabled
+        ? { x: target.x + cfg.dock.offset.x * logoH, y: target.y + cfg.dock.offset.y * logoH }
+        : target;
+      const raw = buildFlightPath(dockPoint);
       const d = MotionPathPlugin.rawPathToString(raw);
       const w = window.innerWidth;
       const h = window.innerHeight;
       trail.setAttribute("viewBox", `0 0 ${w} ${h}`);
-      const ribbons = Array.from(trail.querySelectorAll("path"));
       ribbons.forEach((path) => path.setAttribute("d", d));
 
       // Progression pilotée à la main : p = position sur le tracé (0→1),
       // hover = redressement pendant un arrêt, bob = flottement vertical.
       const state = { p: 0, hover: 0, bob: 0 };
+      let prev = MotionPathPlugin.getPositionOnPath(raw, 0) as { x: number; y: number };
       const render = () => {
         const pos = MotionPathPlugin.getPositionOnPath(raw, state.p, true) as {
           x: number;
@@ -144,9 +208,11 @@ export function SplashScreen() {
         const scale =
           (cfg.birdStartScale + (1 - cfg.birdStartScale) * state.p) *
           (1 + cfg.life.depth * Math.sin(state.p * Math.PI * 3));
-        gsap.set(bird, { x: pos.x, y: pos.y + state.bob, rotation: angle, scale });
+        const y = pos.y + state.bob;
+        gsap.set(bird, { x: pos.x, y, rotation: angle, scale });
         // Vers la gauche : miroir plutôt que tête en bas.
         gsap.set(body, { scaleY: facingLeft ? -1 : 1 });
+
         if (cfg.trail.enabled) {
           let head = state.p;
           cfg.trail.ribbons.forEach((ribbon, i) => {
@@ -155,6 +221,21 @@ export function SplashScreen() {
             head = tail;
           });
         }
+        if (cfg.ambience.halo.enabled) {
+          haloX(pos.x);
+          haloY(y);
+        }
+        const now = performance.now();
+        if (cfg.ambience.pollen.enabled && state.hover < 0.5 && now - lastMote > cfg.ambience.pollen.every) {
+          lastMote = now;
+          sow(pos.x, y);
+        }
+        // Distance au segment parcouru depuis la dernière image : même à bas
+        // débit d'images, l'oiseau ne « saute » pas par-dessus une lettre.
+        letterCenters.forEach((c, i) => {
+          if (distToSegment(c, prev, { x: pos.x, y }) < reach) light(i);
+        });
+        prev = { x: pos.x, y };
       };
 
       const flap = gsap.to(wings, {
@@ -165,13 +246,32 @@ export function SplashScreen() {
         repeat: -1,
       });
 
+      // Arrêt en vol stationnaire à la position courante.
+      const hoverAt = (tl: gsap.core.Timeline, label: string, hd: number) => {
+        const ramp = Math.min(0.18, hd / 2);
+        tl.addLabel(label)
+          .call(() => { flap.timeScale(cfg.life.hoverWingSpeed); }, [], label)
+          .to(state, { hover: 1, duration: ramp, ease: "power2.out", onUpdate: render }, label)
+          .to(state, {
+            keyframes: [
+              { bob: -cfg.life.hoverBob, duration: hd / 2, ease: "sine.inOut" },
+              { bob: 0, duration: hd / 2, ease: "sine.inOut" },
+            ],
+            onUpdate: render,
+          }, label)
+          .to(state, { hover: 0, duration: ramp, ease: "power2.in", onUpdate: render }, `${label}+=${hd - ramp}`)
+          .call(() => { flap.timeScale(1); }, [], `${label}+=${hd}`);
+      };
+
       const tl = gsap.timeline({ delay: t.flightDelay });
       const hovers = cfg.life.hovers;
       const hoverTime = hovers.reduce((sum, hv) => sum + hv.duration, 0);
       const travel = Math.max(0.5, t.flight - hoverTime);
       let from = 0;
 
-      tl.set(bird, { opacity: 1 }).call(render);
+      const start = MotionPathPlugin.getPositionOnPath(raw, 0) as { x: number; y: number };
+      gsap.set(halo, { x: start.x, y: start.y });
+      tl.set([bird, halo], { opacity: 1 }).call(render);
       [...hovers, { at: 1, duration: 0 }].forEach((stop, i, all) => {
         const last = i === all.length - 1;
         // Chaque bond accélère puis freine : effet « fonce / s'arrête net ».
@@ -182,21 +282,15 @@ export function SplashScreen() {
           onUpdate: render,
         });
         from = stop.at;
-        if (last) return;
-        const hd = stop.duration;
-        tl.addLabel(`hover${i}`)
-          .call(() => { flap.timeScale(cfg.life.hoverWingSpeed); })
-          .to(state, { hover: 1, duration: Math.min(0.18, hd / 2), ease: "power2.out", onUpdate: render }, `hover${i}`)
-          .to(state, {
-            keyframes: [
-              { bob: -cfg.life.hoverBob, duration: hd / 2, ease: "sine.inOut" },
-              { bob: 0, duration: hd / 2, ease: "sine.inOut" },
-            ],
-            onUpdate: render,
-          }, `hover${i}`)
-          .to(state, { hover: 0, duration: Math.min(0.18, hd / 2), ease: "power2.in", onUpdate: render }, `hover${i}+=${hd - Math.min(0.18, hd / 2)}`)
-          .call(() => { flap.timeScale(1); }, [], `hover${i}+=${hd}`);
+        if (!last) hoverAt(tl, `hover${i}`, stop.duration);
       });
+
+      // Amarrage : stationnaire devant la place, puis glissade jusqu'à elle.
+      if (cfg.dock.enabled) {
+        hoverAt(tl, "dock", cfg.dock.hover);
+        tl.to(bird, { x: target.x, y: target.y, rotation: 0, scale: 1, duration: cfg.dock.glide, ease: "power2.out" })
+          .to(halo, { x: target.x, y: target.y, duration: cfg.dock.glide, ease: "power2.out", overwrite: "auto" }, "<");
+      }
 
       const landAt = tl.duration();
       tl.add(() => {
@@ -205,15 +299,34 @@ export function SplashScreen() {
         gsap.set(body, { scaleY: 1 });
         flap.kill();
         gsap.to(wings, { scaleY: 1, duration: 0.15, ease: "back.out(2)" });
+        // Les lettres que l'oiseau n'a pas frôlées apparaissent en cascade.
+        letters.forEach((_, i) => light(i, i * cfg.nameReveal.stagger));
       }, landAt)
         .to(ribbons, { opacity: 0, duration: 0.5 }, landAt - 0.1)
-        .fromTo(name, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: t.text, ease: "power3.out" }, t.nameAt - t.flightDelay)
+        .to(halo, { scale: 1.4, opacity: 0.5, duration: 0.8, ease: "power2.out" }, landAt)
         .fromTo(
           slogan,
           { opacity: 0, y: 8 },
           { opacity: 1, y: 0, duration: t.text, ease: "power3.out" },
-          t.nameAt - t.flightDelay + t.sloganDelay,
+          landAt + t.sloganDelay,
         );
+      if (cfg.dock.enabled) {
+        ringEls.forEach((ring, i) => {
+          tl.fromTo(
+            ring,
+            { x: target.x, y: target.y, width: logoH * 1.1, height: logoH * 1.1, scale: 0.35, opacity: 0.7 },
+            {
+              scale: cfg.dock.ringScale,
+              opacity: 0,
+              duration: cfg.dock.ringDuration,
+              ease: "power2.out",
+              // Sans ça, l'état de départ (anneau visible) s'afficherait dès le début.
+              immediateRender: false,
+            },
+            landAt + i * 0.14,
+          );
+        });
+      }
 
       // --- Sortie : portail ou fondu ------------------------------------------
       const navLogo = document.querySelector<HTMLElement>("header a[aria-label$='Accueil'] > div");
@@ -227,7 +340,7 @@ export function SplashScreen() {
       function portal(nav: HTMLElement) {
         reveal();
         const n = nav.getBoundingClientRect();
-        const l = logo!.getBoundingClientRect();
+        const l = logo.getBoundingClientRect();
         const k = n.height / l.height;
         const dur = cfg.portal.duration;
         const ease = "power3.inOut";
@@ -248,7 +361,7 @@ export function SplashScreen() {
             duration: dur * 0.9,
             ease: "power2.in",
           }, dur * 0.1)
-          .to(skipBtn, { opacity: 0, duration: 0.2 }, 0)
+          .to([skipBtn, halo], { opacity: 0, duration: 0.3 }, 0)
           // Arrivé pile sur le vrai logo : on s'efface.
           .to([logo, bird], { opacity: 0, duration: 0.2 }, dur - 0.05);
       }
@@ -256,10 +369,10 @@ export function SplashScreen() {
       skipRef.current = () => {
         tl.kill();
         flap.kill();
-        gsap.set(ribbons, { opacity: 0 });
+        gsap.set([...ribbons, halo, ...motes, ...ringEls], { opacity: 0 });
         gsap.to(bird, { rotation: 0, scale: 1, x: target.x, y: target.y, opacity: 1, duration: t.skipExit });
         gsap.set(body, { scaleY: 1 });
-        gsap.to(texts, { opacity: 1, y: 0, duration: t.skipExit });
+        gsap.to(texts, { opacity: 1, y: 0, scale: 1, duration: t.skipExit });
         fadeOut(t.skipExit);
       };
     }, root);
@@ -284,6 +397,8 @@ export function SplashScreen() {
 
   if (!cfg.enabled || gone) return null;
 
+  const { halo, pollen } = cfg.ambience;
+
   return (
     <div
       ref={rootRef}
@@ -296,7 +411,7 @@ export function SplashScreen() {
       }
       onClick={() => skipRef.current()}
     >
-      {/* Écran blanc ; percé d'un cercle grandissant pendant le « portail ». */}
+      {/* Écran blanc (avec grain) ; percé d'un cercle pendant le « portail ». */}
       <div
         ref={veilRef}
         className="splash-veil absolute inset-0"
@@ -304,8 +419,21 @@ export function SplashScreen() {
           {
             backgroundColor: cfg.background,
             "--portal-feather": `${cfg.portal.feather}px`,
+            "--grain": cfg.ambience.grain,
           } as CSSProperties
         }
+      />
+
+      {/* Halo coloré qui suit l'oiseau (reste invisible s'il est désactivé). */}
+      <div
+        ref={haloRef}
+        data-splash-part
+        className="pointer-events-none fixed left-0 top-0 rounded-full"
+        style={{
+          width: `calc(var(--splash-h) * ${halo.size})`,
+          height: `calc(var(--splash-h) * ${halo.size})`,
+          background: halo.enabled ? `radial-gradient(circle, ${halo.color} 0%, transparent 65%)` : "none",
+        }}
       />
 
       {/* Sillage : trois rubans qui suivent l'oiseau (tracé posé en JS). */}
@@ -323,6 +451,25 @@ export function SplashScreen() {
         ))}
       </svg>
 
+      {/* Pollen semé derrière l'oiseau. */}
+      <div ref={pollenRef} className="pointer-events-none absolute inset-0" aria-hidden="true">
+        {pollen.enabled &&
+          Array.from({ length: pollen.pool }, (_, i) => (
+            <span key={i} className="fixed left-0 top-0 size-1.5 rounded-full opacity-0" />
+          ))}
+      </div>
+
+      {/* Ondes de l'amarrage. */}
+      <div ref={ringsRef} className="pointer-events-none absolute inset-0" aria-hidden="true">
+        {Array.from({ length: cfg.dock.enabled ? cfg.dock.rings : 0 }, (_, i) => (
+          <span
+            key={i}
+            className="fixed left-0 top-0 rounded-full border-2 opacity-0"
+            style={{ borderColor: cfg.dock.ringColor }}
+          />
+        ))}
+      </div>
+
       <div
         ref={logoRef}
         className="splash-logo relative aspect-[165/55.67]"
@@ -333,14 +480,19 @@ export function SplashScreen() {
         <span ref={slotRef} className="absolute left-0 top-0 aspect-[85/56] h-full" />
         <span
           ref={nameRef}
-          data-splash-part
+          aria-hidden="true"
           className="absolute left-[45.5%] top-[37.7%] whitespace-nowrap text-[calc(var(--splash-h)*0.375)] font-extrabold leading-none tracking-[-0.02em] text-black"
         >
-          KIYANZA
+          {NAME.split("").map((letter, i) => (
+            <span key={i} data-letter data-splash-part className="inline-block">
+              {letter}
+            </span>
+          ))}
         </span>
         <span
           ref={sloganRef}
           data-splash-part
+          aria-hidden="true"
           className="absolute left-[52%] top-[77.5%] whitespace-nowrap text-[calc(var(--splash-h)*0.1406)] font-medium leading-none text-green-accent"
         >
           Light your future
@@ -373,11 +525,11 @@ export function SplashScreen() {
 
 /**
  * Convertit le tracé de config (repère 0–100 = écran) en pixels, puis fixe
- * son dernier point sur la cible et aligne le dernier point de contrôle à
- * l'horizontale : l'oiseau arrive tête à droite, exactement à sa place.
+ * son dernier point sur `end` et aligne le dernier point de contrôle à
+ * l'horizontale : l'oiseau arrive tête à droite, exactement là.
  * Les longueurs sont mesurées pour que p (0→1) avance à vitesse régulière.
  */
-function buildFlightPath(target: { x: number; y: number }): RawPath {
+function buildFlightPath(end: { x: number; y: number }): RawPath {
   const w = window.innerWidth;
   const h = window.innerHeight;
   const d = w >= cfg.desktopFrom ? cfg.flightPath.desktop : cfg.flightPath.mobile;
@@ -386,12 +538,21 @@ function buildFlightPath(target: { x: number; y: number }): RawPath {
   const seg = raw[raw.length - 1];
   const n = seg.length;
   const approach = Math.max(w * 0.08, 60);
-  seg[n - 2] = target.x;
-  seg[n - 1] = target.y;
-  seg[n - 4] = target.x - approach;
-  seg[n - 3] = target.y;
+  seg[n - 2] = end.x;
+  seg[n - 1] = end.y;
+  seg[n - 4] = end.x - approach;
+  seg[n - 3] = end.y;
   MotionPathPlugin.cacheRawPathMeasurements(raw);
   return raw;
+}
+
+/** Distance d'un point au segment [a, b]. */
+function distToSegment(p: { x: number; y: number }, a: { x: number; y: number }, b: { x: number; y: number }) {
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  const len = dx * dx + dy * dy;
+  const t = len ? Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / len)) : 0;
+  return Math.hypot(p.x - (a.x + t * dx), p.y - (a.y + t * dy));
 }
 
 /** Interpolation d'angle (en degrés) par le plus court chemin. */
