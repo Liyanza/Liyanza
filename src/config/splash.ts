@@ -51,16 +51,16 @@ export const splashConfig = {
   timing: {
     /** Attente avant le décollage. */
     flightDelay: 0.1,
-    /** Durée du vol (2 à 2,5 s). */
-    flight: 2.3,
+    /** Durée du vol. */
+    flight: 3.4,
     /** Instant où « KIYANZA » apparaît (depuis le début de l'animation). */
-    nameAt: 1.55,
+    nameAt: 2.5,
     /** Décalage du slogan après le nom. */
-    sloganDelay: 0.25,
+    sloganDelay: 0.3,
     /** Durée de l'apparition du nom et du slogan. */
-    text: 0.5,
+    text: 0.6,
     /** Logo complet affiché avant de révéler le site (0,6 à 0,8 s). */
-    hold: 0.7,
+    hold: 0.8,
     /** Disparition de l'écran blanc. */
     exit: 0.5,
     /** Disparition après un clic sur « Passer » ou Échap. */
@@ -79,7 +79,7 @@ export const splashConfig = {
    * Sécurité : si le JavaScript ne démarre pas, l'écran s'efface seul après
    * ce délai (ms) pour ne jamais bloquer le site.
    */
-  failsafeMs: 6000,
+  failsafeMs: 9000,
 } as const;
 
 /** Émis quand le splash est terminé : les intros de hero attendent ce signal. */
