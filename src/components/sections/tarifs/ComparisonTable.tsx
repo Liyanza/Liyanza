@@ -1,4 +1,4 @@
-import { Check } from "lucide-react";
+import { CircleCheck } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
 import { Reveal } from "@/components/motion/Reveal";
@@ -37,7 +37,7 @@ const columns: { key: keyof Omit<Row, "feature">; label: string; sub?: string }[
   { key: "enterprise", label: "ENTERPRISE" },
 ];
 
-function Cell({ value, pro = false }: { value: Cell; pro?: boolean }) {
+function Cell({ value }: { value: Cell }) {
   if (value === "limited") {
     return (
       <span className="border border-[#e4e4e7] bg-zinc-100 px-2.5 py-1 text-[10px] font-semibold text-gray-text">
@@ -47,10 +47,7 @@ function Cell({ value, pro = false }: { value: Cell; pro?: boolean }) {
   }
   if (value) {
     return (
-      <Check
-        className={`mx-auto size-4 ${pro ? "text-green-accent" : "text-[#3f3f46]"}`}
-        aria-hidden="true"
-      />
+      <CircleCheck className="mx-auto size-4 text-green-accent-dark" aria-hidden="true" />
     );
   }
   return <span className="mx-auto block h-px w-1.5 bg-[#d4d4d8]" aria-hidden="true" />;
@@ -110,7 +107,7 @@ export function ComparisonTable() {
                       key={col.key}
                       className={`p-4 text-center ${col.key === "pro" ? "bg-[#f0fdf4]" : ""}`}
                     >
-                      <Cell value={row[col.key]} pro={col.key === "pro"} />
+                      <Cell value={row[col.key]} />
                     </td>
                   ))}
                 </tr>

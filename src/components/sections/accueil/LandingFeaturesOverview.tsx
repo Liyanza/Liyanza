@@ -53,12 +53,13 @@ export function LandingFeaturesOverview() {
   return (
     <section id="fonctionnalites" className="scroll-pt-20 bg-white py-16 sm:py-20 lg:py-24">
       <Container>
-        <Reveal className="mx-auto max-w-2xl text-center">
+        <Reveal className="mx-auto max-w-2xl text-center lg:max-w-4xl">
           <SectionEyebrow variant="pill" tone="orange">
             Fonctionnalités
           </SectionEyebrow>
           <h2 className="mt-5 text-3xl font-black leading-tight text-zinc-950 sm:text-4xl lg:text-5xl">
-            Tout ce dont vous avez besoin pour piloter vos campagnes
+            Tout ce dont vous avez besoin <br className="hidden lg:inline" />
+            pour piloter vos campagnes.
           </h2>
           <p className="mt-4 text-lg text-gray-text">
             De la planification à l&apos;optimisation, KIYANZA couvre l&apos;ensemble du

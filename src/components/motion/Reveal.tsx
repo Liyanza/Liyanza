@@ -17,12 +17,14 @@ export function Reveal({
   children,
   as: Tag = "div",
   className,
+  id,
   stagger = false,
   delay = 0,
 }: {
   children: ReactNode;
   as?: ElementType;
   className?: string;
+  id?: string;
   stagger?: boolean | number;
   delay?: number;
 }) {
@@ -56,7 +58,7 @@ export function Reveal({
   );
 
   return (
-    <Tag ref={ref} className={className}>
+    <Tag ref={ref} id={id} className={className}>
       {children}
     </Tag>
   );
