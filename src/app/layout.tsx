@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import { siteConfig } from "@/lib/site-config";
 import { organizationJsonLd, websiteJsonLd } from "@/lib/structured-data";
+import { splashBootScript } from "@/config/splash";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -79,6 +80,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <head>
         {/* Before first paint: lets CSS pre-hide hero intros only when they will animate. */}
         <script dangerouslySetInnerHTML={{ __html: motionFlagScript }} />
+        {splashBootScript && <script dangerouslySetInnerHTML={{ __html: splashBootScript }} />}
       </head>
       <body className="min-h-full flex flex-col font-sans">
         {children}

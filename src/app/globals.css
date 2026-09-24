@@ -306,3 +306,35 @@ body {
     transform: translateX(100%);
   }
 }
+
+/*
+ * Splash d'entrée (components/motion/SplashScreen.tsx, config/splash.ts).
+ * Masqué par défaut ; le script de <head> pose html[data-splash="on"] avant
+ * le premier affichage quand il doit jouer. Sans JS : jamais affiché.
+ */
+.splash {
+  display: none;
+  --splash-h: var(--splash-h-mobile);
+}
+@media (min-width: 640px) {
+  .splash {
+    --splash-h: var(--splash-h-desktop);
+  }
+}
+html[data-splash="on"] .splash {
+  display: flex;
+}
+.splash-logo {
+  height: var(--splash-h);
+}
+html[data-splash="on"] {
+  overflow: hidden;
+}
+html[data-splash="on"] [data-splash-part] {
+  opacity: 0;
+}
+/*
+ * Le texte des heros n'est PAS mis en pause pendant le splash : c'est souvent
+ * l'élément LCP, le retenir invisible retardait le LCP de ~2 s. Seules les
+ * parties animées en JS (visuel, bulles de stats) attendent la fin du splash.
+ */

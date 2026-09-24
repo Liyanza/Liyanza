@@ -15,6 +15,7 @@ import { siteConfig } from "@/lib/site-config";
 import { homeFaqs } from "@/data/faqs";
 import { faqPageJsonLd } from "@/lib/structured-data";
 import { PageTransition } from "@/components/motion/PageTransition";
+import { SplashScreen } from "@/components/motion/SplashScreen";
 
 export const metadata: Metadata = {
   title: { absolute: siteConfig.defaultTitle },
@@ -38,6 +39,7 @@ export default function Home() {
 
   return (
     <>
+      <SplashScreen />
       <Navbar />
       <PageTransition>
         <main className="flex-1">

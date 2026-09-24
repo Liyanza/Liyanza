@@ -3,6 +3,7 @@
 import { useRef, type ReactNode } from "react";
 import { gsap, ScrollTrigger, takeOverIntro, useMotion } from "@/lib/motion/gsap";
 import { ease, intro } from "@/lib/motion/tokens";
+import { SPLASH_DONE_EVENT } from "@/config/splash";
 
 /**
  * "Boot sequence" for page heroes. Mark the parts inside with data-intro:
@@ -29,13 +30,23 @@ export function HeroIntro({ children, className }: { children: ReactNode; classN
       const parts = (role: string) =>
         Array.from(root.querySelectorAll<HTMLElement>(`[data-intro="${role}"]`));
 
+      // Splash d'entrée en cours : le visuel et les bulles attendent qu'il se
+      // retire pour se jouer sous les yeux (le texte, élément LCP, n'attend pas).
+      const splashing = document.documentElement.dataset.splash === "on";
+      const tl = gsap.timeline({ paused: splashing });
+      let cleanup: (() => void) | undefined;
+      if (splashing) {
+        const play = () => tl.play();
+        window.addEventListener(SPLASH_DONE_EVENT, play, { once: true });
+        cleanup = () => window.removeEventListener(SPLASH_DONE_EVENT, play);
+      }
+
       const visuals = parts("visual");
-      if (visuals.length) gsap.from(visuals, { y: 24, scale: 0.97, duration: 1.1, delay: 0.1 });
+      if (visuals.length) tl.from(visuals, { y: 24, scale: 0.97, duration: 1.1 }, 0.1);
 
       const stats = parts("stat");
-      if (!stats.length || !takeOverIntro(stats)) return;
+      if (!stats.length || !takeOverIntro(stats)) return cleanup;
 
-      const tl = gsap.timeline();
       tl.fromTo(
         stats,
         { opacity: 0, scale: 0.6, y: 20 },
@@ -71,6 +82,7 @@ export function HeroIntro({ children, className }: { children: ReactNode; classN
           sync();
         },
       });
+      return cleanup;
     },
     { scope: ref },
   );
