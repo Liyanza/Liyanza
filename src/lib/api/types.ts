@@ -256,6 +256,57 @@ export interface DigitalSimulationRecord {
   aiAnalysis: DigitalSimulationAnalysis | null;
 }
 
+/** Campagne Facebook Ads (Meta) qu'on peut relier à une campagne Kiyanza. */
+export interface MetaAdCampaign {
+  id: string;
+  name: string;
+  status: string;
+  objective: string | null;
+  startTime: string | null;
+  stopTime: string | null;
+  adAccountId: string;
+  adAccountName: string;
+  currency: string;
+}
+
+export type ActualMetricKey = "reach" | "clicks" | "conversions" | "ctr" | "cpc" | "cpa" | "roas";
+export type ActualMetricStatus = "ahead" | "on_track" | "behind" | "unknown";
+
+export interface ActualMetricComparison {
+  key: ActualMetricKey;
+  kind: "volume" | "rate" | "cost";
+  predicted: number | null;
+  /** Volume attendu à ce stade (prévision × avancement) ; = predicted pour un taux ou un coût. */
+  expected: number | null;
+  actual: number | null;
+  performance: number | null;
+  status: ActualMetricStatus;
+}
+
+export interface ActualPerformanceComparison {
+  currency: string;
+  spendXaf: number | null;
+  spend: number;
+  plannedBudget: number;
+  spendProgress: number | null;
+  timeProgress: number;
+  progress: number;
+  tooEarly: boolean;
+  conversionAction: string | null;
+  metrics: ActualMetricComparison[];
+  daily: { date: string; spend: number; reach: number; impressions: number; clicks: number; conversions: number }[];
+}
+
+export type ActualPerformanceResponse =
+  | { linked: false }
+  | {
+      linked: true;
+      link: { metaCampaignId: string; metaCampaignName: string | null; metaAdAccountId: string | null; linkedAt: string | null };
+      simulation: { id: string; simulatedAt: string } | null;
+      fetchedAt: string;
+      comparison: ActualPerformanceComparison;
+    };
+
 export interface DigitalSimulationAnalysis {
   summary: string;
   strengths: string[];

@@ -81,8 +81,9 @@ export function useSocialAccounts({ loadError: loadErrorMessage, popupBlocked, c
     };
   }, [fetchAccounts]);
 
+  /** `onClosed` : appelé quand la fenêtre Meta se ferme (ex. recharger une page). */
   const connect = useCallback(
-    async (platform: SocialPlatform) => {
+    async (platform: SocialPlatform, onClosed?: () => void) => {
       setConnectError(null);
       setConnectingPlatform(platform);
       try {
@@ -100,6 +101,7 @@ export function useSocialAccounts({ loadError: loadErrorMessage, popupBlocked, c
             setConnectingPlatform(null);
             // Sans squelette : la liste reste affichée pendant le rechargement.
             void fetchAccounts();
+            onClosed?.();
           }
         }, 700);
       } catch (error) {

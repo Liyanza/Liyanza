@@ -26,6 +26,8 @@ import type {
   ReviewProofPayload,
   DashboardSummary,
   DigitalSimulationRecord,
+  MetaAdCampaign,
+  ActualPerformanceResponse,
   EntrepriseRecord,
   InstallationRecord,
   LoginUser,
@@ -54,16 +56,20 @@ import type {
 /** Erreur normalisée à partir d'une réponse d'erreur NestJS (`{message, statusCode}`). */
 export class ApiError extends Error {
   status: number;
+  /** Code métier renvoyé par le backend (ex. META_ADS_NOT_CONNECTED). */
+  code?: string;
 
-  constructor(status: number, message: string) {
+  constructor(status: number, message: string, code?: string) {
     super(message);
     this.status = status;
+    this.code = code;
   }
 }
 
 interface NestErrorBody {
   message?: string | string[];
   error?: string;
+  code?: string;
 }
 
 function extractMessage(body: unknown, fallback: string): string {
@@ -113,7 +119,11 @@ async function request<T>(url: string, init?: RequestInit): Promise<T> {
     if (response.status === 429) {
       throw new ApiError(429, networkMessages().tooMany);
     }
-    throw new ApiError(response.status, extractMessage(body, networkMessages().generic));
+    throw new ApiError(
+      response.status,
+      extractMessage(body, networkMessages().generic),
+      (body as NestErrorBody | null)?.code
+    );
   }
 
   return body as T;
@@ -326,6 +336,33 @@ export function apiCreateDigitalSimulation(campaignId: string) {
   return authenticatedRequest<DigitalSimulationRecord>(
     `/api/backend/campagnes/${campaignId}/simulations-digitales`,
     { method: "POST" }
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Prévu vs réel (résultats Facebook Ads)
+// ---------------------------------------------------------------------------
+
+export function apiListMetaCampaigns(campaignId: string) {
+  return authenticatedRequest<MetaAdCampaign[]>(`/api/backend/campagnes/${campaignId}/meta-campaigns`);
+}
+
+export function apiLinkMetaCampaign(campaignId: string, metaCampaignId: string) {
+  return authenticatedRequest<ActualPerformanceResponse>(`/api/backend/campagnes/${campaignId}/meta-campaign`, {
+    method: "PUT",
+    body: JSON.stringify({ metaCampaignId }),
+  });
+}
+
+export function apiUnlinkMetaCampaign(campaignId: string) {
+  return authenticatedRequest<{ linked: false }>(`/api/backend/campagnes/${campaignId}/meta-campaign`, {
+    method: "DELETE",
+  });
+}
+
+export function apiGetActualPerformance(campaignId: string, refresh = false) {
+  return authenticatedRequest<ActualPerformanceResponse>(
+    `/api/backend/campagnes/${campaignId}/performance-reelle${refresh ? "?refresh=1" : ""}`
   );
 }
 
