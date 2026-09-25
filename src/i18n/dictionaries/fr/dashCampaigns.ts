@@ -60,6 +60,15 @@ const dashCampaigns = {
     loadError: "Impossible de charger la simulation.",
     back: "Retour aux campagnes",
     subtitle: "Voici les résultats estimés pour vos scénarios.",
+    benchmarks: {
+      /** {count} = nombre de campagnes. */
+      company: "Prévisions ajustées sur {count} de vos campagnes Facebook Ads réelles.",
+      /** {count}, {city}, {companies}. */
+      city: "Prévisions ajustées sur {count} campagnes Facebook Ads réelles à {city} ({companies} entreprises).",
+      objective: "Prévisions ajustées sur {count} campagnes Facebook Ads réelles ({companies} entreprises).",
+      market:
+        "Estimations fondées sur des références de marché. Reliez vos campagnes Facebook Ads pour les affiner avec vos vrais coûts.",
+    },
     loading: "Chargement des résultats…",
     empty: "Aucune simulation trouvée pour cette campagne.",
     detail: "Détail du scénario",

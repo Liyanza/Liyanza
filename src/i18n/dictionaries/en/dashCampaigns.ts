@@ -57,6 +57,12 @@ const dashCampaigns: typeof fr = {
     loadError: "Unable to load the simulation.",
     back: "Back to campaigns",
     subtitle: "Here are the estimated results for your scenarios.",
+    benchmarks: {
+      company: "Forecasts adjusted on {count} of your actual Facebook Ads campaigns.",
+      city: "Forecasts adjusted on {count} actual Facebook Ads campaigns in {city} ({companies} companies).",
+      objective: "Forecasts adjusted on {count} actual Facebook Ads campaigns ({companies} companies).",
+      market: "Estimates based on market benchmarks. Link your Facebook Ads campaigns to refine them with your real costs.",
+    },
     loading: "Loading results…",
     empty: "No simulation found for this campaign.",
     detail: "Scenario details",
