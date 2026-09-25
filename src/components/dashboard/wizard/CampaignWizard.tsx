@@ -220,6 +220,8 @@ export function CampaignWizard() {
   const [radioCampaign, setRadioCampaign] = useState<CampagneRecord | null>(null);
   const [radioBroadcastCount, setRadioBroadcastCount] = useState(0);
   const [radioTruncated, setRadioTruncated] = useState(false);
+  // Chaque canal choisi est lié à un compte actif (voir StepChannels).
+  const [channelsReady, setChannelsReady] = useState(false);
 
   const payload = useMemo(() => buildCampagnePayload(state, t), [state, t]);
   const digitalDetailsPayload = useMemo(() => buildDigitalDetailsPayload(state), [state]);
@@ -256,11 +258,11 @@ export function CampaignWizard() {
       case 4:
         return state.budget.amount > 0 && Boolean(state.budget.startDate) && Boolean(state.budget.endDate);
       case 5:
-        return state.channels.length > 0;
+        return state.channels.length > 0 && channelsReady;
       default:
         return true;
     }
-  }, [isRadio, stepIndex, state]);
+  }, [isRadio, stepIndex, state, channelsReady]);
 
   async function submitRadioCampaign() {
     const radioPayload = buildRadioCampagnePayload(state, t, f.locale);
@@ -384,7 +386,9 @@ export function CampaignWizard() {
               {!isRadio && stepIndex === 4 && (
                 <StepBudget data={state.budget} onChange={(budget) => setState((prev) => ({ ...prev, budget }))} />
               )}
-              {!isRadio && stepIndex === 5 && <StepChannels value={state.channels} onToggle={toggleChannel} />}
+              {!isRadio && stepIndex === 5 && (
+                <StepChannels value={state.channels} onToggle={toggleChannel} onReadyChange={setChannelsReady} />
+              )}
               {!isRadio && stepIndex === 6 && (
                 <StepSimulation
                   payload={payload}

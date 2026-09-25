@@ -134,7 +134,19 @@ const dashWizard = {
     subtitle: "Choisissez vos canaux !",
     loading: "Chargement de vos comptes liés…",
     loadError: "Impossible de charger les comptes liés.",
-    notLinked: "Aucun compte connecté — vous pourrez le lier depuis Mon entreprise",
+    notLinked: "Aucun compte connecté",
+    /** {name} = nom de la Page liée. */
+    linked: "Connecté · {name}",
+    expired: "Session expirée — reconnectez le compte pour l'utiliser",
+    missing: "Liez votre compte pour diffuser et suivre cette campagne",
+    /** {platform} = Facebook, Instagram… */
+    linkCta: "Lier {platform}",
+    reconnectCta: "Reconnecter",
+    linking: "Connexion en cours…",
+    askManager: "Seul un administrateur ou un responsable marketing peut lier ce compte.",
+    required: "Liez chaque canal sélectionné pour continuer.",
+    popupBlocked: "Votre navigateur a bloqué la fenêtre de connexion. Autorisez les popups pour ce site.",
+    connectError: "Impossible de démarrer la connexion.",
     descriptions: {
       FACEBOOK: "Atteignez votre audience sur Facebook",
       INSTAGRAM: "Touchez votre communauté",

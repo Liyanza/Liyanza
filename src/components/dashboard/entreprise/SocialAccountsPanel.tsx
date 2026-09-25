@@ -1,17 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { FaFacebook, FaInstagram } from "react-icons/fa6";
 import { Loader2, RefreshCw, ShieldAlert, Trash2, Unplug } from "lucide-react";
 import { TopBar } from "@/components/dashboard/layout/TopBar";
 import { useAuth } from "@/context/AuthContext";
-import {
-  apiListSocialAccounts,
-  apiRevokeSocialAccount,
-  apiStartSocialOAuth,
-  ApiError,
-  apiSyncSocialAccount,
-} from "@/lib/api/client";
+import { apiRevokeSocialAccount, ApiError, apiSyncSocialAccount } from "@/lib/api/client";
+import { ENABLED_SOCIAL_PLATFORMS, useSocialAccounts } from "@/components/social-accounts/useSocialAccounts";
 import type { SocialAccountRecord, SocialPlatform } from "@/lib/api/types";
 import { SkeletonRows } from "@/components/dashboard/ui/Skeleton";
 import { useT } from "@/i18n/client";
@@ -38,13 +33,6 @@ function formatLastSync(value: string | null, ts: Messages["dashAccount"]["socia
   return fill(ts.syncedDaysAgo, { days });
 }
 
-// GET /social-accounts renvoie {items, total, page, limit, totalPages}
-// (SocialAccountsService.findAll) — jamais un tableau brut en pratique, mais
-// on reste défensif au cas où la forme paginée soit désactivée un jour.
-function normalizeList(result: SocialAccountRecord[] | { items: SocialAccountRecord[] }): SocialAccountRecord[] {
-  return Array.isArray(result) ? result : result.items;
-}
-
 export function SocialAccountsPanel() {
   const t = useT("dashAccount");
   const ts = t.social;
@@ -52,66 +40,22 @@ export function SocialAccountsPanel() {
   const { user } = useAuth();
   const canManage = user?.role === "ADMIN" || user?.role === "MARKETING_MANAGER";
 
-  const [accounts, setAccounts] = useState<SocialAccountRecord[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState<string | null>(null);
-  const [connectingPlatform, setConnectingPlatform] = useState<SocialPlatform | null>(null);
+  const {
+    accounts,
+    loading,
+    loadError,
+    reload: loadAccounts,
+    connect,
+    connectingPlatform,
+    connectError,
+  } = useSocialAccounts(ts);
   const [actionId, setActionId] = useState<string | null>(null);
-  const [actionError, setActionError] = useState<string | null>(null);
-  const popupPollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [revokeOrSyncError, setActionError] = useState<string | null>(null);
+  const actionError = revokeOrSyncError ?? connectError;
 
-  const fetchAccounts = useCallback(() => {
-    return apiListSocialAccounts().then(
-      (result) => {
-        setAccounts(normalizeList(result));
-        setLoading(false);
-      },
-      (error) => {
-        setLoadError(error instanceof ApiError ? error.message : ts.loadError);
-        setLoading(false);
-      }
-    );
-  }, [ts]);
-
-  const loadAccounts = useCallback(() => {
-    setLoading(true);
-    setLoadError(null);
-    return fetchAccounts();
-  }, [fetchAccounts]);
-
-  useEffect(() => {
-    void fetchAccounts();
-    return () => {
-      if (popupPollRef.current) clearInterval(popupPollRef.current);
-    };
-  }, [fetchAccounts]);
-
-  async function handleConnect(platform: SocialPlatform) {
+  function handleConnect(platform: SocialPlatform) {
     setActionError(null);
-    setConnectingPlatform(platform);
-    try {
-      const { authorizationUrl } = await apiStartSocialOAuth(platform);
-      const popup = window.open(authorizationUrl, "_blank", "width=600,height=720");
-      if (!popup) {
-        setActionError(ts.popupBlocked);
-        setConnectingPlatform(null);
-        return;
-      }
-      // Le backend redirige le popup vers /social-accounts/callback (valeur
-      // attendue de SOCIAL_OAUTH_MOBILE_REDIRECT_URL côté Render) à la fin du
-      // flow OAuth Meta : on rafraîchit la liste dès que cette fenêtre se
-      // ferme, comme demandé.
-      popupPollRef.current = setInterval(() => {
-        if (popup.closed) {
-          if (popupPollRef.current) clearInterval(popupPollRef.current);
-          setConnectingPlatform(null);
-          loadAccounts();
-        }
-      }, 700);
-    } catch (error) {
-      setActionError(error instanceof ApiError ? error.message : ts.connectError);
-      setConnectingPlatform(null);
-    }
+    void connect(platform);
   }
 
   async function handleRevoke(id: string) {
@@ -154,32 +98,28 @@ export function SocialAccountsPanel() {
 
           {canManage && (
             <div className="flex flex-wrap gap-3">
-              <button
-                type="button"
-                onClick={() => handleConnect("FACEBOOK")}
-                disabled={connectingPlatform !== null}
-                className="flex items-center gap-2 rounded-full border border-border bg-white px-4 py-2.5 text-sm font-semibold text-dash-heading transition hover:bg-dash-canvas disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {connectingPlatform === "FACEBOOK" ? (
-                  <Loader2 className="size-4 animate-spin" aria-hidden="true" />
-                ) : (
-                  <FaFacebook className="size-4 text-[#1877f2]" aria-hidden="true" />
-                )}
-                {ts.connectFacebook}
-              </button>
-              <button
-                type="button"
-                onClick={() => handleConnect("INSTAGRAM")}
-                disabled={connectingPlatform !== null}
-                className="flex items-center gap-2 rounded-full border border-border bg-white px-4 py-2.5 text-sm font-semibold text-dash-heading transition hover:bg-dash-canvas disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {connectingPlatform === "INSTAGRAM" ? (
-                  <Loader2 className="size-4 animate-spin" aria-hidden="true" />
-                ) : (
-                  <FaInstagram className="size-4 text-[#e1306c]" aria-hidden="true" />
-                )}
-                {ts.connectInstagram}
-              </button>
+              {ENABLED_SOCIAL_PLATFORMS.map((platform) => {
+                const Icon = platform === "FACEBOOK" ? FaFacebook : FaInstagram;
+                return (
+                  <button
+                    key={platform}
+                    type="button"
+                    onClick={() => handleConnect(platform)}
+                    disabled={connectingPlatform !== null}
+                    className="flex items-center gap-2 rounded-full border border-border bg-white px-4 py-2.5 text-sm font-semibold text-dash-heading transition hover:bg-dash-canvas disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {connectingPlatform === platform ? (
+                      <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+                    ) : (
+                      <Icon
+                        className={`size-4 ${platform === "FACEBOOK" ? "text-[#1877f2]" : "text-[#e1306c]"}`}
+                        aria-hidden="true"
+                      />
+                    )}
+                    {platform === "FACEBOOK" ? ts.connectFacebook : ts.connectInstagram}
+                  </button>
+                );
+              })}
             </div>
           )}
 
