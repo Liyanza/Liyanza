@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Link } from "@/i18n/navigation";
-import { AlertTriangle, ArrowLeft, Sparkles } from "lucide-react";
+import { AlertTriangle, ArrowLeft, Gauge, Sparkles } from "lucide-react";
 import { TopBar } from "@/components/dashboard/layout/TopBar";
 import { apiGetDigitalSimulations, ApiError } from "@/lib/api/client";
 import type { DigitalSimulationRecord } from "@/lib/api/types";
@@ -15,6 +15,7 @@ import { BudgetTab } from "./BudgetTab";
 import { PerformancesTab } from "./PerformancesTab";
 import { SkeletonKpis, SkeletonPanel } from "@/components/dashboard/ui/Skeleton";
 import { useT } from "@/i18n/client";
+import { fill } from "@/i18n/format";
 import { useCopilot, useCopilotCampaign } from "@/components/dashboard/copilot/CopilotProvider";
 
 function normalizeList(
@@ -63,6 +64,7 @@ export function DigitalResultsPage({ campaignId }: { campaignId: string }) {
               <div>
                 <h1 className="text-2xl font-bold text-dash-heading">{t.title}</h1>
                 <p className="mt-0.5 text-sm text-dash-muted">{t.subtitle}</p>
+                {simulation && <BenchmarkNote simulation={simulation} />}
               </div>
               {copilot.enabled && (
                 <button
@@ -118,5 +120,21 @@ export function DigitalResultsPage({ campaignId }: { campaignId: string }) {
         </div>
       </main>
     </>
+  );
+}
+
+/** Sur quoi reposent les prévisions : références de marché ou campagnes réelles. */
+function BenchmarkNote({ simulation }: { simulation: DigitalSimulationRecord }) {
+  const t = useT("dashCampaigns").results.benchmarks;
+  const calibration = simulation.inputSnapshot?.calibration;
+  const city = calibration?.city ? calibration.city.charAt(0).toUpperCase() + calibration.city.slice(1) : "";
+  const text = calibration
+    ? fill(t[calibration.scope], { count: calibration.campaigns, companies: calibration.companies, city })
+    : t.market;
+  return (
+    <p className={`mt-1.5 flex items-center gap-1.5 text-xs ${calibration ? "text-green-accent-dark" : "text-dash-muted"}`}>
+      <Gauge className="size-3.5 shrink-0" aria-hidden="true" />
+      {text}
+    </p>
   );
 }

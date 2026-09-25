@@ -254,6 +254,19 @@ export interface DigitalSimulationRecord {
   weeklySeries: DigitalSimulationWeekPoint[];
   /** Analyse de l'assistant IA — null si le service IA n'a pas répondu (le narrativeSummary du moteur reste affiché). */
   aiAnalysis: DigitalSimulationAnalysis | null;
+  /** Paramètres envoyés au moteur, dont les références de coûts locales utilisées. */
+  inputSnapshot?: { calibration?: LocalBenchmark | null };
+}
+
+/** Références de coûts tirées de campagnes Facebook Ads réelles (voir le backend, LocalBenchmarksService). */
+export interface LocalBenchmark {
+  scope: "company" | "city" | "objective";
+  city: string | null;
+  campaigns: number;
+  companies: number;
+  cpmFcfa: number | null;
+  ctrPercent: number | null;
+  conversionRatePercent: number | null;
 }
 
 // ---------------------------------------------------------------------------
