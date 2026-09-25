@@ -54,12 +54,22 @@ interface WizardState {
   radioFrequency: RadioFrequencyData;
 }
 
-const initialState: WizardState = {
+/** Date locale (AAAA-MM-JJ) décalée de `days` jours à partir d'aujourd'hui. */
+function isoDateFromToday(days: number): string {
+  const date = new Date();
+  date.setDate(date.getDate() + days);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
+
+// Dates par défaut calculées à l'ouverture de l'assistant : des dates figées
+// deviennent passées et proposent une campagne déjà terminée.
+const createInitialState = (): WizardState => ({
   type: null,
   definition: { name: "", product: "", description: "" },
   objective: null,
   audience: { ageMin: 25, ageMax: 45, gender: "ALL", interests: ["Fintech & Mobile Money", "Entrepreneuriat", "Commerce & PME"] },
-  budget: { budgetType: "TOTAL", amount: 500000, startDate: "2025-10-15", endDate: "2025-10-29" },
+  budget: { budgetType: "TOTAL", amount: 500000, startDate: isoDateFromToday(1), endDate: isoDateFromToday(15) },
   channels: [],
   radioStation: { stationId: null },
   radioSpot: { file: null, fileName: "", durationSec: null, spotName: "" },
@@ -67,10 +77,10 @@ const initialState: WizardState = {
     perDay: 3,
     timeSlots: ["07h00 - 09h00", "12h00 - 14h00", "17h00 - 19h00"],
     days: ["MON", "TUE", "WED", "THU"],
-    startDate: "2026-09-25",
-    endDate: "2026-10-25",
+    startDate: isoDateFromToday(1),
+    endDate: isoDateFromToday(31),
   },
-};
+});
 
 const DIGITAL_LAST_STEP = WIZARD_STEP_COUNT - 1;
 
@@ -214,7 +224,7 @@ export function CampaignWizard() {
   const [stepIndex, setStepIndex] = useState(0);
   // Direction of the last step change, so the new step slides in from it.
   const [stepDir, setStepDir] = useState<"forward" | "back">("forward");
-  const [state, setState] = useState<WizardState>(initialState);
+  const [state, setState] = useState<WizardState>(createInitialState);
   const [radioSubmitting, setRadioSubmitting] = useState(false);
   const [radioError, setRadioError] = useState<string | null>(null);
   const [radioCampaign, setRadioCampaign] = useState<CampagneRecord | null>(null);
