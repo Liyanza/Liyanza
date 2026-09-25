@@ -16,7 +16,13 @@ export const splashConfig = {
    */
   routes: ["/", "/fonctionnalites", "/tarifs", "/ressources", "/a-propos"],
 
-  /** Clé sessionStorage : une fois vu, le splash ne rejoue plus de la session. */
+  /**
+   * true : une seule fois par session (onglet). false : à chaque chargement
+   * de page, y compris après un rafraîchissement. La navigation interne du
+   * site ne le rejoue jamais.
+   */
+  oncePerSession: false,
+  /** Clé sessionStorage utilisée quand `oncePerSession` est vrai. */
   storageKey: "kiyanza-splash-seen",
 
   /** Couleur de fond de l'écran. */
@@ -112,14 +118,29 @@ export const splashConfig = {
   },
 
   /**
-   * NOM DÉVOILÉ — chaque lettre de KIYANZA s'allume quand l'oiseau passe à
-   * moins de `reach` (× hauteur du logo) de son centre. Les lettres non
-   * frôlées apparaissent en cascade à l'amarrage.
+   * NOM DÉVOILÉ — chaque lettre de KIYANZA se révèle quand l'oiseau passe à
+   * moins de `reach` (× hauteur du logo) de son centre : elle sort du flou
+   * dans le sens du vol, avec une brève lueur et quelques grains de pollen,
+   * sans bouger de sa place. Les lettres non frôlées apparaissent ensemble,
+   * en douceur, à l'amarrage.
    */
   nameReveal: {
     reach: 0.55,
-    /** Cascade des lettres restantes à l'amarrage, en s entre deux lettres. */
-    stagger: 0.05,
+    /**
+     * Au-dessus du nom, l'oiseau vole × plus lentement (1 = vitesse normale)
+     * pour dévoiler les lettres une à une. Ralenti et reprise sont progressifs.
+     */
+    slowdown: 8,
+    /** Durée de la révélation d'une lettre, en s. */
+    letterDuration: 0.7,
+    /** Flou de départ d'une lettre, en px. */
+    blur: 8,
+    /** Lueur qui s'éteint pendant la révélation. */
+    glow: "rgba(25, 165, 70, 0.55)",
+    /** Grains de pollen semés sur chaque lettre révélée (0 = aucun). */
+    sparkles: 4,
+    /** Lettres restantes à l'amarrage : écart entre deux lettres, en s (0 = ensemble). */
+    stagger: 0,
   },
 
   /**
@@ -194,13 +215,13 @@ export const SPLASH_DONE_EVENT = "splash:done";
 
 /**
  * Script inline exécuté dans <head> avant le premier affichage : décide si
- * le splash doit s'afficher (bonne page, pas encore vu dans la session) et
+ * le splash doit s'afficher (bonne page, et pas déjà vu si `oncePerSession`) et
  * pose html[data-splash="on"]. Évite tout flash de la page avant l'écran
  * blanc, et tout flash du splash quand il ne doit pas jouer.
  */
 export const splashBootScript = splashConfig.enabled
   ? `try{var r=${JSON.stringify(locales.flatMap((l) => splashConfig.routes.map((r) => localizePath(r, l))))},p=location.pathname.replace(/\\/+$/,"")||"/";` +
-    `if(r.indexOf(p)>-1&&!sessionStorage.getItem(${JSON.stringify(splashConfig.storageKey)})){` +
+    `if(r.indexOf(p)>-1&&!(${splashConfig.oncePerSession}&&sessionStorage.getItem(${JSON.stringify(splashConfig.storageKey)}))){` +
     `var d=document.documentElement;d.dataset.splash="on";` +
     `window.__splashFailsafe=setTimeout(function(){if(d.dataset.splash==="on")d.dataset.splash="done"},${splashConfig.failsafeMs})}}catch(e){}`
   : "";

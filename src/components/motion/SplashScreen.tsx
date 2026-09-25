@@ -33,7 +33,8 @@ const NAME = "KIYANZA";
  * - Affiché par le script de <head> (html[data-splash="on"]) : aucun flash,
  *   et rien du tout quand il ne doit pas jouer. Le contenu de la page reste
  *   rendu dans le HTML (SEO intact).
- * - Une fois par session ; « Passer », un clic ou Échap l'interrompent.
+ * - À chaque chargement de page (ou une fois par session, selon la config) ;
+ *   « Passer », un clic ou Échap l'interrompent.
  * - Mouvement réduit : logo fixe ~1 s puis simple fondu, sans vol.
  */
 export function SplashScreen() {
@@ -90,10 +91,12 @@ export function SplashScreen() {
     const finish = () => {
       if (finished) return;
       finished = true;
-      try {
-        sessionStorage.setItem(cfg.storageKey, "1");
-      } catch {
-        // stockage indisponible : le splash pourra rejouer, rien de grave
+      if (cfg.oncePerSession) {
+        try {
+          sessionStorage.setItem(cfg.storageKey, "1");
+        } catch {
+          // stockage indisponible : le splash pourra rejouer, rien de grave
+        }
       }
       html.dataset.splash = "done";
       reveal();
@@ -137,27 +140,49 @@ export function SplashScreen() {
         return;
       }
 
-      // --- Lettres : centre de chacune, allumage une seule fois ----------------
+      // --- Lettres : centre de chacune, révélation une seule fois -------------
       const letterCenters = letters.map((el) => {
         const r = el.getBoundingClientRect();
         return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
       });
+      const nr = cfg.nameReveal;
       const lit = new Set<number>();
-      const light = (i: number, delay = 0) => {
+      // La lettre reste à sa place (aucun décalage) : elle sort du flou,
+      // découverte dans le sens du vol (dir = 1 vers la droite, -1 vers la
+      // gauche, 0 = sur place), avec une lueur qui s'éteint.
+      const light = (i: number, delay = 0, dir = 0) => {
         if (lit.has(i)) return;
         lit.add(i);
+        const hidden =
+          dir > 0 ? "inset(-30% 100% -30% -30%)" : dir < 0 ? "inset(-30% -30% -30% 100%)" : "inset(-30% -30% -30% -30%)";
         gsap.fromTo(
           letters[i],
-          { opacity: 0, y: logoH * 0.12, scale: 0.6 },
-          { opacity: 1, y: 0, scale: 1, duration: t.text, delay, ease: "back.out(2.4)" },
+          {
+            opacity: 0,
+            clipPath: hidden,
+            filter: `blur(${nr.blur}px)`,
+            textShadow: `0 0 ${logoH * 0.2}px ${nr.glow}`,
+          },
+          {
+            keyframes: [
+              { opacity: 1, clipPath: "inset(-30% -30% -30% -30%)", filter: "blur(0px)", duration: nr.letterDuration * 0.6, ease: "power2.out" },
+              { textShadow: `0 0 0px ${nr.glow}`, duration: nr.letterDuration * 0.4, ease: "sine.out" },
+            ],
+            delay,
+            // Rendu final propre : plus de filtre ni de masque sur le texte.
+            onComplete: () => gsap.set(letters[i], { clearProps: "clipPath,filter,textShadow" }),
+          },
         );
+        if (dir !== 0 && cfg.ambience.pollen.enabled) {
+          for (let k = 0; k < nr.sparkles; k++) sow(letterCenters[i].x, letterCenters[i].y);
+        }
       };
-      const reach = logoH * cfg.nameReveal.reach;
+      const reach = logoH * nr.reach;
 
       // --- Pollen : particules réutilisées, semées derrière l'oiseau ----------
       let mote = 0;
       let lastMote = 0;
-      const sow = (x: number, y: number) => {
+      function sow(x: number, y: number) {
         const el = motes[mote++ % motes.length];
         const colors = cfg.ambience.pollen.colors;
         gsap.killTweensOf(el);
@@ -179,7 +204,7 @@ export function SplashScreen() {
             ease: "power1.out",
           },
         );
-      };
+      }
       const haloX = gsap.quickTo(halo, "x", { duration: 0.6, ease: "power3.out" });
       const haloY = gsap.quickTo(halo, "y", { duration: 0.6, ease: "power3.out" });
 
@@ -237,8 +262,9 @@ export function SplashScreen() {
         }
         // Distance au segment parcouru depuis la dernière image : même à bas
         // débit d'images, l'oiseau ne « saute » pas par-dessus une lettre.
+        const dir = Math.sign(pos.x - prev.x);
         letterCenters.forEach((c, i) => {
-          if (distToSegment(c, prev, { x: pos.x, y }) < reach) light(i);
+          if (distToSegment(c, prev, { x: pos.x, y }) < reach) light(i, 0, dir);
         });
         prev = { x: pos.x, y };
       };
@@ -269,25 +295,44 @@ export function SplashScreen() {
       };
 
       const tl = gsap.timeline({ delay: t.flightDelay });
-      const hovers = cfg.life.hovers;
+      // Passage au-dessus du nom : l'oiseau y vole à vitesse lente et régulière
+      // pour dévoiler les lettres une à une. Pas d'arrêt pendant ce passage.
+      const slow = Math.max(1, nr.slowdown);
+      const pass = slow > 1 ? findNamePass(raw, letterCenters, reach) : null;
+      const hovers = cfg.life.hovers.filter((hv) => !pass || hv.at < pass.from - 0.04 || hv.at > pass.to + 0.04);
       const hoverTime = hovers.reduce((sum, hv) => sum + hv.duration, 0);
       const travel = Math.max(0.5, t.flight - hoverTime);
-      let from = 0;
+
+      type Stop = { at: number; hover?: number; kind?: "slowIn" | "slowOut" };
+      const stops: Stop[] = [
+        ...hovers.map((hv) => ({ at: hv.at, hover: hv.duration })),
+        ...(pass ? [{ at: pass.from, kind: "slowIn" as const }, { at: pass.to, kind: "slowOut" as const }] : []),
+        { at: 1 },
+      ].sort((a, b) => a.at - b.at);
 
       const start = MotionPathPlugin.getPositionOnPath(raw, 0) as { x: number; y: number };
       gsap.set(halo, { x: start.x, y: start.y });
       tl.call(render).set([bird, halo, trail], { opacity: 1 });
-      [...hovers, { at: 1, duration: 0 }].forEach((stop, i, all) => {
-        const last = i === all.length - 1;
-        // Chaque bond accélère puis freine : effet « fonce / s'arrête net ».
-        tl.to(state, {
-          p: stop.at,
-          duration: travel * (stop.at - from),
-          ease: last ? "power3.out" : "power2.inOut",
-          onUpdate: render,
-        });
+      let from = 0;
+      // Vitesse de départ du segment (normalisée) : 0 après un arrêt, 1/slow
+      // à la sortie du passage lent. Les raccords gardent une vitesse continue.
+      let startSlope = 0;
+      stops.forEach((stop, i) => {
+        const length = stop.at - from;
+        if (length > 0) {
+          const slowPass = stop.kind === "slowOut";
+          tl.to(state, {
+            p: stop.at,
+            duration: travel * length * (slowPass ? slow : 1),
+            // Hors passage lent : le bond accélère puis freine (« fonce /
+            // s'arrête net »), ou freine jusqu'à la vitesse lente du passage.
+            ease: slowPass ? "none" : hermiteEase(startSlope, stop.kind === "slowIn" ? 1 / slow : 0),
+            onUpdate: render,
+          });
+        }
         from = stop.at;
-        if (!last) hoverAt(tl, `hover${i}`, stop.duration);
+        startSlope = stop.kind ? 1 / slow : 0;
+        if (stop.hover) hoverAt(tl, `hover${i}`, stop.hover);
       });
 
       // Amarrage : stationnaire devant la place, puis glissade jusqu'à elle.
@@ -384,7 +429,9 @@ export function SplashScreen() {
         gsap.set([...ribbons, halo, ...motes, ...ringEls], { opacity: 0 });
         gsap.to(bird, { rotation: 0, scale: 1, x: target.x, y: target.y, opacity: 1, duration: t.skipExit });
         gsap.set(body, { scaleY: 1 });
-        gsap.to(texts, { opacity: 1, y: 0, scale: 1, duration: t.skipExit });
+        gsap.killTweensOf(letters);
+        gsap.set(letters, { clearProps: "clipPath,filter,textShadow" });
+        gsap.to(texts, { opacity: 1, duration: t.skipExit });
         fadeOut(t.skipExit);
       };
     }, root);
@@ -554,6 +601,44 @@ function buildFlightPath(end: { x: number; y: number }): RawPath {
   seg[n - 3] = end.y;
   MotionPathPlugin.cacheRawPathMeasurements(raw);
   return raw;
+}
+
+/**
+ * Portion du tracé (p de 0 à 1) qui passe au ras du plus grand nombre de
+ * lettres : c'est là que l'oiseau ralentit. null si le tracé n'en frôle aucune.
+ */
+function findNamePass(raw: RawPath, letters: { x: number; y: number }[], reach: number) {
+  const samples = 600;
+  let best: { from: number; to: number; count: number } | null = null;
+  let run: { from: number; to: number; seen: Set<number> } | null = null;
+  for (let i = 0; i <= samples; i++) {
+    const p = i / samples;
+    const pos = MotionPathPlugin.getPositionOnPath(raw, p) as { x: number; y: number };
+    // Rayon réduit : le ralenti couvre le nom lui-même, pas ses abords.
+    const near = letters.flatMap((c, k) => (Math.hypot(c.x - pos.x, c.y - pos.y) < reach * 0.5 ? [k] : []));
+    if (near.length > 0) {
+      run ??= { from: p, to: p, seen: new Set() };
+      run.to = p;
+      near.forEach((k) => run!.seen.add(k));
+    }
+    if (run && (near.length === 0 || i === samples)) {
+      if (!best || run.seen.size > best.count) best = { from: run.from, to: run.to, count: run.seen.size };
+      run = null;
+    }
+  }
+  if (!best) return null;
+  // Marge à l'entrée seulement : l'oiseau est déjà lent en arrivant sur la
+  // première lettre, et repart dès la dernière passée.
+  return { from: Math.max(0.01, best.from - 0.02), to: Math.min(0.97, best.to) };
+}
+
+/**
+ * Courbe d'accélération dont les vitesses de départ et d'arrivée valent m0
+ * et m1 (1 = vitesse moyenne du segment) : raccords sans à-coup entre deux
+ * segments de vitesses différentes. m0 = m1 = 0 : départ et arrivée arrêtés.
+ */
+function hermiteEase(m0: number, m1: number) {
+  return (x: number) => (m0 + m1 - 2) * x ** 3 + (3 - 2 * m0 - m1) * x ** 2 + m0 * x;
 }
 
 /** Distance d'un point au segment [a, b]. */
