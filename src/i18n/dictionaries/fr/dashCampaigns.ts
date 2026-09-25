@@ -93,6 +93,72 @@ const dashCampaigns = {
       aiGenerating: "Analyse en cours… (jusqu'à 30 s)",
       aiGenerateError: "L'analyse IA est momentanément indisponible. Réessayez dans un instant.",
     },
+    actual: {
+      title: "Résultats réels · Facebook Ads",
+      subtitle: "Les résultats de votre campagne Facebook Ads, comparés à la simulation.",
+      loading: "Chargement des résultats Facebook Ads…",
+      notConnected:
+        "Reconnectez votre Page Facebook pour autoriser Kiyanza à lire les résultats de vos publicités.",
+      expired: "Votre session Facebook a expiré : reconnectez votre Page pour mettre à jour les résultats.",
+      reconnect: "Reconnecter Facebook",
+      reconnecting: "Connexion en cours…",
+      askManager: "Un administrateur ou un responsable marketing doit reconnecter la Page Facebook.",
+      unavailable: "Les résultats Facebook Ads sont momentanément indisponibles.",
+      retry: "Réessayer",
+      linkIntro:
+        "Reliez cette campagne à celle créée dans le Gestionnaire de publicités Meta pour suivre ses résultats réels face à la simulation.",
+      chooseCampaign: "Choisir la campagne Facebook Ads",
+      loadingCampaigns: "Recherche de vos campagnes Facebook Ads…",
+      noMetaCampaigns:
+        "Aucune campagne trouvée sur vos comptes publicitaires. Créez-la dans le Gestionnaire de publicités Meta, puis revenez ici.",
+      link: "Relier cette campagne",
+      linking: "Liaison…",
+      cancel: "Annuler",
+      change: "Changer",
+      unlink: "Délier",
+      refresh: "Actualiser",
+      /** {time} = heure de la dernière mise à jour. */
+      updatedAt: "Mis à jour à {time}",
+      budgetSpent: "Budget dépensé",
+      /** {spent}, {planned} = montants. */
+      spentOf: "{spent} sur {planned}",
+      timeElapsed: "Durée écoulée",
+      tooEarly: "La campagne vient de démarrer : les écarts ne sont pas encore significatifs.",
+      noDelivery: "Cette campagne Facebook Ads n'a encore rien diffusé.",
+      /** {currency} = devise du compte publicitaire. */
+      currencyNote:
+        "Compte publicitaire en {currency} : les coûts ne peuvent pas être comparés aux prévisions en FCFA.",
+      /** {value} = valeur formatée. */
+      expectedToDate: "Attendu à ce stade : {value}",
+      predicted: "Prévu : {value}",
+      noPrediction: "Pas de prévision",
+      /** {action} = type de conversion compté. */
+      conversionsCounted: "Conversions comptées : {action}",
+      conversionTypes: {
+        purchase: "achats",
+        lead: "prospects (formulaires)",
+        messaging: "conversations Messenger / WhatsApp",
+      },
+      metrics: {
+        reach: "Portée",
+        clicks: "Clics sur le lien",
+        conversions: "Conversions",
+        ctr: "Taux de clic (CTR)",
+        cpc: "Coût par clic",
+        cpa: "Coût par conversion",
+        roas: "ROAS",
+      },
+      status: {
+        ahead: "En avance",
+        on_track: "Dans les clous",
+        behind: "En retard",
+        unknown: "Non comparable",
+      },
+      dailyTitle: "Dépense par jour",
+      /** {date}, {amount}. */
+      dayTitle: "{date} : {amount}",
+      statusLabel: "Statut Meta : {status}",
+    },
     channels: {
       empty: "Aucun canal sélectionné pour cette simulation.",
       title: "Répartition par canal",

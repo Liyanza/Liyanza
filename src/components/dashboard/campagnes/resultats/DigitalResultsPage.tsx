@@ -7,6 +7,7 @@ import { TopBar } from "@/components/dashboard/layout/TopBar";
 import { apiGetDigitalSimulations, ApiError } from "@/lib/api/client";
 import type { DigitalSimulationRecord } from "@/lib/api/types";
 import { ScenarioComparisonBlock } from "./ScenarioComparisonBlock";
+import { ActualPerformanceSection } from "./ActualPerformanceSection";
 import { ResultsTabs, type ResultsTabId } from "./ResultsTabs";
 import { ResumeTab } from "./ResumeTab";
 import { CanauxTab } from "./CanauxTab";
@@ -93,6 +94,8 @@ export function DigitalResultsPage({ campaignId }: { campaignId: string }) {
           ) : (
             <>
               {simulation.scenarios.length > 0 && <ScenarioComparisonBlock scenarios={simulation.scenarios} />}
+
+              <ActualPerformanceSection campaignId={campaignId} />
 
               <div className="rounded-2xl border border-border bg-white p-6 shadow-[0_1px_1px_rgba(0,0,0,0.05)]">
                 <div className="flex items-center justify-between">
