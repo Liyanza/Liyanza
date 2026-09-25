@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Link } from "@/i18n/navigation";
-import { AlertTriangle, ArrowLeft } from "lucide-react";
+import { AlertTriangle, ArrowLeft, Sparkles } from "lucide-react";
 import { TopBar } from "@/components/dashboard/layout/TopBar";
 import { apiGetDigitalSimulations, ApiError } from "@/lib/api/client";
 import type { DigitalSimulationRecord } from "@/lib/api/types";
@@ -14,6 +14,7 @@ import { BudgetTab } from "./BudgetTab";
 import { PerformancesTab } from "./PerformancesTab";
 import { SkeletonKpis, SkeletonPanel } from "@/components/dashboard/ui/Skeleton";
 import { useT } from "@/i18n/client";
+import { useCopilot, useCopilotCampaign } from "@/components/dashboard/copilot/CopilotProvider";
 
 function normalizeList(
   result: DigitalSimulationRecord[] | { items: DigitalSimulationRecord[] }
@@ -28,6 +29,9 @@ export function DigitalResultsPage({ campaignId }: { campaignId: string }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<ResultsTabId>("resume");
+  const copilot = useCopilot();
+  // Tant que cette page est affichée, le Copilot parle de cette campagne.
+  useCopilotCampaign(campaignId);
 
   useEffect(() => {
     apiGetDigitalSimulations(campaignId).then(
@@ -54,8 +58,22 @@ export function DigitalResultsPage({ campaignId }: { campaignId: string }) {
               <ArrowLeft className="size-3.5" aria-hidden="true" />
               {t.back}
             </Link>
-            <h1 className="mt-3 text-2xl font-bold text-dash-heading">{t.title}</h1>
-            <p className="mt-0.5 text-sm text-dash-muted">{t.subtitle}</p>
+            <div className="mt-3 flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <h1 className="text-2xl font-bold text-dash-heading">{t.title}</h1>
+                <p className="mt-0.5 text-sm text-dash-muted">{t.subtitle}</p>
+              </div>
+              {copilot.enabled && (
+                <button
+                  type="button"
+                  onClick={() => copilot.ask(dash.copilot.analyzePrompt)}
+                  className="flex items-center gap-2 rounded-full bg-gradient-to-br from-blue-500 to-[#1a3460] px-4 py-2.5 text-xs font-semibold text-white shadow-[0_4px_14px_rgba(26,52,96,0.3)] transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-600 focus-visible:ring-offset-2"
+                >
+                  <Sparkles className="size-3.5" aria-hidden="true" />
+                  {dash.copilot.analyzeWithAi}
+                </button>
+              )}
+            </div>
           </div>
 
           {loading ? (

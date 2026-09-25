@@ -294,16 +294,23 @@ export interface CampaignRecommendation {
 }
 
 // ---------------------------------------------------------------------------
-// Assistant IA — chatbot (POST /conversations, POST /conversations/:id/messages)
+// Assistant IA — Copilot du dashboard (/conversations…) et assistant vitrine
+// du site public (/public/assistant/ask)
 // ---------------------------------------------------------------------------
 
 export interface AiConversationRecord {
   id: string;
   startedAt: string;
+  lastMessageAt: string;
   topic: string;
   companyId: string | null;
   createdById: string | null;
 }
+
+/** Ligne de l'historique du Copilot (GET /conversations). */
+export type AiConversationSummary = Pick<AiConversationRecord, "id" | "topic" | "startedAt" | "lastMessageAt">;
+
+export type AiMessageFeedback = "UP" | "DOWN";
 
 export interface AiMessageRecord {
   id: string;
@@ -311,6 +318,18 @@ export interface AiMessageRecord {
   sender: "USER" | "AI";
   sentAt: string;
   conversationId: string;
+  feedback: AiMessageFeedback | null;
+}
+
+/** GET /conversations/:id — messages dans l'ordre chronologique (200 derniers). */
+export interface AiConversationDetail extends AiConversationRecord {
+  messages: AiMessageRecord[];
+}
+
+/** Message d'historique renvoyé à l'assistant vitrine (4 au plus). */
+export interface PublicChatHistoryMessage {
+  sender: "USER" | "AI";
+  content: string;
 }
 
 export interface SendChatMessageResult {
