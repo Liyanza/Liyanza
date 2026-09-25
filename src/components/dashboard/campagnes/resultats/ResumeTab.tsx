@@ -1,7 +1,9 @@
 "use client";
 
-import { AlertTriangle, CheckCircle2, Lightbulb, Sparkles } from "lucide-react";
+import { useState } from "react";
+import { AlertTriangle, CheckCircle2, Lightbulb, Loader2, Sparkles } from "lucide-react";
 import { useFormat, useT } from "@/i18n/client";
+import { apiAnalyzeDigitalSimulation } from "@/lib/api/client";
 import { BudgetDonutChart } from "./charts";
 import type { DigitalSimulationAnalysis, DigitalSimulationRecord } from "@/lib/api/types";
 
@@ -15,7 +17,15 @@ const PLATFORM_COLOR: Record<string, string> = {
   INSTAGRAM: "#e1306c",
 };
 
-export function ResumeTab({ simulation }: { simulation: DigitalSimulationRecord }) {
+export function ResumeTab({
+  simulation,
+  campaignId,
+  onSimulationChange,
+}: {
+  simulation: DigitalSimulationRecord;
+  campaignId: string;
+  onSimulationChange: (simulation: DigitalSimulationRecord) => void;
+}) {
   const t = useT("dashCampaigns").results.resume;
   const f = useFormat();
   const totalBudget = simulation.channelBreakdown.reduce((sum, c) => sum + c.budgetAmount, 0);
@@ -61,16 +71,21 @@ export function ResumeTab({ simulation }: { simulation: DigitalSimulationRecord 
 
       {simulation.aiAnalysis ? (
         <AiAnalysisPanel analysis={simulation.aiAnalysis} />
-      ) : simulation.narrativeSummary && (
-        <div className="flex items-start gap-3 rounded-xl border border-border bg-white p-4">
-          <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-green-accent-dark/10">
-            <Lightbulb className="size-4 text-green-accent-dark" aria-hidden="true" />
-          </span>
-          <div>
-            <p className="text-xs font-bold text-dash-heading">{t.why}</p>
-            <p className="mt-1 text-xs leading-relaxed text-dash-body">{simulation.narrativeSummary}</p>
-          </div>
-        </div>
+      ) : (
+        <>
+          {simulation.narrativeSummary && (
+            <div className="flex items-start gap-3 rounded-xl border border-border bg-white p-4">
+              <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-green-accent-dark/10">
+                <Lightbulb className="size-4 text-green-accent-dark" aria-hidden="true" />
+              </span>
+              <div>
+                <p className="text-xs font-bold text-dash-heading">{t.why}</p>
+                <p className="mt-1 text-xs leading-relaxed text-dash-body">{simulation.narrativeSummary}</p>
+              </div>
+            </div>
+          )}
+          <GenerateAnalysis simulation={simulation} campaignId={campaignId} onSimulationChange={onSimulationChange} />
+        </>
       )}
 
       {simulation.warnings.length > 0 && (
@@ -80,6 +95,68 @@ export function ResumeTab({ simulation }: { simulation: DigitalSimulationRecord 
           ))}
         </ul>
       )}
+    </div>
+  );
+}
+
+/**
+ * Simulation enregistrée sans analyse IA (service lent ou indisponible à ce
+ * moment-là) : la génère à partir des mêmes chiffres, sans nouveau calcul.
+ */
+function GenerateAnalysis({
+  simulation,
+  campaignId,
+  onSimulationChange,
+}: {
+  simulation: DigitalSimulationRecord;
+  campaignId: string;
+  onSimulationChange: (simulation: DigitalSimulationRecord) => void;
+}) {
+  const t = useT("dashCampaigns").results.resume;
+  const [pending, setPending] = useState(false);
+  const [failed, setFailed] = useState(false);
+
+  async function generate() {
+    setPending(true);
+    setFailed(false);
+    try {
+      onSimulationChange(await apiAnalyzeDigitalSimulation(campaignId, simulation.id));
+    } catch {
+      setFailed(true);
+    } finally {
+      setPending(false);
+    }
+  }
+
+  return (
+    <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-dashed border-border bg-white p-4">
+      <div className="flex min-w-0 items-start gap-3">
+        <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-[#1a3460] text-white">
+          <Sparkles className="size-4" aria-hidden="true" />
+        </span>
+        <div className="min-w-0">
+          <p className="text-xs font-bold text-dash-heading">{t.aiTitle}</p>
+          <p className="mt-1 text-xs leading-relaxed text-dash-body">{t.aiMissing}</p>
+          {failed && (
+            <p role="alert" className="mt-1 text-xs font-medium text-red-600">
+              {t.aiGenerateError}
+            </p>
+          )}
+        </div>
+      </div>
+      <button
+        type="button"
+        onClick={generate}
+        disabled={pending}
+        className="flex shrink-0 items-center gap-2 rounded-full bg-[#1a3460] px-4 py-2 text-xs font-semibold text-white transition hover:bg-[#142a4f] disabled:cursor-wait disabled:opacity-70"
+      >
+        {pending ? (
+          <Loader2 className="size-3.5 animate-spin" aria-hidden="true" />
+        ) : (
+          <Sparkles className="size-3.5" aria-hidden="true" />
+        )}
+        {pending ? t.aiGenerating : t.aiGenerate}
+      </button>
     </div>
   );
 }

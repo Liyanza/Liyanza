@@ -102,7 +102,9 @@ export function DigitalResultsPage({ campaignId }: { campaignId: string }) {
                   <ResultsTabs active={activeTab} onChange={setActiveTab} />
                 </div>
                 <div className="pt-6">
-                  {activeTab === "resume" && <ResumeTab simulation={simulation} />}
+                  {activeTab === "resume" && (
+                    <ResumeTab simulation={simulation} campaignId={campaignId} onSimulationChange={setSimulation} />
+                  )}
                   {activeTab === "canaux" && <CanauxTab channels={simulation.channelBreakdown} />}
                   {activeTab === "budget" && <BudgetTab weeklySeries={simulation.weeklySeries} />}
                   {activeTab === "performances" && <PerformancesTab simulation={simulation} />}

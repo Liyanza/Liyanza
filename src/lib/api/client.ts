@@ -329,6 +329,14 @@ export function apiCreateDigitalSimulation(campaignId: string) {
   );
 }
 
+/** Génère l'analyse IA d'une simulation enregistrée sans elle (mêmes chiffres). */
+export function apiAnalyzeDigitalSimulation(campaignId: string, simulationId: string) {
+  return authenticatedRequest<DigitalSimulationRecord>(
+    `/api/backend/campagnes/${campaignId}/simulations-digitales/${simulationId}/analyse`,
+    { method: "POST" }
+  );
+}
+
 export function apiGetDigitalSimulations(campaignId: string) {
   return authenticatedRequest<
     DigitalSimulationRecord[] | { items: DigitalSimulationRecord[] }

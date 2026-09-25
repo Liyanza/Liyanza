@@ -88,6 +88,10 @@ const dashCampaigns = {
       recommendations: "Recommandations",
       aiDisclaimer:
         "Estimations calculées à partir de références de marché : les résultats réels dépendront de vos visuels, de votre offre et de votre audience.",
+      aiMissing: "L'analyse de l'assistant IA n'a pas pu être générée pour cette simulation.",
+      aiGenerate: "Générer l'analyse IA",
+      aiGenerating: "Analyse en cours… (jusqu'à 30 s)",
+      aiGenerateError: "L'analyse IA est momentanément indisponible. Réessayez dans un instant.",
     },
     channels: {
       empty: "Aucun canal sélectionné pour cette simulation.",

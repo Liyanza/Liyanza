@@ -85,6 +85,10 @@ const dashCampaigns: typeof fr = {
       recommendations: "Recommendations",
       aiDisclaimer:
         "Estimates based on market benchmarks: actual results will depend on your visuals, your offer and your audience.",
+      aiMissing: "The AI assistant analysis could not be generated for this simulation.",
+      aiGenerate: "Generate the AI analysis",
+      aiGenerating: "Analysing… (up to 30 s)",
+      aiGenerateError: "The AI analysis is temporarily unavailable. Please try again in a moment.",
     },
     channels: {
       empty: "No channel selected for this simulation.",
