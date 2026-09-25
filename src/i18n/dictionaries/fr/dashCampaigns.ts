@@ -167,6 +167,46 @@ const dashCampaigns = {
       /** {date}, {amount}. */
       dayTitle: "{date} : {amount}",
       statusLabel: "Statut Meta : {status}",
+      alertsTitle: "Alertes",
+      /** {date} = date de détection. */
+      alertSince: "Depuis le {date}",
+      recommended: "Action recommandée :",
+      alerts: {
+        BUDGET_PACING_FAST: {
+          title: "Budget dépensé trop vite",
+          message: "{spendPct} % du budget est déjà dépensé pour {timePct} % de la durée : la campagne risque de s'arrêter avant la fin.",
+          action: "Réduisez le budget quotidien dans le Gestionnaire de publicités Meta pour tenir jusqu'à la date de fin.",
+        },
+        BUDGET_PACING_SLOW: {
+          title: "La campagne diffuse peu",
+          message: "Seulement {spendPct} % du budget dépensé pour {timePct} % de la durée.",
+          action: "Vérifiez que la publicité est approuvée et active, puis élargissez l'audience (âge, villes, centres d'intérêt).",
+        },
+        CPC_HIGH: {
+          title: "Coût par clic élevé",
+          message: "Chaque clic coûte {actualCpc} contre {predictedCpc} prévus.",
+          action: "Testez un nouveau visuel ou un autre message, ou élargissez l'audience pour faire baisser le coût.",
+        },
+        CTR_LOW: {
+          title: "Peu de clics sur la publicité",
+          message: "Taux de clic de {actualCtr} % contre {predictedCtr} % prévus : la publicité accroche peu.",
+          action: "Essayez un visuel plus simple et authentique, avec un appel à l'action clair (« Écrivez-nous sur WhatsApp »).",
+        },
+        AUDIENCE_FATIGUE: {
+          title: "Audience lassée",
+          message: "Les personnes touchées ont vu la publicité {frequency} fois en moyenne et cliquent {ctrDropPct} % moins qu'au début.",
+          action: "Renouvelez le visuel ou élargissez l'audience pour toucher de nouvelles personnes.",
+        },
+        NO_CONVERSIONS: {
+          title: "Aucune conversion",
+          message: "Aucune conversion alors qu'environ {expected} étaient attendues à ce stade.",
+          action: "Vérifiez que le lien WhatsApp, le formulaire ou la page de destination fonctionnent, et que l'offre est claire.",
+        },
+      },
+      severity: {
+        WARNING: "À surveiller",
+        CRITICAL: "Urgent",
+      },
     },
     channels: {
       empty: "Aucun canal sélectionné pour cette simulation.",

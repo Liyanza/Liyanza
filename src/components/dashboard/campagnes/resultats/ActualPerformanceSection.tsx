@@ -2,7 +2,18 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { FaFacebook } from "react-icons/fa6";
-import { AlertTriangle, CheckCircle2, Link2, Loader2, Minus, RefreshCw, TrendingDown, TrendingUp } from "lucide-react";
+import {
+  AlertOctagon,
+  AlertTriangle,
+  CheckCircle2,
+  Lightbulb,
+  Link2,
+  Loader2,
+  Minus,
+  RefreshCw,
+  TrendingDown,
+  TrendingUp,
+} from "lucide-react";
 import {
   ApiError,
   apiGetActualPerformance,
@@ -15,6 +26,7 @@ import type {
   ActualMetricStatus,
   ActualPerformanceComparison,
   ActualPerformanceResponse,
+  CampaignAlert,
   MetaAdCampaign,
 } from "@/lib/api/types";
 import { useAuth } from "@/context/AuthContext";
@@ -146,9 +158,73 @@ export function ActualPerformanceSection({ campaignId }: { campaignId: string })
             onAccessError={(error) => setState(toLoadState(error, t.unavailable))}
           />
         )}
-        {data?.linked && !picking && <Comparison comparison={data.comparison} fetchedAt={data.fetchedAt} />}
+        {data?.linked && !picking && (
+          <div className="flex flex-col gap-5">
+            {data.alerts && data.alerts.length > 0 && <Alerts alerts={data.alerts} />}
+            <Comparison comparison={data.comparison} fetchedAt={data.fetchedAt} />
+          </div>
+        )}
       </div>
     </section>
+  );
+}
+
+/** Alertes ouvertes : ce qui dérive, les chiffres, et quoi faire. */
+function Alerts({ alerts }: { alerts: CampaignAlert[] }) {
+  const t = useT("dashCampaigns").results.actual;
+  const f = useFormat();
+  // Les coûts par clic sont toujours convertis en FCFA par le backend.
+  const value = (key: string, n: number) =>
+    key.endsWith("Cpc") ? f.money(n) : f.number(n, { maximumFractionDigits: 2 });
+
+  return (
+    <div>
+      <h3 className="text-sm font-semibold text-dash-heading">{t.alertsTitle}</h3>
+      <ul className="mt-2 flex flex-col gap-2">
+        {alerts.map((alert) => {
+          const text = t.alerts[alert.type];
+          const critical = alert.severity === "CRITICAL";
+          const Icon = critical ? AlertOctagon : AlertTriangle;
+          const values = Object.fromEntries(Object.entries(alert.data).map(([k, n]) => [k, value(k, n)]));
+          return (
+            <li
+              key={alert.id}
+              className={`rounded-lg border p-4 ${critical ? "border-red-200 bg-red-50/60" : "border-orange-200 bg-orange-500/5"}`}
+            >
+              <div className="flex items-start gap-3">
+                <Icon
+                  className={`mt-0.5 size-4 shrink-0 ${critical ? "text-red-600" : "text-orange-500"}`}
+                  aria-hidden="true"
+                />
+                <div className="min-w-0 flex-1">
+                  <p className="flex flex-wrap items-center gap-2 text-sm font-semibold text-dash-heading">
+                    {text.title}
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+                        critical ? "bg-red-100 text-red-700" : "bg-orange-100 text-orange-700"
+                      }`}
+                    >
+                      {t.severity[alert.severity]}
+                    </span>
+                  </p>
+                  <p className="mt-1 text-xs leading-relaxed text-dash-body">{fill(text.message, values)}</p>
+                  <p className="mt-2 flex items-start gap-1.5 text-xs leading-relaxed text-dash-heading">
+                    <Lightbulb className="mt-0.5 size-3.5 shrink-0 text-green-accent-dark" aria-hidden="true" />
+                    <span>
+                      <span className="font-semibold">{t.recommended} </span>
+                      {text.action}
+                    </span>
+                  </p>
+                  <p className="mt-1.5 text-[10px] text-dash-muted">
+                    {fill(t.alertSince, { date: f.date(alert.createdAt, { day: "numeric", month: "long" }) })}
+                  </p>
+                </div>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
   );
 }
 

@@ -381,7 +381,26 @@ export type ActualPerformanceResponse =
       simulation: { id: string; simulatedAt: string } | null;
       fetchedAt: string;
       comparison: ActualPerformanceComparison;
+      /** Alertes ouvertes (les plus graves d'abord) ; absent avec un backend antérieur. */
+      alerts?: CampaignAlert[];
     };
+
+export type CampaignAlertType =
+  | "BUDGET_PACING_FAST"
+  | "BUDGET_PACING_SLOW"
+  | "CPC_HIGH"
+  | "CTR_LOW"
+  | "AUDIENCE_FATIGUE"
+  | "NO_CONVERSIONS";
+
+/** Alerte « intelligente » sur une campagne Facebook Ads reliée ; `data` = chiffres du message. */
+export interface CampaignAlert {
+  id: string;
+  type: CampaignAlertType;
+  severity: "WARNING" | "CRITICAL";
+  data: Record<string, number>;
+  createdAt: string;
+}
 
 export interface DigitalSimulationAnalysis {
   summary: string;
