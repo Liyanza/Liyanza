@@ -252,6 +252,16 @@ export interface DigitalSimulationRecord {
   scenarios: DigitalSimulationScenario[];
   channelBreakdown: DigitalSimulationChannelResult[];
   weeklySeries: DigitalSimulationWeekPoint[];
+  /** Analyse de l'assistant IA — null si le service IA n'a pas répondu (le narrativeSummary du moteur reste affiché). */
+  aiAnalysis: DigitalSimulationAnalysis | null;
+}
+
+export interface DigitalSimulationAnalysis {
+  summary: string;
+  strengths: string[];
+  risks: string[];
+  recommendations: Array<{ title: string; detail: string }>;
+  scenarioChoice: string;
 }
 
 export interface CreateEntreprisePayload {
