@@ -82,6 +82,12 @@ const dashCampaigns = {
       roas: "ROAS estimé",
       budgetSplit: "Répartition du budget",
       why: "Pourquoi ce scénario ?",
+      aiTitle: "Analyse de l'assistant IA",
+      strengths: "Points forts",
+      risks: "Points de vigilance",
+      recommendations: "Recommandations",
+      aiDisclaimer:
+        "Estimations calculées à partir de références de marché : les résultats réels dépendront de vos visuels, de votre offre et de votre audience.",
     },
     channels: {
       empty: "Aucun canal sélectionné pour cette simulation.",

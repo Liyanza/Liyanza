@@ -79,6 +79,12 @@ const dashCampaigns: typeof fr = {
       roas: "Estimated ROAS",
       budgetSplit: "Budget breakdown",
       why: "Why this scenario?",
+      aiTitle: "AI assistant analysis",
+      strengths: "Strengths",
+      risks: "Watch points",
+      recommendations: "Recommendations",
+      aiDisclaimer:
+        "Estimates based on market benchmarks: actual results will depend on your visuals, your offer and your audience.",
     },
     channels: {
       empty: "No channel selected for this simulation.",
