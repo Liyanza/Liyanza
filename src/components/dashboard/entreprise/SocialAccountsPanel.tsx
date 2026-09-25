@@ -7,6 +7,7 @@ import { TopBar } from "@/components/dashboard/layout/TopBar";
 import { useAuth } from "@/context/AuthContext";
 import { apiRevokeSocialAccount, ApiError, apiSyncSocialAccount } from "@/lib/api/client";
 import { ENABLED_SOCIAL_PLATFORMS, useSocialAccounts } from "@/components/social-accounts/useSocialAccounts";
+import { PageHealthSection } from "./PageHealthSection";
 import type { SocialAccountRecord, SocialPlatform } from "@/lib/api/types";
 import { SkeletonRows } from "@/components/dashboard/ui/Skeleton";
 import { useT } from "@/i18n/client";
@@ -52,6 +53,9 @@ export function SocialAccountsPanel() {
   const [actionId, setActionId] = useState<string | null>(null);
   const [revokeOrSyncError, setActionError] = useState<string | null>(null);
   const actionError = revokeOrSyncError ?? connectError;
+
+  // Santé de la Page : la Page Facebook active la plus récente de l'entreprise.
+  const healthAccount = accounts.find((a) => a.platform === "FACEBOOK" && a.status !== "REVOKED");
 
   function handleConnect(platform: SocialPlatform) {
     setActionError(null);
@@ -205,6 +209,14 @@ export function SocialAccountsPanel() {
               </ul>
             )}
           </div>
+
+          {healthAccount && (
+            <PageHealthSection
+              key={healthAccount.id}
+              accountId={healthAccount.id}
+              onReconnect={canManage ? () => handleConnect("FACEBOOK") : undefined}
+            />
+          )}
 
           {!canManage && (
             <p className="flex items-center gap-2 text-xs text-dash-muted">

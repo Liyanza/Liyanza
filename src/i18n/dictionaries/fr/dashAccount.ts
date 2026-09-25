@@ -78,6 +78,72 @@ const dashAccount = {
     disconnect: "Déconnecter",
     readOnly:
       "Lecture seule : seuls les rôles Administrateur et Responsable Marketing peuvent lier, resynchroniser ou déconnecter un compte.",
+    health: {
+      title: "Santé de la Page",
+      /** {days} = nombre de jours. */
+      period: "{days} derniers jours, comparés aux {days} précédents",
+      loading: "Analyse de votre Page Facebook…",
+      unavailable: "Les statistiques de la Page sont momentanément indisponibles.",
+      reconnect: "Reconnectez votre Page Facebook pour voir ses statistiques.",
+      retry: "Réessayer",
+      refresh: "Actualiser",
+      /** {time} = heure. */
+      updatedAt: "Mis à jour à {time}",
+      followers: "Abonnés",
+      kpis: {
+        views: "Vues",
+        engagement: "Interactions",
+        newFollowers: "Nouveaux abonnés",
+      },
+      /** {value} = variation en %. */
+      changeUp: "+{value} % vs période précédente",
+      changeDown: "−{value} % vs période précédente",
+      changeFlat: "Stable vs période précédente",
+      noChange: "Pas de comparaison disponible",
+      /** {posts} = publications, {perWeek} = rythme hebdomadaire. */
+      rhythm: "{posts} publications · {perWeek} par semaine",
+      /** {rate} = taux d'engagement. */
+      engagementRate: "Taux d'engagement : {rate} %",
+      engagementHint: "Interactions moyennes par publication, rapportées au nombre d'abonnés.",
+      trendTitle: "Vues par jour",
+      /** {date}, {value}. */
+      dayTitle: "{date} : {value} vues",
+      bestTimesTitle: "Meilleurs moments pour publier",
+      /** {count} = publications analysées. */
+      bestTimesBasis: "D'après vos {count} dernières publications (heure du Cameroun).",
+      bestTimesNotEnough:
+        "Pas encore assez de publications pour trouver vos meilleurs moments : publiez régulièrement, Kiyanza les calculera.",
+      /** {interactions} = moyenne, {posts} = nombre de publications. */
+      slotDetail: "{interactions} interactions en moyenne · {posts} publications",
+      weekdays: ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"],
+      weekdaysShort: ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"],
+      /** {from}, {to} = heures. */
+      slotRange: "{from}h – {to}h",
+      heatmapLabel: "Interactions moyennes par jour et par tranche de 3 heures",
+      /** {day}, {range}, {value}, {posts}. */
+      cellTitle: "{day} {range} : {value} interactions en moyenne ({posts} publications)",
+      cellEmpty: "{day} {range} : aucune publication",
+      less: "Moins",
+      more: "Plus",
+      topPostsTitle: "Publications les plus engageantes",
+      noPosts: "Aucune publication récente sur cette Page.",
+      reactions: "réactions",
+      comments: "commentaires",
+      shares: "partages",
+      viewPost: "Voir sur Facebook",
+      noText: "(publication sans texte)",
+      aiTitle: "Bilan de l'assistant IA",
+      aiIntro: "Un bilan de votre Page et 3 actions concrètes pour la semaine.",
+      aiGenerate: "Générer le bilan IA",
+      aiRegenerate: "Régénérer",
+      aiGenerating: "Analyse en cours… (jusqu'à 30 s)",
+      aiError: "Le bilan IA est momentanément indisponible. Réessayez dans un instant.",
+      /** {date} = date de génération. */
+      aiGeneratedAt: "Bilan du {date}",
+      strengths: "Ce qui fonctionne",
+      watchouts: "Points de vigilance",
+      actions: "Vos 3 actions de la semaine",
+    },
   },
   notifications: {
     filters: {
