@@ -8,6 +8,7 @@ import { apiListNotifications } from "@/lib/api/client";
 import { useT } from "@/i18n/client";
 import { fill } from "@/i18n/format";
 import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
+import { CopilotButton } from "@/components/dashboard/copilot/CopilotPanel";
 
 export function TopBar({
   title,
@@ -63,6 +64,7 @@ export function TopBar({
             <ChevronDown className="size-3.5" aria-hidden="true" />
           </button>
         )}
+        <CopilotButton />
         <LanguageSwitcher variant="dashboard" />
         <Link
           href="/dashboard/notifications"

@@ -1,8 +1,8 @@
 export interface NavItem {
   href: string;
   /** Clé du libellé dans dash.nav (dictionnaire). */
-  key: "home" | "campaigns" | "monitoring" | "terrain" | "recommendations" | "reports" | "teams" | "company" | "profile" | "notifications" | "help";
-  icon: "home" | "campaigns" | "monitoring" | "terrain" | "ai" | "reports" | "teams" | "company" | "profile" | "notifications" | "help";
+  key: "home" | "campaigns" | "monitoring" | "terrain" | "assistant" | "recommendations" | "reports" | "teams" | "company" | "profile" | "notifications" | "help";
+  icon: "home" | "campaigns" | "monitoring" | "terrain" | "assistant" | "ai" | "reports" | "teams" | "company" | "profile" | "notifications" | "help";
 }
 
 // "Monitoring" : réintroduit (maquette Figma "MARKETED-OSC-2026", frames
@@ -20,6 +20,7 @@ export const mainNavItems: NavItem[] = [
   { href: "/dashboard/campagnes", key: "campaigns", icon: "campaigns" },
   { href: "/dashboard/monitoring", key: "monitoring", icon: "monitoring" },
   { href: "/dashboard/terrain", key: "terrain", icon: "terrain" },
+  { href: "/dashboard/assistant", key: "assistant", icon: "assistant" },
   { href: "/dashboard/recommandations", key: "recommendations", icon: "ai" },
   { href: "/dashboard/rapports", key: "reports", icon: "reports" },
   { href: "/dashboard/equipes", key: "teams", icon: "teams" },

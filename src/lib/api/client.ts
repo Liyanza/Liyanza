@@ -3,7 +3,11 @@
 import { localizePath, parsePath } from "@/i18n/paths";
 import type {
   AdvertisingChannelRecord,
+  AiConversationDetail,
   AiConversationRecord,
+  AiConversationSummary,
+  AiMessageFeedback,
+  AiMessageRecord,
   AssociateChannelsPayload,
   AuthUser,
   BroadcastRecord,
@@ -31,6 +35,7 @@ import type {
   PaginatedCampagnes,
   PaginatedNotifications,
   ProofLinkConsultation,
+  PublicChatHistoryMessage,
   ProofLinkResponse,
   RapportConformite,
   RegisterPayload,
@@ -450,25 +455,70 @@ export function apiGenerateRecommendations(campaignId: string) {
 }
 
 // ---------------------------------------------------------------------------
-// Assistant IA — chatbot
-//
-// `request` et non `authenticatedRequest` : le widget de chat est aussi
-// affiché sur les pages publiques, où un visiteur non connecté ne doit pas
-// être renvoyé d'office vers /connexion. Le 401/403 est traité par le widget.
+// Assistant IA — Copilot du dashboard (utilisateurs connectés)
 // ---------------------------------------------------------------------------
 
+export function apiListConversations() {
+  return authenticatedRequest<AiConversationSummary[]>("/api/backend/conversations");
+}
+
+export function apiGetConversation(conversationId: string) {
+  return authenticatedRequest<AiConversationDetail>(`/api/backend/conversations/${conversationId}`);
+}
+
 export function apiCreateConversation(topic: string) {
-  return request<AiConversationRecord>("/api/backend/conversations", {
+  return authenticatedRequest<AiConversationRecord>("/api/backend/conversations", {
     method: "POST",
     body: JSON.stringify({ topic }),
   });
 }
 
-export function apiSendChatMessage(conversationId: string, content: string) {
-  return request<SendChatMessageResult>(
+export function apiRenameConversation(conversationId: string, topic: string) {
+  return authenticatedRequest<AiConversationSummary>(`/api/backend/conversations/${conversationId}`, {
+    method: "PATCH",
+    body: JSON.stringify({ topic }),
+  });
+}
+
+export function apiDeleteConversation(conversationId: string) {
+  return authenticatedRequest<null>(`/api/backend/conversations/${conversationId}`, { method: "DELETE" });
+}
+
+/** `campaignId` : campagne affichée à l'écran, ajoutée au contexte de l'IA. */
+export function apiSendChatMessage(conversationId: string, content: string, campaignId?: string) {
+  return authenticatedRequest<SendChatMessageResult>(
     `/api/backend/conversations/${conversationId}/messages`,
-    { method: "POST", body: JSON.stringify({ content }) }
+    { method: "POST", body: JSON.stringify({ content, ...(campaignId && { campaignId }) }) }
   );
+}
+
+/** Remplace la dernière réponse de l'IA par une nouvelle. */
+export function apiRegenerateLastAnswer(conversationId: string, campaignId?: string) {
+  return authenticatedRequest<AiMessageRecord>(`/api/backend/conversations/${conversationId}/regenerate`, {
+    method: "POST",
+    body: JSON.stringify(campaignId ? { campaignId } : {}),
+  });
+}
+
+export function apiSetMessageFeedback(conversationId: string, messageId: string, value: AiMessageFeedback | null) {
+  return authenticatedRequest<{ id: string; feedback: AiMessageFeedback | null }>(
+    `/api/backend/conversations/${conversationId}/messages/${messageId}/feedback`,
+    { method: "PATCH", body: JSON.stringify({ value }) }
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Assistant vitrine du site public (visiteurs anonymes)
+//
+// `request` et non `authenticatedRequest` : aucun compte ici, et un 429
+// (quota du visiteur atteint) ne doit jamais renvoyer vers /connexion.
+// ---------------------------------------------------------------------------
+
+export function apiPublicAsk(message: string, history: PublicChatHistoryMessage[]) {
+  return request<{ answer: string }>("/api/public/assistant", {
+    method: "POST",
+    body: JSON.stringify({ message, history }),
+  });
 }
 
 // ---------------------------------------------------------------------------
