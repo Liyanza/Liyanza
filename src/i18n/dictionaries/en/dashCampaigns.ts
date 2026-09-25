@@ -153,6 +153,45 @@ const dashCampaigns: typeof fr = {
       dailyTitle: "Spend per day",
       dayTitle: "{date}: {amount}",
       statusLabel: "Meta status: {status}",
+      alertsTitle: "Alerts",
+      alertSince: "Since {date}",
+      recommended: "Recommended action:",
+      alerts: {
+        BUDGET_PACING_FAST: {
+          title: "Budget spent too fast",
+          message: "{spendPct}% of the budget is already spent for {timePct}% of the duration: the campaign may stop before the end.",
+          action: "Lower the daily budget in Meta Ads Manager so it lasts until the end date.",
+        },
+        BUDGET_PACING_SLOW: {
+          title: "The campaign delivers little",
+          message: "Only {spendPct}% of the budget spent for {timePct}% of the duration.",
+          action: "Check that the ad is approved and active, then widen the audience (age, cities, interests).",
+        },
+        CPC_HIGH: {
+          title: "High cost per click",
+          message: "Each click costs {actualCpc} against {predictedCpc} forecast.",
+          action: "Test a new visual or message, or widen the audience to bring the cost down.",
+        },
+        CTR_LOW: {
+          title: "Few clicks on the ad",
+          message: "Click-through rate of {actualCtr}% against {predictedCtr}% forecast: the ad is not catching attention.",
+          action: "Try a simpler, authentic visual with a clear call to action (\"Message us on WhatsApp\").",
+        },
+        AUDIENCE_FATIGUE: {
+          title: "Audience fatigue",
+          message: "People reached have seen the ad {frequency} times on average and click {ctrDropPct}% less than at the start.",
+          action: "Refresh the visual or widen the audience to reach new people.",
+        },
+        NO_CONVERSIONS: {
+          title: "No conversions",
+          message: "No conversions while about {expected} were expected by now.",
+          action: "Check that the WhatsApp link, the form or the landing page work, and that the offer is clear.",
+        },
+      },
+      severity: {
+        WARNING: "To watch",
+        CRITICAL: "Urgent",
+      },
     },
     channels: {
       empty: "No channel selected for this simulation.",
