@@ -4,6 +4,8 @@
  * que l'URL du backend et les tokens ne transitent jamais par le navigateur.
  */
 
+import { headers } from "next/headers";
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 if (!API_URL) {
@@ -15,6 +17,27 @@ if (!API_URL) {
 export interface BackendResult<T = unknown> {
   status: number;
   body: T;
+}
+
+/**
+ * IP réelle du visiteur, relayée au backend avec le secret partagé
+ * WEB_PROXY_SECRET. Relayées d'ici, toutes les requêtes arrivent au backend
+ * depuis ce serveur : sans cela, ses limites par IP (tentatives de
+ * connexion, requêtes par minute, quotas de l'assistant vitrine) seraient
+ * partagées par tous les visiteurs du site. L'IP vient de la plateforme
+ * d'hébergement (x-real-ip / x-forwarded-for), pas du navigateur.
+ */
+async function visitorIpHeaders(): Promise<Record<string, string>> {
+  const secret = process.env.WEB_PROXY_SECRET;
+  if (!secret) return {};
+  try {
+    const incoming = await headers();
+    const ip = incoming.get("x-real-ip") ?? incoming.get("x-forwarded-for")?.split(",")[0]?.trim();
+    return ip ? { "X-Visitor-IP": ip, "X-Web-Proxy-Secret": secret } : {};
+  } catch {
+    // Appel hors d'une requête (build, script) : pas de visiteur à relayer.
+    return {};
+  }
 }
 
 /**
@@ -31,6 +54,7 @@ export async function backendFetch<T = unknown>(
     method: init.method ?? "GET",
     headers: {
       "Content-Type": "application/json",
+      ...(await visitorIpHeaders()),
       ...init.headers,
     },
     body: init.body !== undefined ? JSON.stringify(init.body) : undefined,
@@ -51,18 +75,24 @@ export async function backendFetch<T = unknown>(
 }
 
 /**
- * Variante brute de `backendFetch`, pour les réponses non-JSON (export CSV/
- * PDF de `GET /rapports`) : `backendFetch` appelle `.text()` puis
- * `JSON.parse`, ce qui corromprait un PDF binaire. Renvoie la `Response`
- * telle quelle (headers + corps en flux), à retransmettre sans la parser.
+ * Variante brute de `backendFetch`, pour les réponses à ne pas parser :
+ * fichiers (export CSV/PDF de `GET /rapports`, qu'un `JSON.parse`
+ * corromprait) et flux (réponses de l'assistant IA en Server-Sent Events).
+ * Renvoie la `Response` telle quelle (headers + corps en flux), à
+ * retransmettre sans la lire.
  */
 export async function backendFetchRaw(
   path: string,
-  init: { headers?: Record<string, string> } = {}
+  init: { method?: string; body?: unknown; headers?: Record<string, string> } = {}
 ): Promise<Response> {
   return fetch(`${API_URL}${path}`, {
-    method: "GET",
-    headers: init.headers,
+    method: init.method ?? "GET",
+    headers: {
+      ...(init.body !== undefined && { "Content-Type": "application/json" }),
+      ...(await visitorIpHeaders()),
+      ...init.headers,
+    },
+    body: init.body !== undefined ? JSON.stringify(init.body) : undefined,
     cache: "no-store",
   });
 }

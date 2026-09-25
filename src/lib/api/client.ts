@@ -144,6 +144,64 @@ async function authenticatedRequest<T>(url: string, init?: RequestInit): Promise
 }
 
 // ---------------------------------------------------------------------------
+// Réponses en flux (Server-Sent Events) de l'assistant IA
+// ---------------------------------------------------------------------------
+
+/**
+ * Lit une réponse SSE : appelle `onDelta` pour chaque morceau de texte et
+ * renvoie l'événement final `done`. Un événement `error` (réponse coupée
+ * par le serveur) ou un flux qui s'arrête sans `done` lève une ApiError.
+ */
+async function readEventStream<TDone>(response: Response, onDelta: (text: string) => void): Promise<TDone> {
+  const reader = response.body?.getReader();
+  if (!reader) throw new ApiError(502, networkMessages().generic);
+  const decoder = new TextDecoder();
+  let buffer = "";
+
+  for (;;) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    let end: number;
+    while ((end = buffer.indexOf("\n\n")) !== -1) {
+      const data = buffer
+        .slice(0, end)
+        .split("\n")
+        .filter((line) => line.startsWith("data:"))
+        .map((line) => line.slice(5).trim())
+        .join("");
+      buffer = buffer.slice(end + 2);
+      if (!data) continue;
+      const event = JSON.parse(data) as { type: string; text?: string };
+      if (event.type === "delta" && event.text) onDelta(event.text);
+      else if (event.type === "done") return event as TDone;
+      else if (event.type === "error") throw new ApiError(502, networkMessages().generic);
+    }
+  }
+  throw new ApiError(502, networkMessages().generic);
+}
+
+/** POST en flux : les erreurs HTTP (avant le flux) deviennent des ApiError, comme request(). */
+async function streamRequest<TDone>(url: string, body: unknown, onDelta: (text: string) => void): Promise<TDone> {
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+  } catch {
+    throw new ApiError(0, networkMessages().offline);
+  }
+  if (!response.ok) {
+    const errorBody: unknown = await response.json().catch(() => null);
+    if (response.status === 429) throw new ApiError(429, networkMessages().tooMany);
+    throw new ApiError(response.status, extractMessage(errorBody, networkMessages().generic));
+  }
+  return readEventStream<TDone>(response, onDelta);
+}
+
+// ---------------------------------------------------------------------------
 // Auth
 // ---------------------------------------------------------------------------
 
@@ -492,6 +550,32 @@ export function apiSendChatMessage(conversationId: string, content: string, camp
   );
 }
 
+/**
+ * Comme apiSendChatMessage, mais la réponse de l'IA arrive au fil de sa
+ * génération (`onDelta`) ; renvoie les deux messages enregistrés à la fin.
+ * Un 401 renvoie vers /connexion, comme authenticatedRequest.
+ */
+export async function apiStreamChatMessage(
+  conversationId: string,
+  content: string,
+  campaignId: string | undefined,
+  onDelta: (text: string) => void
+): Promise<SendChatMessageResult> {
+  try {
+    return await streamRequest<SendChatMessageResult>(
+      `/api/backend/conversations/${conversationId}/messages/stream`,
+      { content, ...(campaignId && { campaignId }) },
+      onDelta
+    );
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 401) {
+      const { locale } = parsePath(window.location.pathname);
+      window.location.assign(localizePath("/connexion", locale));
+    }
+    throw error;
+  }
+}
+
 /** Remplace la dernière réponse de l'IA par une nouvelle. */
 export function apiRegenerateLastAnswer(conversationId: string, campaignId?: string) {
   return authenticatedRequest<AiMessageRecord>(`/api/backend/conversations/${conversationId}/regenerate`, {
@@ -513,6 +597,15 @@ export function apiSetMessageFeedback(conversationId: string, messageId: string,
 // `request` et non `authenticatedRequest` : aucun compte ici, et un 429
 // (quota du visiteur atteint) ne doit jamais renvoyer vers /connexion.
 // ---------------------------------------------------------------------------
+
+/** Assistant vitrine, réponse au fil de sa génération (`onDelta`). */
+export async function apiPublicAskStream(
+  message: string,
+  history: PublicChatHistoryMessage[],
+  onDelta: (text: string) => void
+): Promise<void> {
+  await streamRequest<{ type: "done" }>("/api/public/assistant/stream", { message, history }, onDelta);
+}
 
 export function apiPublicAsk(message: string, history: PublicChatHistoryMessage[]) {
   return request<{ answer: string }>("/api/public/assistant", {

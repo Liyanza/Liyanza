@@ -48,6 +48,19 @@ export async function authenticatedBackendRequest<T = unknown>(
  * Content-Disposition + corps binaire), jamais parsée en JSON.
  */
 export async function authenticatedBackendFileRequest(path: string): Promise<Response> {
+  return authenticatedBackendRawRequest(path);
+}
+
+/**
+ * Généralisation de `authenticatedBackendFileRequest` à toute méthode : sert
+ * aussi aux réponses en flux de l'assistant IA (Server-Sent Events), à
+ * retransmettre au navigateur sans les lire. Le 401 → refresh → rejeu ne peut
+ * se produire qu'avant le premier octet du flux, donc sans rien perdre.
+ */
+export async function authenticatedBackendRawRequest(
+  path: string,
+  init: { method?: string; body?: unknown } = {}
+): Promise<Response> {
   let accessToken = await getAccessToken();
 
   if (!accessToken) {
@@ -59,6 +72,7 @@ export async function authenticatedBackendFileRequest(path: string): Promise<Res
   }
 
   let response = await backendFetchRaw(path, {
+    ...init,
     headers: { Authorization: `Bearer ${accessToken}` },
   });
 
@@ -68,6 +82,7 @@ export async function authenticatedBackendFileRequest(path: string): Promise<Res
       return response;
     }
     response = await backendFetchRaw(path, {
+      ...init,
       headers: { Authorization: `Bearer ${refreshed.accessToken}` },
     });
   }
