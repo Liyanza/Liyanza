@@ -6,7 +6,7 @@ import { Send, Sparkles } from "lucide-react";
 import { useT } from "@/i18n/client";
 import { fill } from "@/i18n/format";
 import { Link } from "@/i18n/navigation";
-import { ApiError, apiMe, apiPublicAsk } from "@/lib/api/client";
+import { ApiError, apiMe, apiPublicAskStream } from "@/lib/api/client";
 import { MarkdownText } from "@/components/chat/MarkdownText";
 
 /**
@@ -82,6 +82,9 @@ export function ChatPanel() {
   const [limitReached, setLimitReached] = useState(stored?.limitReached ?? false);
   const [input, setInput] = useState("");
   const [pending, setPending] = useState(false);
+  // Vrai dès le premier morceau de la réponse : l'indicateur « rédige sa
+  // réponse » laisse alors place à la réponse qui s'écrit.
+  const [streaming, setStreaming] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -123,14 +126,24 @@ export function ChatPanel() {
     setInput("");
     setPending(true);
 
+    // La réponse s'écrit au fil de sa génération dans une bulle créée au
+    // premier morceau ; elle n'est enregistrée (sessionStorage) qu'une fois
+    // complète. Réponse coupée : la bulle partielle laisse place à l'erreur.
+    const answerId = nextId++;
+    let answer = "";
     try {
-      const { answer } = await apiPublicAsk(trimmed, history);
-      update([...withQuestion, { id: nextId++, role: "bot", text: answer }], asked + 1, false);
+      await apiPublicAskStream(trimmed, history, (text) => {
+        answer += text;
+        setStreaming(true);
+        setMessages([...withQuestion, { id: answerId, role: "bot", text: answer }]);
+      });
+      update([...withQuestion, { id: answerId, role: "bot", text: answer }], asked + 1, false);
     } catch (error) {
       const quota = error instanceof ApiError && error.status === 429;
       update([...withQuestion, { id: nextId++, role: "notice", notice: quota ? "limit" : "error" }], asked, quota);
     } finally {
       setPending(false);
+      setStreaming(false);
     }
   }
 
@@ -228,7 +241,7 @@ export function ChatPanel() {
                 </div>
               )
             )}
-            {pending && (
+            {pending && !streaming && (
               <div className="flex items-start gap-2">
                 <BotAvatar />
                 <p className="animate-pulse rounded-tl-sm rounded-r-2xl rounded-bl-2xl border border-border-light bg-slate-50 px-3.5 py-2.5 text-xs italic leading-[1.6] text-gray-text-light">

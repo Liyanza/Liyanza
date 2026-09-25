@@ -23,6 +23,9 @@ export function CopilotChat({ variant }: { variant: "panel" | "page" }) {
   }, [messages, pending]);
 
   const lastAiId = [...messages].reverse().find((m) => m.sender === "AI" && !m.local)?.id;
+  // Dès le premier morceau, la réponse s'écrit dans sa bulle : l'indicateur
+  // « rédige sa réponse » ne couvre que l'attente avant ce premier morceau.
+  const streaming = messages.some((m) => m.sender === "AI" && m.local);
   const width = variant === "page" ? "mx-auto w-full max-w-3xl" : "w-full";
 
   function submit() {
@@ -64,7 +67,7 @@ export function CopilotChat({ variant }: { variant: "panel" | "page" }) {
             )
           )}
 
-          {pending && (
+          {pending && !streaming && (
             <div className="flex items-start gap-3">
               <AiAvatar />
               <p className="animate-pulse pt-1 text-[13px] italic text-dash-muted">{t.thinking}</p>
@@ -182,7 +185,8 @@ function AiMessage({ message, isLast }: { message: CopilotMessage; isLast: boole
       <AiAvatar />
       <div className="min-w-0 flex-1">
         <MarkdownText text={message.content} className="break-words text-[13px] leading-[1.65] text-[#3a3c3e]" />
-        <div className="mt-1.5 flex items-center gap-0.5">
+        {/* Réponse en cours d'écriture (locale) : pas encore enregistrée, donc ni avis ni copie. */}
+        <div className={`mt-1.5 flex items-center gap-0.5 ${message.local ? "invisible" : ""}`}>
           <button type="button" onClick={copy} aria-label={copied ? t.copied : t.copy} title={copied ? t.copied : t.copy} className={actionClass}>
             {copied ? <Check className="size-3.5 text-green-600" aria-hidden="true" /> : <Copy className="size-3.5" aria-hidden="true" />}
           </button>
