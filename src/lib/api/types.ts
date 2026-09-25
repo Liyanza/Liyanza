@@ -256,6 +256,69 @@ export interface DigitalSimulationRecord {
   aiAnalysis: DigitalSimulationAnalysis | null;
 }
 
+// ---------------------------------------------------------------------------
+// Santé de la Page Facebook (GET /social-accounts/:id/health)
+// ---------------------------------------------------------------------------
+
+export interface PageHealthKpi {
+  key: "views" | "engagement" | "newFollowers";
+  current: number | null;
+  previous: number | null;
+  /** Variation relative (0,12 = +12 %). */
+  change: number | null;
+}
+
+export interface PageHealthPost {
+  id: string;
+  message: string;
+  createdTime: string;
+  permalink: string | null;
+  picture: string | null;
+  reactions: number;
+  comments: number;
+  shares: number;
+  interactions: number;
+}
+
+export interface PostingSlot {
+  /** 0 = lundi … 6 = dimanche. */
+  weekday: number;
+  /** Tranche de 3 h, heure du Cameroun : 0 = 0h-3h … 7 = 21h-24h. */
+  slot: number;
+  posts: number;
+  avgInteractions: number;
+}
+
+export interface PageHealth {
+  pageName: string;
+  followers: number | null;
+  periodDays: number;
+  kpis: PageHealthKpi[];
+  series: { date: string; views: number | null; engagement: number | null }[];
+  postsInPeriod: number;
+  postsPerWeek: number;
+  avgInteractionsPerPost: number | null;
+  engagementRate: number | null;
+  topPosts: PageHealthPost[];
+  bestTimes: { sampleSize: number; enough: boolean; top: PostingSlot[]; slots: PostingSlot[] };
+}
+
+export interface PageHealthAnalysis {
+  analysis: {
+    summary: string;
+    strengths: string[];
+    watchouts: string[];
+    actions: Array<{ title: string; detail: string }>;
+  };
+  generatedAt: string;
+}
+
+export interface PageHealthResponse {
+  health: PageHealth;
+  fetchedAt: string;
+  analysis: PageHealthAnalysis | null;
+}
+
 /** Campagne Facebook Ads (Meta) qu'on peut relier à une campagne Kiyanza. */
 export interface MetaAdCampaign {
   id: string;

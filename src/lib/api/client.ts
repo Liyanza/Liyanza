@@ -27,6 +27,8 @@ import type {
   DashboardSummary,
   DigitalSimulationRecord,
   MetaAdCampaign,
+  PageHealthAnalysis,
+  PageHealthResponse,
   ActualPerformanceResponse,
   EntrepriseRecord,
   InstallationRecord,
@@ -337,6 +339,22 @@ export function apiCreateDigitalSimulation(campaignId: string) {
     `/api/backend/campagnes/${campaignId}/simulations-digitales`,
     { method: "POST" }
   );
+}
+
+// ---------------------------------------------------------------------------
+// Santé de la Page Facebook
+// ---------------------------------------------------------------------------
+
+export function apiGetPageHealth(accountId: string, refresh = false) {
+  return authenticatedRequest<PageHealthResponse>(
+    `/api/backend/social-accounts/${accountId}/health${refresh ? "?refresh=1" : ""}`
+  );
+}
+
+export function apiAnalyzePageHealth(accountId: string) {
+  return authenticatedRequest<PageHealthAnalysis>(`/api/backend/social-accounts/${accountId}/health/analysis`, {
+    method: "POST",
+  });
 }
 
 // ---------------------------------------------------------------------------
