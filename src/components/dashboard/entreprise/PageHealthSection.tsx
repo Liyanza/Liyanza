@@ -127,8 +127,17 @@ export function PageHealthSection({ accountId, onReconnect }: { accountId: strin
               onAnalysis={(analysis) => setState({ ...state, analysis })}
             />
             <div className="grid gap-6 lg:grid-cols-2">
-              <BestTimes bestTimes={state.health.bestTimes} />
-              <TopPosts posts={state.health.topPosts} />
+              {state.health.postsAccess && state.health.postsAccess !== "full" && (
+                <p className="rounded-lg bg-slate-50 p-3 text-xs leading-relaxed text-dash-body lg:col-span-2">
+                  {state.health.postsAccess === "none" ? t.postsNone : t.postsPartial}
+                </p>
+              )}
+              {state.health.postsAccess !== "none" && (
+                <>
+                  <BestTimes bestTimes={state.health.bestTimes} />
+                  <TopPosts posts={state.health.topPosts} />
+                </>
+              )}
             </div>
             <p className="text-[10px] text-gray-text-light">
               {fill(t.updatedAt, { time: f.date(state.fetchedAt, { hour: "2-digit", minute: "2-digit" }) })}

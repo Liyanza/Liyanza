@@ -126,6 +126,10 @@ const dashAccount = {
       less: "Moins",
       more: "Plus",
       topPostsTitle: "Publications les plus engageantes",
+      postsPartial:
+        "Interactions partielles : Facebook ne donne pas encore accès aux commentaires de vos publications. Les classements ci-dessous en tiennent compte sans eux.",
+      postsNone:
+        "Facebook ne donne pas encore accès aux publications de votre Page : les meilleurs moments pour publier et les publications les plus engageantes ne peuvent pas être calculés pour l'instant.",
       noPosts: "Aucune publication récente sur cette Page.",
       reactions: "réactions",
       comments: "commentaires",
