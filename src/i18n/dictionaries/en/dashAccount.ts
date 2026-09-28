@@ -111,6 +111,10 @@ const dashAccount: typeof fr = {
       less: "Less",
       more: "More",
       topPostsTitle: "Most engaging posts",
+      postsPartial:
+        "Partial interactions: Facebook does not give access to your posts' comments yet. The rankings below are computed without them.",
+      postsNone:
+        "Facebook does not give access to your Page's posts yet: the best times to post and the most engaging posts cannot be computed for now.",
       noPosts: "No recent posts on this Page.",
       reactions: "reactions",
       comments: "comments",

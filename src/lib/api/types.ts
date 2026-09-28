@@ -304,6 +304,12 @@ export interface PostingSlot {
 
 export interface PageHealth {
   pageName: string;
+  /**
+   * Données de publications que Meta a accepté de fournir : sans la
+   * permission pages_read_user_content, les commentaires (voire les
+   * réactions) manquent, ou les publications sont inaccessibles.
+   */
+  postsAccess?: "full" | "no_comments" | "basic" | "none";
   followers: number | null;
   periodDays: number;
   kpis: PageHealthKpi[];
