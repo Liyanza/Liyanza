@@ -1,6 +1,16 @@
 "use client";
 
-import { CheckCircle2, Heart, Megaphone, Plus, ShoppingCart, Target, TrendingUp, UserPlus } from "lucide-react";
+import {
+  CheckCircle2,
+  Heart,
+  Megaphone,
+  MessageCircle,
+  Plus,
+  ShoppingCart,
+  Target,
+  TrendingUp,
+  UserPlus,
+} from "lucide-react";
 import { objectiveOptions, type ObjectiveOption } from "@/data/dashboard";
 import type { DigitalObjective } from "@/lib/api/types";
 import { useT } from "@/i18n/client";
@@ -12,6 +22,7 @@ const icons: Record<ObjectiveOption["icon"], typeof Megaphone> = {
   conversions: Target,
   traffic: TrendingUp,
   engagement: Heart,
+  messages: MessageCircle,
 };
 
 export function StepObjective({

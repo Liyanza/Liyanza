@@ -144,6 +144,10 @@ const dashCampaigns: typeof fr = {
         cpa: "Cost per conversion",
         roas: "ROAS",
       },
+      messagingMetrics: {
+        conversions: "WhatsApp / Messenger conversations",
+        cpa: "Cost per conversation",
+      },
       status: {
         ahead: "Ahead",
         on_track: "On track",
