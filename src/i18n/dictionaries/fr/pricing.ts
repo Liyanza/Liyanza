@@ -12,7 +12,7 @@ const pricing = {
     text: "Choisissez la formule adaptée à vos besoins et faites évoluer votre utilisation de KIYANZA avec votre activité.",
     monthly: "Mensuel",
     annual: "Annuel",
-    annualHint: "Économisez avec la facturation annuelle",
+    annualHint: "Facturation annuelle : 12 mois réglés en une fois",
   },
   cardsFooter: ["Aucune carte pour FREE", "Changement de formule à tout moment", "Annulation sans engagement"],
   comparison: {
@@ -60,7 +60,7 @@ const pricing = {
       {
         question: "Quelle est la différence entre facturation mensuelle et annuelle ?",
         answer:
-          "La facturation annuelle vous permet de bénéficier d'une réduction par rapport au paiement mensuel, pour le même accès à toutes les fonctionnalités.",
+          "La facturation annuelle correspond à 12 mois réglés en une seule fois (ex. 240 000 FCFA par an pour PRO), pour le même accès à toutes les fonctionnalités.",
       },
       {
         question: "Les fonctionnalités IA sont-elles disponibles dans toutes les offres ?",

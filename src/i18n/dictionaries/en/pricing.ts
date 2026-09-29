@@ -13,7 +13,7 @@ const pricing: typeof fr = {
     text: "Choose the plan that fits your needs and scale your use of KIYANZA as your business grows.",
     monthly: "Monthly",
     annual: "Yearly",
-    annualHint: "Save with yearly billing",
+    annualHint: "Yearly billing: 12 months paid at once",
   },
   cardsFooter: ["No card needed for FREE", "Switch plans anytime", "Cancel with no commitment"],
   comparison: {
@@ -60,7 +60,7 @@ const pricing: typeof fr = {
       {
         question: "What is the difference between monthly and yearly billing?",
         answer:
-          "Yearly billing gives you a discount compared with paying monthly, with the same access to every feature.",
+          "Yearly billing is 12 months paid in a single payment (e.g. 240,000 FCFA per year for PRO), with the same access to every feature.",
       },
       {
         question: "Are AI features available on every plan?",

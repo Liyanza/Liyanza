@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Check } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionEyebrow } from "@/components/ui/Badge";
@@ -12,6 +12,15 @@ export function PricingHero({ t }: { t: Messages["pricing"]["hero"] }) {
   const toggleRef = useRef<HTMLDivElement>(null);
   const pillRef = useRef<HTMLSpanElement>(null);
   const placedOnce = useRef(false);
+
+  // Les cartes de prix (composant serveur) affichent le prix annuel quand
+  // <html> porte data-billing="annual".
+  useEffect(() => {
+    const root = document.documentElement;
+    if (annual) root.setAttribute("data-billing", "annual");
+    else root.removeAttribute("data-billing");
+    return () => root.removeAttribute("data-billing");
+  }, [annual]);
 
   // Slide the green pill under the selected option. Absolute element, so
   // animating its width doesn't reflow anything else. Until this runs (or

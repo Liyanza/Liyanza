@@ -8,6 +8,8 @@ const plans = {
       tagline: "Pour découvrir KIYANZA",
       price: "Gratuit",
       priceNote: "",
+      priceAnnual: "Gratuit",
+      priceNoteAnnual: "",
       cta: "Commencer gratuitement",
       featured: false,
       features: [
@@ -21,8 +23,10 @@ const plans = {
     {
       tier: "PRO",
       tagline: "Pour les équipes marketing",
-      price: "XX XXX FCFA/mois",
+      price: "20 000 FCFA",
       priceNote: "par mois",
+      priceAnnual: "240 000 FCFA",
+      priceNoteAnnual: "par an",
       cta: "Commencer avec PRO",
       featured: true,
       features: [
@@ -38,8 +42,10 @@ const plans = {
     {
       tier: "BUSINESS",
       tagline: "Pour les entreprises avancées",
-      price: "XX XXX FCFA/mois",
+      price: "30 000 FCFA",
       priceNote: "par mois",
+      priceAnnual: "360 000 FCFA",
+      priceNoteAnnual: "par an",
       cta: "Choisir Business",
       featured: false,
       features: [
@@ -56,6 +62,8 @@ const plans = {
       tagline: "Pour les besoins spécifiques",
       price: "Sur devis",
       priceNote: "",
+      priceAnnual: "Sur devis",
+      priceNoteAnnual: "",
       cta: "Contacter l'équipe",
       /** Le bouton ouvre un email plutôt que l'inscription. */
       contact: true,

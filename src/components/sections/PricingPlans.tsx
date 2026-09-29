@@ -12,6 +12,17 @@ import type { Messages } from "@/i18n/dictionaries";
 
 type Plan = Messages["plans"]["items"][number];
 
+function PlanPrice({ price, note }: { price: string; note: string }) {
+  return (
+    <>
+      <p className={`font-bold tracking-[-0.02em] text-black ${note ? "text-xl leading-5" : "text-2xl leading-6"}`}>
+        {price}
+      </p>
+      {note && <p className="mt-1 text-[10px] leading-[15px] text-black/30">{note}</p>}
+    </>
+  );
+}
+
 function PlanCard({ plan, labels }: { plan: Plan; labels: { recommended: string; included: string } }) {
   return (
     <div
@@ -39,16 +50,14 @@ function PlanCard({ plan, labels }: { plan: Plan; labels: { recommended: string;
           </p>
           <p className="mt-1 text-sm text-black/40">{plan.tagline}</p>
           <div className="mt-5">
-            <p
-              className={`font-bold tracking-[-0.02em] text-black ${
-                plan.priceNote ? "text-xl leading-5" : "text-2xl leading-6"
-              }`}
-            >
-              {plan.price}
-            </p>
-            {plan.priceNote && (
-              <p className="mt-1 text-[10px] leading-[15px] text-black/30">{plan.priceNote}</p>
-            )}
+            {/* Mensuel par défaut ; le sélecteur de /tarifs pose
+                data-billing="annual" sur <html> (voir PricingHero). */}
+            <div className="in-data-[billing=annual]:hidden">
+              <PlanPrice price={plan.price} note={plan.priceNote} />
+            </div>
+            <div className="hidden in-data-[billing=annual]:block">
+              <PlanPrice price={plan.priceAnnual} note={plan.priceNoteAnnual} />
+            </div>
           </div>
         </div>
 
