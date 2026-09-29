@@ -75,10 +75,12 @@ export interface ObjectiveOption {
   // (DigitalObjective côté backend) — jamais une transformation à faire au
   // moment de la soumission.
   id: DigitalObjective;
-  icon: "awareness" | "sales" | "leads" | "conversions" | "traffic" | "engagement";
+  icon: "awareness" | "sales" | "leads" | "conversions" | "traffic" | "engagement" | "messages";
 }
 
 export const objectiveOptions: ObjectiveOption[] = [
+  // En tête : le format qui convertit le mieux pour les PME au Cameroun.
+  { id: "MESSAGES", icon: "messages" },
   { id: "AWARENESS", icon: "awareness" },
   { id: "LEADS", icon: "leads" },
   { id: "CONVERSION", icon: "conversions" },

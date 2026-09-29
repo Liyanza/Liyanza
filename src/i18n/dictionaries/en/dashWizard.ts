@@ -82,6 +82,11 @@ const dashWizard: typeof fr = {
         description: "Drive far more visits to your website, product page or app with minimal bounce.",
         optimization: "CPC OPTIMISATION",
       },
+      MESSAGES: {
+        title: "WhatsApp conversations",
+        description: "Get your customers to message you on WhatsApp or Messenger from the ad, and sell through the chat.",
+        optimization: "COST PER CONVERSATION OPTIMISATION",
+      },
       ENGAGEMENT: {
         title: "Engagement",
         description: "Spark strong interactions, shares, comments and a lasting community conversation.",

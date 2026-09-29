@@ -90,6 +90,7 @@ const dashCampaigns: typeof fr = {
       strengths: "Strengths",
       risks: "Watch points",
       recommendations: "Recommendations",
+      aiOnRecommended: "The AI assistant analysis covers the recommended scenario: select it to see the analysis.",
       aiDisclaimer:
         "Estimates based on market benchmarks: actual results will depend on your visuals, your offer and your audience.",
       aiMissing: "The AI assistant analysis could not be generated for this simulation.",
@@ -144,6 +145,10 @@ const dashCampaigns: typeof fr = {
         cpc: "Cost per click",
         cpa: "Cost per conversion",
         roas: "ROAS",
+      },
+      messagingMetrics: {
+        conversions: "WhatsApp / Messenger conversations",
+        cpa: "Cost per conversation",
       },
       status: {
         ahead: "Ahead",
@@ -212,11 +217,27 @@ const dashCampaigns: typeof fr = {
       roi: "Estimated ROI",
     },
     scenarios: {
+      title: "Compared scenarios",
+      selectHint: "Click a scenario to see its detail",
       current: "Current scenario",
       recommended: "Recommended",
       globalScore: "Overall score",
       others: "Other scenarios",
       score: "Score",
+      strategies: {
+        balanced: {
+          label: "Balanced",
+          description: "Your settings as they are: chosen age, gender, interests and locations.",
+        },
+        broad: {
+          label: "Wider audience",
+          description: "More people reached, cheaper per person, but fewer clicks and conversions per person.",
+        },
+        focused: {
+          label: "Tight targeting",
+          description: "Fewer people reached, but more clicks and conversions per person.",
+        },
+      },
     },
   },
   charts: {

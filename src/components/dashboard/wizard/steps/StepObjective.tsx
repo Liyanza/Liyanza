@@ -5,6 +5,7 @@ import {
   CheckCircle2,
   Heart,
   Megaphone,
+  MessageCircle,
   Pencil,
   Plus,
   ShoppingCart,
@@ -24,6 +25,7 @@ const icons: Record<ObjectiveOption["icon"], typeof Megaphone> = {
   conversions: Target,
   traffic: TrendingUp,
   engagement: Heart,
+  messages: MessageCircle,
 };
 
 export function StepObjective({

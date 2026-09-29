@@ -7,6 +7,7 @@ import { TopBar } from "@/components/dashboard/layout/TopBar";
 import { apiGetDigitalSimulations, ApiError } from "@/lib/api/client";
 import type { DigitalSimulationRecord } from "@/lib/api/types";
 import { ScenarioComparisonBlock } from "./ScenarioComparisonBlock";
+import { scenarioView } from "./scenarioView";
 import { ActualPerformanceSection } from "./ActualPerformanceSection";
 import { ResultsTabs, type ResultsTabId } from "./ResultsTabs";
 import { ResumeTab } from "./ResumeTab";
@@ -31,6 +32,8 @@ export function DigitalResultsPage({ campaignId }: { campaignId: string }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<ResultsTabId>("resume");
+  // Scénario détaillé dans les onglets (par défaut : le recommandé).
+  const [selectedScenarioId, setSelectedScenarioId] = useState<string | null>(null);
   const copilot = useCopilot();
   // Tant que cette page est affichée, le Copilot parle de cette campagne.
   useCopilotCampaign(campaignId);
@@ -49,6 +52,16 @@ export function DigitalResultsPage({ campaignId }: { campaignId: string }) {
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps -- rechargé seulement si la campagne change
   }, [campaignId]);
+
+  const selectedScenario =
+    simulation?.scenarios.find((s) => s.id === selectedScenarioId) ??
+    simulation?.scenarios.find((s) => s.isRecommended);
+  const baseView = simulation ? scenarioView(simulation, selectedScenario) : null;
+  // Description de la stratégie dans la langue de l'interface.
+  const viewed =
+    baseView && selectedScenario?.strategy && !selectedScenario.isRecommended
+      ? { ...baseView, narrativeSummary: t.scenarios.strategies[selectedScenario.strategy].description }
+      : baseView;
 
   return (
     <>
@@ -95,24 +108,43 @@ export function DigitalResultsPage({ campaignId }: { campaignId: string }) {
             </div>
           ) : (
             <>
-              {simulation.scenarios.length > 0 && <ScenarioComparisonBlock scenarios={simulation.scenarios} />}
+              {simulation.scenarios.length > 0 && (
+                <ScenarioComparisonBlock
+                  scenarios={simulation.scenarios}
+                  selectedId={selectedScenario?.id}
+                  onSelect={setSelectedScenarioId}
+                />
+              )}
 
               <ActualPerformanceSection campaignId={campaignId} />
 
               <div className="rounded-2xl border border-border bg-white p-6 shadow-[0_1px_1px_rgba(0,0,0,0.05)]">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-base font-semibold text-dash-heading">{t.detail}</h2>
+                  <h2 className="text-base font-semibold text-dash-heading">
+                    {t.detail}
+                    {selectedScenario?.strategy && (
+                      <span className="font-normal text-dash-muted">
+                        {" · "}
+                        {t.scenarios.strategies[selectedScenario.strategy].label}
+                      </span>
+                    )}
+                  </h2>
                 </div>
                 <div className="mt-2">
                   <ResultsTabs active={activeTab} onChange={setActiveTab} />
                 </div>
                 <div className="pt-6">
                   {activeTab === "resume" && (
-                    <ResumeTab simulation={simulation} campaignId={campaignId} onSimulationChange={setSimulation} />
+                    <ResumeTab
+                      simulation={viewed!}
+                      campaignId={campaignId}
+                      onSimulationChange={setSimulation}
+                      analysisOnRecommendedOnly={!selectedScenario?.isRecommended && Boolean(selectedScenario)}
+                    />
                   )}
-                  {activeTab === "canaux" && <CanauxTab channels={simulation.channelBreakdown} />}
-                  {activeTab === "budget" && <BudgetTab weeklySeries={simulation.weeklySeries} />}
-                  {activeTab === "performances" && <PerformancesTab simulation={simulation} />}
+                  {activeTab === "canaux" && <CanauxTab channels={viewed!.channelBreakdown} />}
+                  {activeTab === "budget" && <BudgetTab weeklySeries={viewed!.weeklySeries} />}
+                  {activeTab === "performances" && <PerformancesTab simulation={viewed!} />}
                 </div>
               </div>
             </>

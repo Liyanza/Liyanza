@@ -85,6 +85,11 @@ const dashWizard = {
         description: "Augmenter massivement les visites sur votre site web, page produit ou application avec un rebond minimal.",
         optimization: "OPTIMISATION CPC",
       },
+      MESSAGES: {
+        title: "Conversations WhatsApp",
+        description: "Faire écrire vos clients sur WhatsApp ou Messenger depuis la publicité, pour vendre en discutant.",
+        optimization: "OPTIMISATION COÛT PAR CONVERSATION",
+      },
       ENGAGEMENT: {
         title: "Engagement",
         description: "Créer des interactions fortes, des partages, des commentaires et un dialogue communautaire pérenne.",
