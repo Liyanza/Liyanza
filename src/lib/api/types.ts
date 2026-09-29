@@ -207,6 +207,8 @@ export interface SelectDigitalChannelsPayload {
   channels: DigitalCampaignChannelSelection[];
 }
 
+export type ScenarioStrategy = "balanced" | "broad" | "focused";
+
 export interface DigitalSimulationScenario {
   id: string;
   label: string;
@@ -216,6 +218,19 @@ export interface DigitalSimulationScenario {
   predictedClicks: number;
   predictedConversions: number;
   predictedRoas: number;
+  /**
+   * Détail complet du scénario (même budget, autre stratégie de ciblage) ;
+   * absent des simulations faites avant l'ajout des stratégies.
+   */
+  strategy?: ScenarioStrategy;
+  description?: string;
+  predictedCtr?: number;
+  predictedEngagementRate?: number;
+  avgCpc?: number;
+  costPerAcquisition?: number;
+  conversionRate?: number;
+  channelBreakdown?: DigitalSimulationChannelResult[];
+  weeklySeries?: DigitalSimulationWeekPoint[];
 }
 
 export interface DigitalSimulationChannelResult {

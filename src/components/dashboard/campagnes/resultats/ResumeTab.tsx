@@ -21,10 +21,13 @@ export function ResumeTab({
   simulation,
   campaignId,
   onSimulationChange,
+  analysisOnRecommendedOnly = false,
 }: {
   simulation: DigitalSimulationRecord;
   campaignId: string;
   onSimulationChange: (simulation: DigitalSimulationRecord) => void;
+  /** Scénario non recommandé affiché : l'analyse IA porte sur le recommandé. */
+  analysisOnRecommendedOnly?: boolean;
 }) {
   const t = useT("dashCampaigns").results.resume;
   const f = useFormat();
@@ -84,7 +87,11 @@ export function ResumeTab({
               </div>
             </div>
           )}
-          <GenerateAnalysis simulation={simulation} campaignId={campaignId} onSimulationChange={onSimulationChange} />
+          {analysisOnRecommendedOnly ? (
+            <p className="rounded-lg bg-slate-50 px-4 py-2.5 text-xs text-dash-muted">{t.aiOnRecommended}</p>
+          ) : (
+            <GenerateAnalysis simulation={simulation} campaignId={campaignId} onSimulationChange={onSimulationChange} />
+          )}
         </>
       )}
 

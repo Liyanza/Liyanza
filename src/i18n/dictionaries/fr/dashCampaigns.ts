@@ -95,6 +95,7 @@ const dashCampaigns = {
       strengths: "Points forts",
       risks: "Points de vigilance",
       recommendations: "Recommandations",
+      aiOnRecommended: "L'analyse de l'assistant IA porte sur le scénario recommandé : sélectionnez-le pour la voir.",
       aiDisclaimer:
         "Estimations calculées à partir de références de marché : les résultats réels dépendront de vos visuels, de votre offre et de votre audience.",
       aiMissing: "L'analyse de l'assistant IA n'a pas pu être générée pour cette simulation.",
@@ -227,11 +228,27 @@ const dashCampaigns = {
       roi: "ROI estimé",
     },
     scenarios: {
+      title: "Scénarios comparés",
+      selectHint: "Cliquez sur un scénario pour voir son détail",
       current: "Scénario actuel",
       recommended: "Recommandé",
       globalScore: "Score global",
       others: "Autres scénarios",
       score: "Score",
+      strategies: {
+        balanced: {
+          label: "Équilibré",
+          description: "Vos réglages tels quels : âge, genre, centres d'intérêt et zones choisis.",
+        },
+        broad: {
+          label: "Audience élargie",
+          description: "Plus de personnes touchées, moins cher par personne, mais moins de clics et de conversions par personne.",
+        },
+        focused: {
+          label: "Ciblage resserré",
+          description: "Moins de personnes touchées, mais davantage de clics et de conversions par personne.",
+        },
+      },
     },
   },
   charts: {
