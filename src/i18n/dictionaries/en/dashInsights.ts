@@ -140,6 +140,21 @@ const dashInsights: typeof fr = {
     forCampaign: "Recommendations for {name}",
     loading: "Loading recommendations…",
     empty: "No recommendations for this campaign. Generate some with the button above.",
+    regenerate: "Refresh recommendations",
+    thinking: "The AI is reviewing your campaign: settings, simulation, real results, alerts, radio and field tracking…",
+    aiNote:
+      "Written by the AI from the campaign's data: settings, simulation, real results, alerts, radio broadcasts and field tracking. Refresh them as the campaign evolves.",
+    generatedOn: "Generated on {date}",
+    categories: {
+      budget: "Budget",
+      audience: "Audience",
+      creative: "Message & visuals",
+      channel: "Channels",
+      timing: "Timing",
+      field: "Field",
+      radio: "Radio",
+      measurement: "Results tracking",
+    },
   },
 };
 

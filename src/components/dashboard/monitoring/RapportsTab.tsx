@@ -12,14 +12,9 @@ import {
 } from "@/lib/api/client";
 import type { CampagneRecord, CampaignRecommendation, RapportConformite } from "@/lib/api/types";
 import { SkeletonPanel } from "@/components/dashboard/ui/Skeleton";
+import { RecommendationCard } from "@/components/dashboard/recommandations/RecommendationCard";
 import { useFormat, useT } from "@/i18n/client";
 import { fill } from "@/i18n/format";
-
-const PRIORITY_CLASS: Record<string, string> = {
-  high: "bg-red-600/10 text-red-600",
-  medium: "bg-orange-500/10 text-orange-500",
-  low: "bg-slate-100 text-slate-500",
-};
 
 export function RapportsTab({ campaignId }: { campaignId: string }) {
   const ti = useT("dashInsights");
@@ -35,6 +30,7 @@ export function RapportsTab({ campaignId }: { campaignId: string }) {
   const [recommendations, setRecommendations] = useState<CampaignRecommendation[]>([]);
   const [recoLoading, setRecoLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
+  const [recoError, setRecoError] = useState<string | null>(null);
 
   useEffect(() => {
     Promise.all([apiGetCampagne(campaignId), apiGetRapportConformite(campaignId)]).then(
@@ -63,9 +59,12 @@ export function RapportsTab({ campaignId }: { campaignId: string }) {
 
   function handleGenerate() {
     setGenerating(true);
+    setRecoError(null);
     apiGenerateRecommendations(campaignId)
-      .then(() => apiListRecommendations(campaignId))
       .then((result) => setRecommendations(result))
+      .catch((error: unknown) => {
+        setRecoError(error instanceof ApiError ? error.message : ti.recommendations.generateError);
+      })
       .finally(() => setGenerating(false));
   }
 
@@ -147,28 +146,32 @@ export function RapportsTab({ campaignId }: { campaignId: string }) {
             <Sparkles className="size-4 text-blue-500" aria-hidden="true" />
             {t.recommendations}
           </h3>
-          {recoLoading ? (
+          {generating ? (
+            <p role="status" className="text-xs text-dash-muted">{ti.recommendations.thinking}</p>
+          ) : recoLoading ? (
             <p className="text-xs text-dash-muted">{t.loadingReco}</p>
           ) : recommendations.length === 0 ? (
             <p className="text-xs text-dash-muted">{t.noReco}</p>
           ) : (
             <div className="flex flex-col gap-2">
               {recommendations.slice(0, 3).map((reco) => (
-                <div key={reco.id} className={`rounded-xl p-3 text-xs ${PRIORITY_CLASS[reco.priority.toLowerCase()] ?? "bg-slate-100 text-slate-600"}`}>
-                  {reco.content}
-                </div>
+                <RecommendationCard key={reco.id} recommendation={reco} compact />
               ))}
             </div>
           )}
+          {recoError && <p role="alert" className="text-xs font-medium text-red-600">{recoError}</p>}
           <button
             type="button"
             onClick={handleGenerate}
             disabled={generating}
             className="mt-1 flex items-center justify-center gap-1.5 rounded-full bg-green-accent px-4 py-2 text-xs font-semibold text-white disabled:opacity-50"
           >
-            {generating ? ti.generating : ti.generate}
+            {generating ? ti.generating : recommendations.length > 0 ? ti.recommendations.regenerate : ti.generate}
           </button>
-          <Link href="/dashboard/recommandations" className="text-center text-xs font-semibold text-green-accent-dark">
+          <Link
+            href={`/dashboard/recommandations?campagne=${campaignId}`}
+            className="text-center text-xs font-semibold text-green-accent-dark"
+          >
             {t.seeAll}
           </Link>
         </div>

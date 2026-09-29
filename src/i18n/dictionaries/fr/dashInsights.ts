@@ -147,6 +147,23 @@ const dashInsights = {
     forCampaign: "Recommandations pour {name}",
     loading: "Chargement des recommandations…",
     empty: "Aucune recommandation pour cette campagne. Générez-en avec le bouton ci-dessus.",
+    regenerate: "Actualiser les recommandations",
+    /** Affiché pendant l'appel à l'IA (15 à 30 s). */
+    thinking: "L'IA analyse votre campagne : paramètres, simulation, résultats réels, alertes, radio et terrain…",
+    aiNote:
+      "Rédigées par l'IA à partir des données de la campagne : paramètres, simulation, résultats réels, alertes, diffusions radio et suivi terrain. Actualisez-les quand la campagne évolue.",
+    /** {date} = date de génération. */
+    generatedOn: "Générées le {date}",
+    categories: {
+      budget: "Budget",
+      audience: "Audience",
+      creative: "Message et visuels",
+      channel: "Canaux",
+      timing: "Calendrier",
+      field: "Terrain",
+      radio: "Radio",
+      measurement: "Suivi des résultats",
+    },
   },
 };
 
