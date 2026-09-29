@@ -10,7 +10,7 @@ import { StepType } from "./steps/StepType";
 import { StepDefinition, type DefinitionData } from "./steps/StepDefinition";
 import { StepObjective } from "./steps/StepObjective";
 import { StepAudience, type AudienceData } from "./steps/StepAudience";
-import { StepBudget, type BudgetData } from "./steps/StepBudget";
+import { budgetIssue, StepBudget, type BudgetData } from "./steps/StepBudget";
 import { StepChannels } from "./steps/StepChannels";
 import { StepSimulation } from "./steps/StepSimulation";
 import { RadioWizardStepper } from "./radio/RadioWizardStepper";
@@ -46,6 +46,8 @@ interface WizardState {
   type: string | null;
   definition: DefinitionData;
   objective: DigitalObjective | null;
+  /** Objectif formulé librement, en plus du type d'optimisation `objective`. */
+  customObjective: string;
   audience: AudienceData;
   budget: BudgetData;
   channels: SocialPlatform[];
@@ -68,8 +70,10 @@ const createInitialState = (): WizardState => ({
   type: null,
   definition: { name: "", product: "", description: "" },
   objective: null,
-  audience: { ageMin: 25, ageMax: 45, gender: "ALL", interests: ["Fintech & Mobile Money", "Entrepreneuriat", "Commerce & PME"] },
-  budget: { budgetType: "TOTAL", amount: 500000, startDate: isoDateFromToday(1), endDate: isoDateFromToday(15) },
+  customObjective: "",
+  // Aucun centre d'intérêt ni ville présélectionnés : c'est à l'utilisateur de choisir.
+  audience: { ageMin: 25, ageMax: 45, gender: "ALL", interests: [], locations: [] },
+  budget: { budgetType: "TOTAL", amount: 500000, startDate: isoDateFromToday(0), endDate: isoDateFromToday(14) },
   channels: [],
   radioStation: { stationId: null },
   radioSpot: { file: null, fileName: "", durationSec: null, spotName: "" },
@@ -77,8 +81,8 @@ const createInitialState = (): WizardState => ({
     perDay: 3,
     timeSlots: ["07h00 - 09h00", "12h00 - 14h00", "17h00 - 19h00"],
     days: ["MON", "TUE", "WED", "THU"],
-    startDate: isoDateFromToday(1),
-    endDate: isoDateFromToday(31),
+    startDate: isoDateFromToday(0),
+    endDate: isoDateFromToday(30),
   },
 });
 
@@ -166,10 +170,11 @@ function buildDigitalDetailsPayload(state: WizardState): UpsertDigitalDetailsPay
   if (!state.objective) return null;
   return {
     objective: state.objective,
+    ...(state.customObjective.trim() && { customObjective: state.customObjective.trim() }),
     ageMin: state.audience.ageMin,
     ageMax: state.audience.ageMax,
     targetGender: state.audience.gender,
-    targetLocations: [],
+    targetLocations: state.audience.locations,
     targetInterests: state.audience.interests,
     budgetAllocation: state.budget.budgetType,
   };
@@ -266,7 +271,7 @@ export function CampaignWizard() {
       case 2:
         return Boolean(state.objective);
       case 4:
-        return state.budget.amount > 0 && Boolean(state.budget.startDate) && Boolean(state.budget.endDate);
+        return budgetIssue(state.budget) === null;
       case 5:
         return state.channels.length > 0 && channelsReady;
       default:
@@ -388,6 +393,8 @@ export function CampaignWizard() {
                 <StepObjective
                   value={state.objective}
                   onChange={(objective) => setState((prev) => ({ ...prev, objective }))}
+                  customObjective={state.customObjective}
+                  onCustomObjectiveChange={(customObjective) => setState((prev) => ({ ...prev, customObjective }))}
                 />
               )}
               {!isRadio && stepIndex === 3 && (

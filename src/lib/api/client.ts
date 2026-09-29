@@ -26,6 +26,7 @@ import type {
   ReviewProofPayload,
   DashboardSummary,
   DigitalSimulationRecord,
+  DigitalObjective,
   MetaAdCampaign,
   PageHealthAnalysis,
   PageHealthResponse,
@@ -308,6 +309,8 @@ export function apiListCampagnes(params: CampagneListParams = {}) {
   if (params.limit) query.set("limit", String(params.limit));
   if (params.status) query.set("status", params.status);
   if (params.type) query.set("type", params.type);
+  if (params.search?.trim()) query.set("search", params.search.trim());
+  if (params.period) query.set("period", params.period);
   const qs = query.toString();
   return authenticatedRequest<PaginatedCampagnes>(
     `/api/backend/campagnes${qs ? `?${qs}` : ""}`
@@ -382,6 +385,14 @@ export function apiGetActualPerformance(campaignId: string, refresh = false) {
   return authenticatedRequest<ActualPerformanceResponse>(
     `/api/backend/campagnes/${campaignId}/performance-reelle${refresh ? "?refresh=1" : ""}`
   );
+}
+
+/** Rédige la description d'une campagne avec l'IA (assistant de création). */
+export function apiDescribeCampaign(payload: { name: string; product: string; objective?: DigitalObjective }) {
+  return authenticatedRequest<{ description: string }>(`/api/backend/campagnes/description-ia`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
 }
 
 /** Génère l'analyse IA d'une simulation enregistrée sans elle (mêmes chiffres). */

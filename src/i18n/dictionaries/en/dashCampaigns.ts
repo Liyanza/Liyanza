@@ -16,12 +16,13 @@ const dashCampaigns: typeof fr = {
     seeReports: "See the reports",
   },
   filterBar: {
+    search: "Search by name",
     type: "Type",
-    allChannels: "All channels",
+    allTypes: "All types",
+    types: { DIGITAL: "Digital", RADIO: "Radio", POSTER: "Advertising media" },
     period: "Period",
-    last30Days: "Last 30 days",
-    performance: "Performance",
-    moreFilters: "More filters",
+    allPeriods: "All periods",
+    periods: { "7d": "Last 7 days", "30d": "Last 30 days", "90d": "Last 90 days" },
     reset: "Reset filters",
   },
   pagination: {

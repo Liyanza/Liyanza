@@ -1,6 +1,8 @@
 "use client";
 
-import { Flag, Info, Package, Sparkles } from "lucide-react";
+import { useState } from "react";
+import { Flag, Info, Loader2, Package, Sparkles } from "lucide-react";
+import { apiDescribeCampaign } from "@/lib/api/client";
 import { useT } from "@/i18n/client";
 
 export interface DefinitionData {
@@ -17,6 +19,28 @@ export function StepDefinition({
   onChange: (data: DefinitionData) => void;
 }) {
   const t = useT("dashWizard").definition;
+  const [generating, setGenerating] = useState(false);
+  const [generateError, setGenerateError] = useState<string | null>(null);
+  const canGenerate = data.name.trim().length > 0 && data.product.trim().length > 0;
+
+  /** Rédige la description avec l'IA à partir du nom et de ce qui est promu. */
+  async function generate() {
+    if (!canGenerate) {
+      setGenerateError(t.generateNeedsFields);
+      return;
+    }
+    setGenerating(true);
+    setGenerateError(null);
+    try {
+      const { description } = await apiDescribeCampaign({ name: data.name.trim(), product: data.product.trim() });
+      onChange({ ...data, description: description.slice(0, 500) });
+    } catch {
+      setGenerateError(t.generateError);
+    } finally {
+      setGenerating(false);
+    }
+  }
+
   return (
     <div className="max-w-[768px]">
       <h1 className="text-[28px] font-semibold leading-9 tracking-[-0.7px] text-dash-heading">
@@ -79,10 +103,17 @@ export function StepDefinition({
             </label>
             <button
               type="button"
-              className="flex items-center gap-1.5 rounded-full bg-[#f0faff] px-3 py-1.5 text-xs font-semibold text-[#006398]"
+              onClick={generate}
+              disabled={generating}
+              title={canGenerate ? undefined : t.generateNeedsFields}
+              className="flex items-center gap-1.5 rounded-full bg-[#f0faff] px-3 py-1.5 text-xs font-semibold text-[#006398] transition hover:bg-[#e0f2fe] disabled:cursor-wait disabled:opacity-70"
             >
-              <Sparkles className="size-3.5" aria-hidden="true" />
-              {t.generate}
+              {generating ? (
+                <Loader2 className="size-3.5 animate-spin" aria-hidden="true" />
+              ) : (
+                <Sparkles className="size-3.5" aria-hidden="true" />
+              )}
+              {generating ? t.generating : t.generate}
             </button>
           </div>
           <textarea
@@ -94,6 +125,11 @@ export function StepDefinition({
             placeholder={t.descriptionPlaceholder}
             className="mt-1 w-full resize-none rounded-lg border-2 border-green-accent bg-dash-canvas px-4 py-3 text-sm text-black outline-none"
           />
+          {generateError && (
+            <p role="alert" className="mt-1.5 text-xs font-medium text-orange-600">
+              {generateError}
+            </p>
+          )}
           <div className="mt-1.5 flex items-center justify-between">
             <span className="text-[11px] font-semibold text-blue-500">{t.poweredBy}</span>
             <span className="text-[11px] font-semibold text-dash-body">{data.description.length} / 500</span>

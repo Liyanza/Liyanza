@@ -99,6 +99,15 @@ export const interestTags = [
   "E-commerce",
   "Études supérieures",
   "Investissement immobilier",
+  "Mode & Beauté",
+  "Alimentation & Restauration",
+  "Santé & Bien-être",
+  "Technologie & Mobile",
+  "Sport",
+  "Famille & Enfants",
 ];
+
+/** Villes suggérées à l'étape Cibles (les autres se saisissent librement). */
+export const cityTags = ["Douala", "Yaoundé", "Bafoussam", "Garoua", "Bamenda", "Kribi", "Limbé"];
 
 export const budgetPresets = [250000, 500000, 1000000, 2500000];

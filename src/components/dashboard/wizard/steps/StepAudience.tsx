@@ -1,9 +1,9 @@
 "use client";
 
-import { Check, Plus, Users, UsersRound } from "lucide-react";
-import { interestTags } from "@/data/dashboard";
+import { Check, MapPin, Users, UsersRound } from "lucide-react";
+import { cityTags, interestTags } from "@/data/dashboard";
 import { AgeRangeSlider } from "./AgeRangeSlider";
-
+import { ChipPicker } from "./ChipPicker";
 import type { TargetGender } from "@/lib/api/types";
 import { useT } from "@/i18n/client";
 import { fill } from "@/i18n/format";
@@ -15,6 +15,8 @@ export interface AudienceData {
   // PUT /campagnes/:id/digital-details.
   gender: TargetGender;
   interests: string[];
+  /** Villes ou régions ciblées (`targetLocations`). */
+  locations: string[];
 }
 
 const genderOptions: AudienceData["gender"][] = ["ALL", "MALE", "FEMALE"];
@@ -27,13 +29,8 @@ export function StepAudience({
   onChange: (data: AudienceData) => void;
 }) {
   const t = useT("dashWizard").audience;
-  function toggleInterest(tag: string) {
-    const isActive = data.interests.includes(tag);
-    onChange({
-      ...data,
-      interests: isActive ? data.interests.filter((t) => t !== tag) : [...data.interests, tag],
-    });
-  }
+  const interestLabel = (tag: string) => t.interestLabels[interestTags.indexOf(tag)] ?? tag;
+  const countLabel = (count: number) => fill(count > 1 ? t.selectedMany : t.selectedOne, { count });
 
   return (
     <div>
@@ -88,30 +85,45 @@ export function StepAudience({
             <Users className="size-[18px] text-green-accent-dark" aria-hidden="true" />
             {t.interests}
           </h2>
-          <span className="text-[11px] font-semibold text-green-accent">{fill(data.interests.length > 1 ? t.selectedMany : t.selectedOne, { count: data.interests.length })}</span>
+          {data.interests.length > 0 && (
+            <span className="text-[11px] font-semibold text-green-accent">{countLabel(data.interests.length)}</span>
+          )}
         </div>
-        <p className="text-[13px] leading-[18px] text-dash-body">
-          {t.interestsHint}
-        </p>
-        <div className="flex flex-wrap gap-2">
-          {interestTags.map((tag, index) => {
-            const selected = data.interests.includes(tag);
-            return (
-              <button
-                key={tag}
-                type="button"
-                aria-pressed={selected}
-                onClick={() => toggleInterest(tag)}
-                className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-medium transition-colors ${
-                  selected ? "bg-blue-500 text-white shadow-[0_1px_1px_rgba(0,0,0,0.05)]" : "bg-dash-pill-bg text-dash-heading"
-                }`}
-              >
-                {selected ? <Check className="size-3" aria-hidden="true" /> : <Plus className="size-3" aria-hidden="true" />}
-                {t.interestLabels[index] ?? tag}
-              </button>
-            );
-          })}
+        <p className="text-[13px] leading-[18px] text-dash-body">{t.interestsHint}</p>
+        <ChipPicker
+          suggestions={interestTags}
+          value={data.interests}
+          onChange={(interests) => onChange({ ...data, interests })}
+          labelFor={interestLabel}
+          inputLabel={t.interestInput}
+          placeholder={t.interestPlaceholder}
+          addLabel={t.add}
+          removeLabel={t.remove}
+        />
+        {data.interests.length === 0 && <p className="text-[11px] text-dash-muted">{t.interestsNone}</p>}
+      </div>
+
+      <div className="mt-4 flex flex-col gap-4 rounded-xl bg-white p-6 shadow-[0_1px_1px_rgba(0,0,0,0.05)]">
+        <div className="flex items-center justify-between">
+          <h2 className="flex items-center gap-2 text-lg font-semibold text-dash-heading">
+            <MapPin className="size-[18px] text-green-accent-dark" aria-hidden="true" />
+            {t.locations}
+          </h2>
+          {data.locations.length > 0 && (
+            <span className="text-[11px] font-semibold text-green-accent">{countLabel(data.locations.length)}</span>
+          )}
         </div>
+        <p className="text-[13px] leading-[18px] text-dash-body">{t.locationsHint}</p>
+        <ChipPicker
+          suggestions={cityTags}
+          value={data.locations}
+          onChange={(locations) => onChange({ ...data, locations })}
+          inputLabel={t.locationInput}
+          placeholder={t.locationPlaceholder}
+          addLabel={t.add}
+          removeLabel={t.remove}
+        />
+        {data.locations.length === 0 && <p className="text-[11px] text-dash-muted">{t.locationsNone}</p>}
       </div>
     </div>
   );
