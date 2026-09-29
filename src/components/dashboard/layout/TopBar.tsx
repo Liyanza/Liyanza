@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Link } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { ChevronDown, LogOut, Search } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { apiListNotifications } from "@/lib/api/client";
@@ -13,13 +13,13 @@ import { CopilotButton } from "@/components/dashboard/copilot/CopilotPanel";
 export function TopBar({
   title,
   searchPlaceholder,
-  showPeriodFilter = false,
 }: {
   title: string;
   searchPlaceholder?: string;
-  showPeriodFilter?: boolean;
 }) {
   const { user, logout } = useAuth();
+  const router = useRouter();
+  const [query, setQuery] = useState("");
   const dash = useT("dash");
   const t = dash.topBar;
   const [menuOpen, setMenuOpen] = useState(false);
@@ -47,23 +47,26 @@ export function TopBar({
     <header className="flex h-16 shrink-0 items-center justify-between border-b border-border bg-white px-8">
       <p className="text-[15px] font-bold text-gray-900">{title}</p>
       <div className="flex items-center gap-3">
-        <div className="flex h-12 w-[220px] items-center gap-2 rounded-full border border-border bg-dash-canvas px-3 lg:w-[280px]">
+        {/* Recherche de campagnes : ouvre la liste filtrée sur ce nom. */}
+        <form
+          role="search"
+          onSubmit={(event) => {
+            event.preventDefault();
+            const search = query.trim();
+            router.push(search ? `/dashboard/campagnes?q=${encodeURIComponent(search)}` : "/dashboard/campagnes");
+          }}
+          className="flex h-12 w-[220px] items-center gap-2 rounded-full border border-border bg-dash-canvas px-3 lg:w-[280px]"
+        >
           <Search className="size-3.5 shrink-0 text-gray-text-light" aria-hidden="true" />
           <input
             type="search"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
             placeholder={searchPlaceholder ?? t.searchCampaign}
+            aria-label={t.searchCampaign}
             className="w-full bg-transparent text-xs text-gray-text placeholder:text-gray-text outline-none"
           />
-        </div>
-        {showPeriodFilter && (
-          <button
-            type="button"
-            className="hidden items-center gap-1.5 rounded-full border border-border bg-dash-canvas px-3 py-2 text-xs font-medium text-dash-body md:flex"
-          >
-            {t.period}
-            <ChevronDown className="size-3.5" aria-hidden="true" />
-          </button>
-        )}
+        </form>
         <CopilotButton />
         <LanguageSwitcher variant="dashboard" />
         <Link

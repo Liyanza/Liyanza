@@ -10,7 +10,7 @@ import { StepType } from "./steps/StepType";
 import { StepDefinition, type DefinitionData } from "./steps/StepDefinition";
 import { StepObjective } from "./steps/StepObjective";
 import { StepAudience, type AudienceData } from "./steps/StepAudience";
-import { StepBudget, type BudgetData } from "./steps/StepBudget";
+import { budgetIssue, StepBudget, type BudgetData } from "./steps/StepBudget";
 import { StepChannels } from "./steps/StepChannels";
 import { StepSimulation } from "./steps/StepSimulation";
 import { RadioWizardStepper } from "./radio/RadioWizardStepper";
@@ -46,6 +46,8 @@ interface WizardState {
   type: string | null;
   definition: DefinitionData;
   objective: DigitalObjective | null;
+  /** Objectif formulé librement, en plus du type d'optimisation `objective`. */
+  customObjective: string;
   audience: AudienceData;
   budget: BudgetData;
   channels: SocialPlatform[];
@@ -54,12 +56,24 @@ interface WizardState {
   radioFrequency: RadioFrequencyData;
 }
 
-const initialState: WizardState = {
+/** Date locale (AAAA-MM-JJ) décalée de `days` jours à partir d'aujourd'hui. */
+function isoDateFromToday(days: number): string {
+  const date = new Date();
+  date.setDate(date.getDate() + days);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
+
+// Dates par défaut calculées à l'ouverture de l'assistant : des dates figées
+// deviennent passées et proposent une campagne déjà terminée.
+const createInitialState = (): WizardState => ({
   type: null,
   definition: { name: "", product: "", description: "" },
   objective: null,
-  audience: { ageMin: 25, ageMax: 45, gender: "ALL", interests: ["Fintech & Mobile Money", "Entrepreneuriat", "Commerce & PME"] },
-  budget: { budgetType: "TOTAL", amount: 500000, startDate: "2025-10-15", endDate: "2025-10-29" },
+  customObjective: "",
+  // Aucun centre d'intérêt ni ville présélectionnés : c'est à l'utilisateur de choisir.
+  audience: { ageMin: 25, ageMax: 45, gender: "ALL", interests: [], locations: [] },
+  budget: { budgetType: "TOTAL", amount: 500000, startDate: isoDateFromToday(0), endDate: isoDateFromToday(14) },
   channels: [],
   radioStation: { stationId: null },
   radioSpot: { file: null, fileName: "", durationSec: null, spotName: "" },
@@ -67,10 +81,10 @@ const initialState: WizardState = {
     perDay: 3,
     timeSlots: ["07h00 - 09h00", "12h00 - 14h00", "17h00 - 19h00"],
     days: ["MON", "TUE", "WED", "THU"],
-    startDate: "2026-09-25",
-    endDate: "2026-10-25",
+    startDate: isoDateFromToday(0),
+    endDate: isoDateFromToday(30),
   },
-};
+});
 
 const DIGITAL_LAST_STEP = WIZARD_STEP_COUNT - 1;
 
@@ -156,10 +170,11 @@ function buildDigitalDetailsPayload(state: WizardState): UpsertDigitalDetailsPay
   if (!state.objective) return null;
   return {
     objective: state.objective,
+    ...(state.customObjective.trim() && { customObjective: state.customObjective.trim() }),
     ageMin: state.audience.ageMin,
     ageMax: state.audience.ageMax,
     targetGender: state.audience.gender,
-    targetLocations: [],
+    targetLocations: state.audience.locations,
     targetInterests: state.audience.interests,
     budgetAllocation: state.budget.budgetType,
   };
@@ -214,7 +229,7 @@ export function CampaignWizard() {
   const [stepIndex, setStepIndex] = useState(0);
   // Direction of the last step change, so the new step slides in from it.
   const [stepDir, setStepDir] = useState<"forward" | "back">("forward");
-  const [state, setState] = useState<WizardState>(initialState);
+  const [state, setState] = useState<WizardState>(createInitialState);
   const [radioSubmitting, setRadioSubmitting] = useState(false);
   const [radioError, setRadioError] = useState<string | null>(null);
   const [radioCampaign, setRadioCampaign] = useState<CampagneRecord | null>(null);
@@ -256,7 +271,7 @@ export function CampaignWizard() {
       case 2:
         return Boolean(state.objective);
       case 4:
-        return state.budget.amount > 0 && Boolean(state.budget.startDate) && Boolean(state.budget.endDate);
+        return budgetIssue(state.budget) === null;
       case 5:
         return state.channels.length > 0 && channelsReady;
       default:
@@ -378,6 +393,8 @@ export function CampaignWizard() {
                 <StepObjective
                   value={state.objective}
                   onChange={(objective) => setState((prev) => ({ ...prev, objective }))}
+                  customObjective={state.customObjective}
+                  onCustomObjectiveChange={(customObjective) => setState((prev) => ({ ...prev, customObjective }))}
                 />
               )}
               {!isRadio && stepIndex === 3 && (

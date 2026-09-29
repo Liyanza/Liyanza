@@ -22,7 +22,13 @@ export function WelcomeBanner() {
           {t.trend}
         </span>
       </div>
-      <Button variant="cta" size="md" icon={<Plus className="size-4" aria-hidden="true" />} iconPosition="left">
+      <Button
+        href="/dashboard/campagnes/nouvelle"
+        variant="cta"
+        size="md"
+        icon={<Plus className="size-4" aria-hidden="true" />}
+        iconPosition="left"
+      >
         {t.newCampaign}
       </Button>
     </div>

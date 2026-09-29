@@ -7,7 +7,11 @@ import { TopBar } from "@/components/dashboard/layout/TopBar";
 import { Button } from "@/components/ui/Button";
 import { CampaignKpiRow } from "@/components/dashboard/CampaignKpiRow";
 import { CampaignsFilterTabs } from "@/components/dashboard/campagnes/CampaignsFilterTabs";
-import { CampaignsFilterBar } from "@/components/dashboard/campagnes/CampaignsFilterBar";
+import {
+  CampaignsFilterBar,
+  EMPTY_FILTERS,
+  type CampaignFilters,
+} from "@/components/dashboard/campagnes/CampaignsFilterBar";
 import { CampaignsTable } from "@/components/dashboard/campagnes/CampaignsTable";
 import { Pagination } from "@/components/dashboard/campagnes/Pagination";
 import { apiGetDashboard, apiListCampagnes, ApiError } from "@/lib/api/client";
@@ -29,7 +33,10 @@ const FILTERS: { id: "all" | CampaignStatus; status?: CampaignStatus }[] = [
   { id: "CANCELLED", status: "CANCELLED" },
 ];
 
-export function CampagnesListClient() {
+/** Délai avant de relancer la recherche pendant la frappe. */
+const SEARCH_DEBOUNCE_MS = 300;
+
+export function CampagnesListClient({ initialSearch = "" }: { initialSearch?: string }) {
   const t = useT("dashCampaigns").list;
   const dash = useT("dash");
   const [activeFilter, setActiveFilter] = useState<string>(FILTERS[0].id);
@@ -39,6 +46,13 @@ export function CampagnesListClient() {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [filters, setFilters] = useState<CampaignFilters>({ ...EMPTY_FILTERS, search: initialSearch });
+  const [search, setSearch] = useState(initialSearch);
+
+  useEffect(() => {
+    const id = setTimeout(() => setSearch(filters.search), SEARCH_DEBOUNCE_MS);
+    return () => clearTimeout(id);
+  }, [filters.search]);
 
   const activeStatus = FILTERS.find((filter) => filter.id === activeFilter)?.status;
 
@@ -51,7 +65,14 @@ export function CampagnesListClient() {
   const fetchData = useCallback(() => {
     return Promise.all([
       apiGetDashboard(),
-      apiListCampagnes({ page, limit: PAGE_SIZE, status: activeStatus }),
+      apiListCampagnes({
+        page,
+        limit: PAGE_SIZE,
+        status: activeStatus,
+        search,
+        type: filters.type || undefined,
+        period: filters.period || undefined,
+      }),
     ]).then(
       ([dashboard, list]) => {
         setSummary(dashboard);
@@ -64,7 +85,7 @@ export function CampagnesListClient() {
         setLoading(false);
       }
     );
-  }, [page, activeStatus, t]);
+  }, [page, activeStatus, search, filters.type, filters.period, t]);
 
   useEffect(() => {
     void fetchData();
@@ -83,8 +104,16 @@ export function CampagnesListClient() {
     setLoadError(null);
   }
 
+  function handleFiltersChange(next: CampaignFilters) {
+    setFilters(next);
+    setPage(1);
+    setLoadError(null);
+  }
+
   function handleReset() {
     setActiveFilter(FILTERS[0].id);
+    setFilters(EMPTY_FILTERS);
+    setSearch("");
     setPage(1);
     setLoading(true);
     setLoadError(null);
@@ -125,7 +154,7 @@ export function CampagnesListClient() {
                 onChange={handleFilterChange}
               />
             </div>
-            <CampaignsFilterBar onReset={handleReset} />
+            <CampaignsFilterBar filters={filters} onChange={handleFiltersChange} onReset={handleReset} />
           </div>
 
           {loadError && <p className="text-sm text-red-600">{loadError}</p>}

@@ -18,12 +18,13 @@ const dashCampaigns = {
     seeReports: "Consultez les rapports",
   },
   filterBar: {
+    search: "Rechercher par nom",
     type: "Type",
-    allChannels: "Tous canaux",
+    allTypes: "Tous les types",
+    types: { DIGITAL: "Digitale", RADIO: "Radio", POSTER: "Supports publicitaires" },
     period: "Période",
-    last30Days: "30 derniers jours",
-    performance: "Performance",
-    moreFilters: "Plus de filtres",
+    allPeriods: "Toutes les périodes",
+    periods: { "7d": "7 derniers jours", "30d": "30 derniers jours", "90d": "90 derniers jours" },
     reset: "Réinitialiser les filtres",
   },
   pagination: {

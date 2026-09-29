@@ -74,11 +74,17 @@ export interface CampagneRecord extends CreateCampagnePayload {
   updatedAt: string;
 }
 
+export type CampaignPeriod = "7d" | "30d" | "90d";
+
 export interface CampagneListParams {
   page?: number;
   limit?: number;
   status?: CampaignStatus;
   type?: CampaignType;
+  /** Nom de campagne contenant ce texte (insensible à la casse). */
+  search?: string;
+  /** Campagnes encore en cours sur les N derniers jours. */
+  period?: CampaignPeriod;
 }
 
 export interface PaginatedCampagnes {
@@ -192,6 +198,8 @@ export interface SocialAccountRecord {
 
 export interface UpsertDigitalDetailsPayload {
   objective: DigitalObjective;
+  /** Objectif formulé librement (« Ajouter un objectif »). */
+  customObjective?: string;
   ageMin: number;
   ageMax: number;
   targetGender: TargetGender;

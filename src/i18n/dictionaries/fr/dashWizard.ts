@@ -42,11 +42,23 @@ const dashWizard = {
     generate: "Générer une description avec l'IA",
     descriptionPlaceholder: "Décrivez le contexte marketing de votre campagne...",
     poweredBy: "Optimisé par KIYANZA AI",
+    generating: "Rédaction en cours…",
+    generateNeedsFields: "Renseignez d'abord le nom de la campagne et ce que vous souhaitez promouvoir.",
+    generateError: "La rédaction par l'IA est momentanément indisponible. Réessayez dans un instant.",
   },
   objective: {
     title: "Quel résultat souhaitez-vous obtenir ?",
     subtitle: "Choisissez l'objectif prioritaire de cette campagne.",
     add: "Ajouter un objectif",
+    customTitle: "Votre objectif",
+    customLabel: "Décrivez votre objectif en une phrase",
+    customPlaceholder: "Ex. : Remplir le restaurant le samedi soir",
+    customHint:
+      "Choisissez aussi ci-dessus la carte la plus proche : c'est elle qui règle l'optimisation de la campagne. L'IA tiendra compte de votre objectif dans ses conseils.",
+    customSave: "Enregistrer l'objectif",
+    customCancel: "Annuler",
+    customEdit: "Modifier",
+    customRemove: "Retirer",
     options: {
       AWARENESS: {
         title: "Notoriété",
@@ -109,7 +121,24 @@ const dashWizard = {
       "E-commerce",
       "Études supérieures",
       "Investissement immobilier",
+      "Mode & Beauté",
+      "Alimentation & Restauration",
+      "Santé & Bien-être",
+      "Technologie & Mobile",
+      "Sport",
+      "Famille & Enfants",
     ],
+    interestsNone: "Aucun centre d'intérêt : la publicité touchera toute la tranche d'âge choisie.",
+    interestInput: "Ajouter un centre d'intérêt",
+    interestPlaceholder: "Ex. : Coiffure, Football, Agriculture…",
+    add: "Ajouter",
+    /** {item} = valeur retirée. */
+    remove: "Retirer {item}",
+    locations: "Zones géographiques",
+    locationsHint: "Villes ou régions où diffuser la campagne. Elles affinent aussi les prévisions de coûts.",
+    locationsNone: "Aucune ville : la campagne sera diffusée dans tout le pays.",
+    locationInput: "Ajouter une ville ou une région",
+    locationPlaceholder: "Ex. : Buea, Littoral…",
     age: {
       selected: "Tranche d'âge sélectionnée",
       /** {age} = âge. */
@@ -133,6 +162,18 @@ const dashWizard = {
     duration: "Durée totale : {days} jours",
     startDate: "Date de début",
     endDate: "Date de fin",
+    amountLabel: "Montant en FCFA",
+    sliderLabel: "Ajuster le montant",
+    /** {amount} = montant par jour. */
+    perDay: "Soit environ {amount} par jour",
+    /** {amount} = montant total, {days} = jours. */
+    totalOver: "Soit environ {amount} au total sur {days} jours",
+    minAmount: "Le budget minimum est de {amount}.",
+    quickDurations: "Durée :",
+    /** {days} = nombre de jours. */
+    days: "{days} jours",
+    endBeforeStart: "La date de fin doit être après la date de début.",
+    startInPast: "La date de début ne peut pas être dans le passé.",
   },
   channels: {
     title: "Configurez vos canaux de diffusion",

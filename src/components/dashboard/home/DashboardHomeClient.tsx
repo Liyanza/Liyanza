@@ -42,7 +42,7 @@ export function DashboardHomeClient() {
 
   return (
     <>
-      <TopBar title={dash.titles.home} searchPlaceholder={t.searchPlaceholder} showPeriodFilter />
+      <TopBar title={dash.titles.home} searchPlaceholder={t.searchPlaceholder} />
       <main className="flex-1 overflow-y-auto bg-dash-canvas">
         <div className="flex flex-col gap-6 px-8 py-6">
           <WelcomeBanner />
