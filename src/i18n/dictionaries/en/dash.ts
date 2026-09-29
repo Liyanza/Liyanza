@@ -85,7 +85,6 @@ const dash: typeof fr = {
     loadError: "Unable to load the dashboard.",
     hello: "Hello",
     subtitle: "Here is an overview of how your campaigns are performing.",
-    trend: "Your performance is up 18% this week.",
     newCampaign: "New campaign",
     kpis: {
       total: "Total campaigns",
@@ -110,8 +109,13 @@ const dash: typeof fr = {
     },
     ai: {
       title: "AI recommendations",
-      subtitle: "KIYANZA will soon analyse your data continuously.",
-      empty: "No recommendations yet",
+      subtitle: "AI advice based on your campaigns' data.",
+      forCampaign: "For {name}",
+      empty: "No recommendations for this campaign",
+      noCampaign: "Create a campaign to receive recommendations",
+      restricted: "Available to admins and marketing managers",
+      generate: "Get recommendations",
+      seeAll: "See all {count} recommendations",
     },
   },
   copilot: {

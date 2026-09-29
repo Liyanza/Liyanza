@@ -91,7 +91,6 @@ const dash = {
     /** {name} = prénom (le « , » est inclus seulement si le prénom existe). */
     hello: "Bonjour",
     subtitle: "Voici un aperçu de la performance de vos campagnes.",
-    trend: "Vos performances sont en hausse de 18 % cette semaine.",
     newCampaign: "Nouvelle campagne",
     kpis: {
       total: "Campagnes totales",
@@ -117,8 +116,15 @@ const dash = {
     },
     ai: {
       title: "Recommandations IA",
-      subtitle: "KIYANZA analysera bientôt vos données en continu.",
-      empty: "Aucune recommandation pour l'instant",
+      subtitle: "Conseils de l'IA à partir des données de vos campagnes.",
+      /** {name} = nom de la campagne. */
+      forCampaign: "Pour {name}",
+      empty: "Aucune recommandation pour cette campagne",
+      noCampaign: "Créez une campagne pour recevoir des recommandations",
+      restricted: "Réservé aux administrateurs et responsables marketing",
+      generate: "Obtenir des recommandations",
+      /** {count} = nombre de recommandations. */
+      seeAll: "Voir les {count} recommandations",
     },
   },
   copilot: {

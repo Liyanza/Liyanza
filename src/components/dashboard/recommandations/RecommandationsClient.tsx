@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { ChevronDown, Lightbulb, Sparkles } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { ChevronDown, Lightbulb, Loader2, RefreshCw, Sparkles } from "lucide-react";
 import { TopBar } from "@/components/dashboard/layout/TopBar";
 import {
   apiGenerateRecommendations,
@@ -11,14 +11,24 @@ import {
 } from "@/lib/api/client";
 import type { CampagneRecord, CampaignRecommendation } from "@/lib/api/types";
 import { SkeletonPanel } from "@/components/dashboard/ui/Skeleton";
+import { RecommendationCard } from "@/components/dashboard/recommandations/RecommendationCard";
 import { useFormat, useT } from "@/i18n/client";
 import { fill } from "@/i18n/format";
 
-const PRIORITY_CLASS: Record<string, string> = {
-  high: "bg-red-600/10 text-red-600",
-  medium: "bg-orange-500/10 text-orange-500",
-  low: "bg-slate-100 text-slate-500",
-};
+/**
+ * Campagne ouverte par défaut : celle passée dans `?campagne=` (lien du
+ * panneau de l'accueil), sinon la première en cours, sinon la plus récente.
+ */
+function initialCampaignId(campaigns: CampagneRecord[]) {
+  let requested: string | null = null;
+  try {
+    requested = new URLSearchParams(window.location.search).get("campagne");
+  } catch {
+    // URL illisible : on retombe sur la sélection par défaut.
+  }
+  if (requested && campaigns.some((c) => c.id === requested)) return requested;
+  return (campaigns.find((c) => c.status === "IN_PROGRESS") ?? campaigns[0])?.id ?? "";
+}
 
 export function RecommandationsClient() {
   const ti = useT("dashInsights");
@@ -26,36 +36,17 @@ export function RecommandationsClient() {
   const dash = useT("dash");
   const f = useFormat();
   const formatDate = (iso: string) => f.date(iso, { day: "numeric", month: "long", year: "numeric" });
-  function priorityMeta(priority: string) {
-    const key = priority.toLowerCase() as keyof typeof ti.priorities;
-    return {
-      label: ti.priorities[key] ?? priority,
-      className: PRIORITY_CLASS[key] ?? "bg-slate-100 text-slate-500",
-    };
-  }
+
   const [campaigns, setCampaigns] = useState<CampagneRecord[]>([]);
   const [campaignsLoading, setCampaignsLoading] = useState(true);
   const [campaignsError, setCampaignsError] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string>("");
+  const selectedRef = useRef("");
 
   const [recommendations, setRecommendations] = useState<CampaignRecommendation[]>([]);
   const [recoLoading, setRecoLoading] = useState(false);
   const [recoError, setRecoError] = useState<string | null>(null);
   const [generating, setGenerating] = useState(false);
-
-  useEffect(() => {
-    apiListCampagnes({ limit: 100 }).then(
-      (result) => {
-        setCampaigns(result.items);
-        setCampaignsLoading(false);
-      },
-      (error: unknown) => {
-        setCampaignsError(error instanceof ApiError ? error.message : t.campaignsError);
-        setCampaignsLoading(false);
-      }
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- messages stables, rechargement sur l'identifiant seulement
-  }, []);
 
   const fetchRecommendations = useCallback((campaignId: string) => {
     setRecoLoading(true);
@@ -72,7 +63,28 @@ export function RecommandationsClient() {
     );
   }, [t]);
 
+  useEffect(() => {
+    apiListCampagnes({ limit: 100 }).then(
+      (result) => {
+        setCampaigns(result.items);
+        setCampaignsLoading(false);
+        const first = initialCampaignId(result.items);
+        if (first) {
+          selectedRef.current = first;
+          setSelectedId(first);
+          void fetchRecommendations(first);
+        }
+      },
+      (error: unknown) => {
+        setCampaignsError(error instanceof ApiError ? error.message : t.campaignsError);
+        setCampaignsLoading(false);
+      }
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- chargement initial uniquement
+  }, []);
+
   function handleSelect(campaignId: string) {
+    selectedRef.current = campaignId;
     setSelectedId(campaignId);
     setRecommendations([]);
     if (campaignId) void fetchRecommendations(campaignId);
@@ -80,10 +92,14 @@ export function RecommandationsClient() {
 
   function handleGenerate() {
     if (!selectedId) return;
+    const campaignId = selectedId;
     setGenerating(true);
     setRecoError(null);
-    apiGenerateRecommendations(selectedId)
-      .then(() => fetchRecommendations(selectedId))
+    apiGenerateRecommendations(campaignId)
+      .then((result) => {
+        // Réponse arrivée après un changement de campagne : on l'ignore.
+        if (selectedRef.current === campaignId) setRecommendations(result);
+      })
       .catch((error: unknown) => {
         setRecoError(error instanceof ApiError ? error.message : t.generateError);
       })
@@ -91,17 +107,19 @@ export function RecommandationsClient() {
   }
 
   const selectedCampaign = campaigns.find((c) => c.id === selectedId);
+  const generatedAt = recommendations.reduce<string | null>(
+    (latest, reco) => (!latest || reco.generatedAt > latest ? reco.generatedAt : latest),
+    null
+  );
 
   return (
     <>
       <TopBar title={dash.titles.recommendations} />
       <main className="flex-1 overflow-y-auto bg-dash-canvas">
-        <div className="mx-auto flex max-w-[860px] flex-col gap-6 px-8 py-6">
+        <div className="mx-auto flex max-w-[860px] flex-col gap-6 px-4 py-6 sm:px-8">
           <div>
             <h1 className="text-lg font-bold text-dash-heading">{dash.titles.recommendations}</h1>
-            <p className="mt-1 text-sm text-dash-muted">
-              {t.subtitle}
-            </p>
+            <p className="mt-1 text-sm text-dash-muted">{t.subtitle}</p>
           </div>
 
           {campaignsError && (
@@ -114,12 +132,10 @@ export function RecommandationsClient() {
               <select
                 value={selectedId}
                 onChange={(event) => handleSelect(event.target.value)}
-                disabled={campaignsLoading}
+                disabled={campaignsLoading || generating}
                 className="w-full appearance-none rounded-full border border-border bg-white px-5 py-3 text-sm font-medium text-dash-heading outline-none disabled:opacity-50"
               >
-                <option value="">
-                  {campaignsLoading ? t.loadingCampaigns : t.select}
-                </option>
+                <option value="">{campaignsLoading ? t.loadingCampaigns : t.select}</option>
                 {campaigns.map((campaign) => (
                   <option key={campaign.id} value={campaign.id}>
                     {campaign.name} ({dash.campaignTypes[campaign.type]})
@@ -138,53 +154,71 @@ export function RecommandationsClient() {
 
           {selectedId && (
             <div className="flex flex-col gap-4">
-              <div className="flex items-center justify-between">
-                <h2 className="text-sm font-semibold text-dash-heading">
-                  {fill(t.forCampaign, { name: selectedCampaign?.name ?? "" })}
-                </h2>
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <h2 className="text-sm font-semibold text-dash-heading">
+                    {fill(t.forCampaign, { name: selectedCampaign?.name ?? "" })}
+                  </h2>
+                  {generatedAt && !generating && (
+                    <p className="mt-0.5 text-[11px] text-dash-muted">
+                      {fill(t.generatedOn, { date: formatDate(generatedAt) })}
+                    </p>
+                  )}
+                </div>
                 <button
                   type="button"
                   onClick={handleGenerate}
-                  disabled={generating}
-                  className="flex items-center gap-2 rounded-full bg-green-accent px-5 py-2.5 text-xs font-semibold text-white disabled:opacity-50"
+                  disabled={generating || recoLoading}
+                  className="flex items-center gap-2 rounded-full bg-green-accent px-5 py-2.5 text-xs font-semibold text-white transition-opacity disabled:opacity-50"
                 >
-                  <Sparkles className="size-3.5" aria-hidden="true" />
-                  {generating ? ti.generating : ti.generate}
+                  {generating ? (
+                    <Loader2 className="size-3.5 animate-spin" aria-hidden="true" />
+                  ) : recommendations.length > 0 ? (
+                    <RefreshCw className="size-3.5" aria-hidden="true" />
+                  ) : (
+                    <Sparkles className="size-3.5" aria-hidden="true" />
+                  )}
+                  {generating ? ti.generating : recommendations.length > 0 ? t.regenerate : ti.generate}
                 </button>
               </div>
 
               {recoError && (
-                <p className="rounded-lg bg-red-50 px-4 py-2.5 text-sm font-medium text-red-600">{recoError}</p>
+                <p role="alert" className="rounded-lg bg-red-50 px-4 py-2.5 text-sm font-medium text-red-600">
+                  {recoError}
+                </p>
               )}
 
-              {recoLoading ? (
+              {generating ? (
+                <div
+                  role="status"
+                  className="flex flex-col items-center gap-3 rounded-2xl border border-blue-500/20 bg-blue-500/5 p-8 text-center"
+                >
+                  <span className="flex size-10 items-center justify-center rounded-full bg-blue-500/10">
+                    <Sparkles className="size-5 animate-pulse text-blue-500" aria-hidden="true" />
+                  </span>
+                  <p className="max-w-md text-sm text-dash-body">{t.thinking}</p>
+                </div>
+              ) : recoLoading ? (
                 <SkeletonPanel lines={3} label={t.loading} />
               ) : recommendations.length === 0 ? (
                 <div className="flex flex-col items-center gap-2 rounded-2xl border border-border-light bg-white p-10 text-center">
                   <span className="flex size-10 items-center justify-center rounded-full bg-dash-pill-bg">
                     <Lightbulb className="size-5 text-dash-muted" aria-hidden="true" />
                   </span>
-                  <p className="text-sm text-dash-muted">
-                    {t.empty}
-                  </p>
+                  <p className="text-sm text-dash-muted">{t.empty}</p>
                 </div>
               ) : (
-                <div className="flex flex-col gap-3">
-                  {recommendations.map((reco) => {
-                    const meta = priorityMeta(reco.priority);
-                    return (
-                      <div key={reco.id} className="rounded-2xl border border-border bg-white p-5">
-                        <div className="flex items-start justify-between gap-3">
-                          <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${meta.className}`}>
-                            {meta.label}
-                          </span>
-                          <span className="shrink-0 text-[11px] text-dash-muted">{formatDate(reco.generatedAt)}</span>
-                        </div>
-                        <p className="mt-3 text-sm leading-relaxed text-dash-body">{reco.content}</p>
-                      </div>
-                    );
-                  })}
-                </div>
+                <>
+                  <div className="flex flex-col gap-3">
+                    {recommendations.map((reco) => (
+                      <RecommendationCard key={reco.id} recommendation={reco} />
+                    ))}
+                  </div>
+                  <p className="flex items-start gap-1.5 text-[11px] leading-relaxed text-dash-muted">
+                    <Sparkles className="mt-0.5 size-3 shrink-0 text-blue-500" aria-hidden="true" />
+                    {t.aiNote}
+                  </p>
+                </>
               )}
             </div>
           )}

@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, TrendingUp } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/context/AuthContext";
 import { useT } from "@/i18n/client";
@@ -17,10 +17,6 @@ export function WelcomeBanner() {
           {t.hello}{firstName ? `, ${firstName}` : ""}
         </h1>
         <p className="mt-1 text-sm text-gray-text">{t.subtitle}</p>
-        <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-orange-500/10 px-3 py-1.5 text-xs font-semibold text-orange-500">
-          <TrendingUp className="size-3.5" aria-hidden="true" />
-          {t.trend}
-        </span>
       </div>
       <Button
         href="/dashboard/campagnes/nouvelle"

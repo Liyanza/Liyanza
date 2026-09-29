@@ -474,8 +474,12 @@ export interface UserProfile {
  * actuel produit "high"/"medium"/"low". */
 export interface CampaignRecommendation {
   id: string;
+  /** L'action en quelques mots (null pour les recommandations anciennes). */
+  title?: string | null;
   content: string;
   priority: string;
+  /** budget, audience, creative, channel, timing, field, radio, measurement. */
+  category?: string | null;
   generatedAt: string;
   campaignId: string;
 }
