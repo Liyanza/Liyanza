@@ -420,6 +420,8 @@ function Comparison({ comparison, fetchedAt }: { comparison: ActualPerformanceCo
       : `${f.number(comparison.spend, { maximumFractionDigits: 2 })} ${comparison.currency}`;
   const noDelivery = comparison.spend === 0 && comparison.daily.length === 0;
   const conversionType = conversionLabel(comparison.conversionAction, t);
+  // Conversions comptées = conversations WhatsApp / Messenger : on le dit.
+  const messaging = comparison.conversionAction?.includes("messaging") ?? false;
 
   return (
     <div className="flex flex-col gap-5">
@@ -453,7 +455,11 @@ function Comparison({ comparison, fetchedAt }: { comparison: ActualPerformanceCo
                 });
           return (
             <li key={metric.key} className="flex flex-col gap-1.5 rounded-lg border border-border-light p-3">
-              <p className="text-[11px] text-dash-muted">{t.metrics[metric.key]}</p>
+              <p className="text-[11px] text-dash-muted">
+                {messaging && (metric.key === "conversions" || metric.key === "cpa")
+                  ? t.messagingMetrics[metric.key]
+                  : t.metrics[metric.key]}
+              </p>
               <p className="text-lg font-bold text-dash-heading">{formatMetric(metric, metric.actual, f)}</p>
               <p className="text-[11px] text-dash-body">{reference}</p>
               <span

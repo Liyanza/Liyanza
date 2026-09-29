@@ -157,6 +157,10 @@ const dashCampaigns = {
         cpa: "Coût par conversion",
         roas: "ROAS",
       },
+      messagingMetrics: {
+        conversions: "Conversations WhatsApp / Messenger",
+        cpa: "Coût par conversation",
+      },
       status: {
         ahead: "En avance",
         on_track: "Dans les clous",

@@ -12,7 +12,9 @@ export type DigitalObjective =
   | "CONVERSION"
   | "LEADS"
   | "SALES"
-  | "TRAFFIC";
+  | "TRAFFIC"
+  /** Conversations WhatsApp / Messenger démarrées depuis la publicité. */
+  | "MESSAGES";
 
 export type BudgetAllocationType = "TOTAL" | "DAILY";
 
