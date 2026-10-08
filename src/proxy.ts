@@ -123,5 +123,12 @@ function preferredLocale(header: string | null): Locale {
 export const config = {
   // Tout sauf l'API, les fichiers internes de Next et les fichiers statiques
   // (icon.svg, robots.txt, sitemap.xml, manifest.webmanifest, images…).
-  matcher: ["/((?!api|_next|.*\\..*).*)"],
+  // Le lien de preuve porte un jeton JWT (xxx.yyy.zzz) : ses points le font
+  // passer pour un fichier, d'où les entrées explicites qui suivent.
+  matcher: [
+    "/((?!api|_next|.*\\..*).*)",
+    "/preuve-installation/:token",
+    "/:lang/preuve-installation/:token",
+    "/:lang/installation-proof/:token",
+  ],
 };
