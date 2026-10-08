@@ -38,10 +38,62 @@ const dashInsights = {
       recommandation: "Recommandation",
       annulees: "Annulées",
     },
-    comingSoon: {
-      /** {label} = nom de l'onglet. */
-      title: "{label} — Bientôt disponible",
-      text: "Cet écran n'a pas encore été maquetté. Il sera ajouté ici dès que le contenu détaillé sera disponible.",
+    restricted: "Réservé aux administrateurs et responsables marketing.",
+    recommendationIntro: "L'IA analyse les diffusions de la campagne (conformité, retards, créneaux, période) et propose des actions concrètes.",
+    alerts: {
+      loading: "Chargement des alertes…",
+      loadError: "Impossible de charger les alertes.",
+      allGood: "Aucune alerte",
+      allGoodText: "Toutes les diffusions passées sont constatées et à l'heure, et aucune n'est prévue dans les prochaines 24 h.",
+      /** {count} = nombre de diffusions. */
+      missedTitle: "{count} diffusion(s) sans constat",
+      missedText: "L'heure est passée mais rien ne confirme le passage. Vérifiez auprès de la radio, puis constatez l'heure réelle : sans constat, la diffusion compte comme manquée.",
+      missedTextReadOnly: "L'heure est passée mais rien ne confirme le passage : un responsable doit vérifier auprès de la radio.",
+      record: "Constater",
+      actualTime: "Heure réelle de diffusion",
+      confirm: "Enregistrer",
+      cancel: "Annuler",
+      recordError: "Impossible d'enregistrer le constat.",
+      /** {count} = nombre, {minutes} = seuil. */
+      lateTitle: "{count} diffusion(s) décalée(s) de plus de {minutes} min",
+      /** {minutes} = écart. */
+      lateBy: "+{minutes} min",
+      earlyBy: "−{minutes} min",
+      soonTitle: "{count} passage(s) dans les prochaines 24 h",
+    },
+    analyses: {
+      loading: "Calcul des analyses…",
+      loadError: "Impossible de charger les analyses.",
+      noData: "Pas encore de diffusion passée à analyser.",
+      compliance: "Conformité",
+      /** {broadcasted}, {missed} = nombres. */
+      complianceHint: "{broadcasted} diffusée(s), {missed} manquée(s)",
+      onTime: "Ponctualité",
+      /** {minutes} = tolérance. */
+      onTimeHint: "Diffusées à ± {minutes} min de l'heure prévue",
+      averageGap: "Écart moyen",
+      /** {count} = minutes. */
+      minutes: "{count} min",
+      /** {count} = diffusions mesurées. */
+      averageGapHint: "Sur {count} diffusion(s) constatée(s)",
+      upcoming: "À venir",
+      /** {total} = total prévu. */
+      upcomingHint: "Sur {total} diffusion(s) prévue(s)",
+      byWeekday: "Conformité par jour de la semaine",
+      byHour: "Conformité par heure de passage",
+      byWeek: "Conformité par semaine",
+      /** {date} = lundi de la semaine. */
+      weekOf: "Sem. du {date}",
+      /** {broadcasted}, {missed} = nombres. */
+      barDetail: "{broadcasted} diffusée(s), {missed} manquée(s)",
+    },
+    cancelled: {
+      loading: "Chargement…",
+      loadError: "Impossible de charger les diffusions annulées.",
+      empty: "Aucune diffusion annulée pour cette campagne.",
+      /** {count} = nombre. */
+      title: "{count} diffusion(s) annulée(s)",
+      text: "Exclues du taux de conformité : une diffusion annulée n'est pas un manquement de la radio.",
     },
     headers: {
       scheduled: "Prévue",

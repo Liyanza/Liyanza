@@ -8,19 +8,19 @@ import { OverviewTab } from "./OverviewTab";
 import { DiffusionsTab } from "./DiffusionsTab";
 import { PlanningTab } from "./PlanningTab";
 import { RapportsTab } from "./RapportsTab";
-import { ComingSoonTab } from "./ComingSoonTab";
+import { AlertsTab } from "./AlertsTab";
+import { AnalysesTab } from "./AnalysesTab";
+import { RecommendationTab } from "./RecommendationTab";
+import { CancelledTab } from "./CancelledTab";
 import { apiListCampagnes, ApiError } from "@/lib/api/client";
 import type { CampagneRecord } from "@/lib/api/types";
 import { useT } from "@/i18n/client";
 
-// Onglets sans contenu maquetté (voir ComingSoonTab).
-const COMING_SOON_TABS: MonitoringTabId[] = ["alertes", "analyses", "recommandation", "annulees"];
 
 // Le pipeline Canaux/Diffusions (AdvertisingChannel/Broadcast) qui alimente
 // ce module n'existe que pour les campagnes RADIO/POSTER, jamais DIGITAL —
-// voir CampagnesService.validateCampaignComplete côté backend. Seul RADIO
-// est réellement produit par l'assistant de création à ce stade (Affichage
-// reste désactivé, voir StepType).
+// voir CampagnesService.validateCampaignComplete côté backend. Le suivi des
+// campagnes d'affichage se fait dans Terrain (emplacements et preuves).
 export function MonitoringClient() {
   const t = useT("dashInsights").monitoring;
   const dash = useT("dash");
@@ -94,7 +94,10 @@ export function MonitoringClient() {
                 {activeTab === "diffusions" && <DiffusionsTab key={selectedId} campaignId={selectedId} />}
                 {activeTab === "planning" && <PlanningTab key={selectedId} campaignId={selectedId} />}
                 {activeTab === "rapports" && <RapportsTab key={selectedId} campaignId={selectedId} />}
-                {COMING_SOON_TABS.includes(activeTab) && <ComingSoonTab label={t.tabs[activeTab]} />}
+                {activeTab === "alertes" && <AlertsTab key={selectedId} campaignId={selectedId} />}
+                {activeTab === "analyses" && <AnalysesTab key={selectedId} campaignId={selectedId} />}
+                {activeTab === "recommandation" && <RecommendationTab key={selectedId} campaignId={selectedId} />}
+                {activeTab === "annulees" && <CancelledTab key={selectedId} campaignId={selectedId} />}
               </>
             )
           )}

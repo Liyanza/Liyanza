@@ -455,6 +455,14 @@ export function apiGetRapportConformite(campaignId: string) {
   );
 }
 
+/** Constate qu'une diffusion a eu lieu (heure réelle). 409 si déjà constatée. */
+export function apiRecordBroadcast(broadcastId: string, actualBroadcastAt: string) {
+  return authenticatedRequest<BroadcastRecord>(`/api/backend/diffusions/${broadcastId}/constat`, {
+    method: "PATCH",
+    body: JSON.stringify({ actualBroadcastAt }),
+  });
+}
+
 // ---------------------------------------------------------------------------
 // Terrain (Affichage) — PrestationsModule
 // ---------------------------------------------------------------------------
