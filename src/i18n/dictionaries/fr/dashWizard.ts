@@ -20,7 +20,7 @@ const dashWizard = {
   type: {
     title: "Quel type de campagne souhaitez-vous créer ?",
     options: {
-      digital: { title: "Campagne Digitale", description: "Facebook, Instagram, Google Ads & Email" },
+      digital: { title: "Campagne Digitale", description: "Publicités Facebook simulées puis suivies (Instagram bientôt)" },
       radio: { title: "Campagne Radio", description: "Diffusion sur les radios locales et nationales" },
       print: { title: "Supports Publicitaires", description: "Affiches, bâches, roll-ups, street marketing" },
     },
@@ -288,6 +288,49 @@ const dashWizard = {
         "Limite technique atteinte : seules les {count} premières diffusions ont été planifiées. Réduisez la fréquence ou la période pour tout couvrir.",
       monitoring: "Aller au monitoring",
       viewCampaign: "Voir la campagne",
+    },
+  },
+  /** Flux Supports publicitaires (affichage). */
+  poster: {
+    /** {product} = ce que promeut la campagne. */
+    objective: "Affichage — {product}",
+    create: "Créer la campagne",
+    placements: {
+      title: "Où seront posés vos supports ?",
+      subtitle: "Cherchez une adresse puis cliquez sur la carte à chaque emplacement. Chacun sera suivi avec sa preuve photo.",
+      kindLabel: "Type de support",
+      kinds: { poster: "Affiche", billboard: "Panneau 4x3", banner: "Bâche", rollup: "Roll-up", flyers: "Flyers" },
+      /** {kind} = type de support choisi. */
+      clickHint: "Cliquez pour placer un support ({kind})",
+      /** {count} = nombre d'emplacements. */
+      listTitle: "Emplacements ({count})",
+      empty: "Aucun emplacement pour l'instant : cliquez sur la carte pour en ajouter.",
+      showOnMap: "Voir sur la carte",
+      locationLabel: "Nom de l'emplacement",
+      dateLabel: "Date de pose",
+      remove: "Retirer cet emplacement",
+      proofNote: "Après la création, envoyez à chaque poseur un lien de preuve depuis Terrain : il photographie le support sur place, sans compte.",
+      /** {lat}, {lng} = coordonnées, en attendant le nom du lieu. */
+      pointLabel: "Point {lat}, {lng}",
+    },
+    recap: {
+      title: "Récapitulatif",
+      subtitle: "Vérifiez avant de créer la campagne et ses emplacements.",
+      name: "Campagne",
+      product: "Produit ou service",
+      budget: "Budget total",
+      period: "Période",
+      placements: "Emplacements",
+    },
+    confirmation: {
+      title: "Campagne d'affichage créée !",
+      /** {name} = nom de la campagne, {count} = emplacements créés. */
+      text: "« {name} » est créée en brouillon avec {count} emplacement(s) à suivre.",
+      /** {missing} = emplacements non enregistrés. */
+      partial: "{missing} emplacement(s) n'ont pas pu être enregistrés : ajoutez-les depuis Terrain.",
+      next: "Prochaine étape : dans Terrain, générez un lien de preuve pour chaque emplacement et envoyez-le au poseur. Les photos reçues apparaîtront sur la carte, à valider.",
+      field: "Ouvrir le suivi terrain",
+      campaigns: "Voir les campagnes",
     },
   },
 };
