@@ -54,18 +54,17 @@ export const WIZARD_STEP_COUNT = 7;
 export interface CampaignTypeOption {
   id: "digital" | "radio" | "print";
   icon: "digital" | "radio" | "print";
-  // "print" (Affichage) reste grisé : aucun flux dédié n'a été maquetté pour
-  // ce type. "radio" a désormais son propre flux (StepRadioStation et
-  // suivants, voir RadioCampaignWizard) — les étapes 2 à 6 du wizard
-  // "digital" (objectif, audience, budget, canaux, simulation) restent
-  // strictement Digital/Meta et ne s'appliquent pas au flux radio.
+  // Chaque type a son flux : "digital" (objectif, audience, budget, canaux,
+  // simulation), "radio" (station, spot, fréquence, récapitulatif) et
+  // "print" (définition, budget, emplacements sur la carte, récapitulatif),
+  // voir CampaignWizard.
   supported: boolean;
 }
 
 export const campaignTypeOptions: CampaignTypeOption[] = [
   { id: "digital", icon: "digital", supported: true },
   { id: "radio", icon: "radio", supported: true },
-  { id: "print", icon: "print", supported: false },
+  { id: "print", icon: "print", supported: true },
 ];
 
 import type { DigitalObjective } from "@/lib/api/types";

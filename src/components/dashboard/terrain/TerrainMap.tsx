@@ -56,12 +56,14 @@ const plannedDot = L.divIcon({
   iconAnchor: [6, 6],
 });
 
-const draftIcon = L.divIcon({
-  className: "",
-  html: `<span style="display:block;width:22px;height:22px;border-radius:9999px;background:#296bd6;border:3px solid white;box-shadow:0 0 0 8px rgba(41,107,214,0.25)"></span>`,
-  iconSize: [22, 22],
-  iconAnchor: [11, 11],
-});
+function draftIcon(label?: string) {
+  return L.divIcon({
+    className: "",
+    html: `<span style="display:flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:9999px;background:#296bd6;border:3px solid white;box-shadow:0 0 0 8px rgba(41,107,214,0.25);color:white;font:700 11px/1 sans-serif">${label ? escapeAttr(label) : ""}</span>`,
+    iconSize: [24, 24],
+    iconAnchor: [12, 12],
+  });
+}
 
 function ClickCapture({ onPick }: { onPick: (lat: number, lng: number) => void }) {
   useMapEvents({ click: (event) => onPick(event.latlng.lat, event.latlng.lng) });
@@ -121,8 +123,8 @@ export function TerrainMap({
   installations: InstallationRecord[];
   selectedId?: string | null;
   onSelect?: (id: string) => void;
-  /** Points en cours d'ajout (pas encore enregistrés). */
-  draftPoints?: { lat: number; lng: number }[];
+  /** Points en cours d'ajout (pas encore enregistrés), numérotés si `label`. */
+  draftPoints?: { lat: number; lng: number; label?: string }[];
   onMapClick?: (lat: number, lng: number) => void;
   /** Mode « placer un point » : curseur en croix. */
   picking?: boolean;
@@ -176,7 +178,7 @@ export function TerrainMap({
       ))}
 
       {draftPoints.map((point, index) => (
-        <Marker key={`draft-${index}`} position={[point.lat, point.lng]} icon={draftIcon} />
+        <Marker key={`draft-${index}`} position={[point.lat, point.lng]} icon={draftIcon(point.label)} />
       ))}
     </MapContainer>
   );

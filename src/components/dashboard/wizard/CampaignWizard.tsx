@@ -20,6 +20,9 @@ import { StepRadioFrequency, type RadioFrequencyData } from "./radio/StepRadioFr
 import { StepRadioRecap } from "./radio/StepRadioRecap";
 import { RadioConfirmation } from "./radio/RadioConfirmation";
 import { buildBroadcastSchedule } from "./radio/buildBroadcastSchedule";
+import { StepPosterPlacements, type PosterPlacement } from "./poster/StepPosterPlacements";
+import { StepPosterRecap } from "./poster/StepPosterRecap";
+import { PosterConfirmation } from "./poster/PosterConfirmation";
 import { WIZARD_STEP_COUNT } from "@/data/dashboard";
 import { useFormat, useT } from "@/i18n/client";
 import { fill, formatDate } from "@/i18n/format";
@@ -29,6 +32,7 @@ import { radioStations } from "@/data/radioStations";
 import {
   apiAssociateChannels,
   apiCreateCampagne,
+  apiCreatePrestation,
   apiCreateSchedule,
   ApiError,
 } from "@/lib/api/client";
@@ -54,6 +58,7 @@ interface WizardState {
   radioStation: RadioStationData;
   radioSpot: RadioSpotData;
   radioFrequency: RadioFrequencyData;
+  posterPlacements: PosterPlacement[];
 }
 
 /** Date locale (AAAA-MM-JJ) décalée de `days` jours à partir d'aujourd'hui. */
@@ -84,6 +89,7 @@ const createInitialState = (): WizardState => ({
     startDate: isoDateFromToday(0),
     endDate: isoDateFromToday(30),
   },
+  posterPlacements: [],
 });
 
 const DIGITAL_LAST_STEP = WIZARD_STEP_COUNT - 1;
@@ -95,6 +101,12 @@ const DIGITAL_LAST_STEP = WIZARD_STEP_COUNT - 1;
 // dans src/data/dashboard.ts.
 const RADIO_STEP = { STATION: 1, SPOT: 2, FREQUENCY: 3, RECAP: 4, CONFIRMATION: 5 } as const;
 const RADIO_LAST_STEP = RADIO_STEP.CONFIRMATION;
+
+// Flux Supports publicitaires : définition et budget repris du flux
+// Digital, puis les emplacements sur la carte, un récapitulatif et la
+// confirmation. Chaque emplacement devient une installation suivie dans
+// Terrain (preuve photo par lien ou par le prestataire).
+const POSTER_STEP = { DEFINITION: 1, BUDGET: 2, PLACEMENTS: 3, RECAP: 4, CONFIRMATION: 5 } as const;
 
 // StepType n'expose que 3 options (voir src/data/dashboard.ts) : leur id
 // correspond 1:1 à l'enum CampaignType du backend.
@@ -119,6 +131,31 @@ function durationInDays(start: string, end: string): number {
 }
 
 type WizardMessages = Messages["dashWizard"];
+
+/** Budget total : un budget quotidien est multiplié par la durée. */
+function totalBudget(budget: BudgetData): number {
+  const days = durationInDays(budget.startDate, budget.endDate);
+  const raw = budget.budgetType === "DAILY" ? budget.amount * days : budget.amount;
+  return Math.min(9_999_999_999, Math.max(0.01, Math.round(raw * 100) / 100));
+}
+
+function buildPosterCampagnePayload(state: WizardState, t: WizardMessages): CreateCampagnePayload | null {
+  const name = state.definition.name.trim();
+  const product = state.definition.product.trim();
+  if (!name || !product) return null;
+  const objective = [fill(t.poster.objective, { product }), state.definition.description.trim()]
+    .filter(Boolean)
+    .join(" — ")
+    .slice(0, 2000);
+  return {
+    name: name.slice(0, 200),
+    startDate: state.budget.startDate,
+    endDate: state.budget.endDate,
+    plannedBudget: totalBudget(state.budget),
+    objective,
+    type: "POSTER",
+  };
+}
 
 function formatMonthYear(iso: string, locale: Locale): string {
   const date = new Date(iso);
@@ -235,6 +272,9 @@ export function CampaignWizard() {
   const [radioCampaign, setRadioCampaign] = useState<CampagneRecord | null>(null);
   const [radioBroadcastCount, setRadioBroadcastCount] = useState(0);
   const [radioTruncated, setRadioTruncated] = useState(false);
+  const [posterSubmitting, setPosterSubmitting] = useState(false);
+  const [posterError, setPosterError] = useState<string | null>(null);
+  const [posterResult, setPosterResult] = useState<{ campaign: CampagneRecord; created: number } | null>(null);
   // Chaque canal choisi est lié à un compte actif (voir StepChannels).
   const [channelsReady, setChannelsReady] = useState(false);
 
@@ -243,9 +283,22 @@ export function CampaignWizard() {
   const channelsPayload = useMemo(() => buildChannelsPayload(state), [state]);
   const isDigital = state.type === "digital";
   const isRadio = state.type === "radio";
-  const lastStep = isRadio ? RADIO_LAST_STEP : DIGITAL_LAST_STEP;
+  const isPoster = state.type === "print";
+  const lastStep = isRadio ? RADIO_LAST_STEP : isPoster ? POSTER_STEP.CONFIRMATION : DIGITAL_LAST_STEP;
 
   const canContinue = useMemo(() => {
+    if (isPoster && stepIndex > 0) {
+      switch (stepIndex) {
+        case POSTER_STEP.DEFINITION:
+          return state.definition.name.trim().length > 0 && state.definition.product.trim().length > 0;
+        case POSTER_STEP.BUDGET:
+          return budgetIssue(state.budget) === null;
+        case POSTER_STEP.PLACEMENTS:
+          return state.posterPlacements.length > 0 && state.posterPlacements.every((p) => p.location.trim() && p.date);
+        default:
+          return true;
+      }
+    }
     if (isRadio) {
       switch (stepIndex) {
         case RADIO_STEP.STATION:
@@ -277,7 +330,46 @@ export function CampaignWizard() {
       default:
         return true;
     }
-  }, [isRadio, stepIndex, state, channelsReady]);
+  }, [isRadio, isPoster, stepIndex, state, channelsReady]);
+
+  async function submitPosterCampaign() {
+    const posterPayload = buildPosterCampagnePayload(state, t);
+    if (!posterPayload || state.posterPlacements.length === 0) {
+      setPosterError(t.errors.incomplete);
+      return;
+    }
+    setPosterSubmitting(true);
+    setPosterError(null);
+    try {
+      const campaign = await apiCreateCampagne(posterPayload);
+      const kinds = new Set(state.posterPlacements.map((p) => p.kind));
+      await apiAssociateChannels(campaign.id, {
+        channels: [{ radio: false, poster: [...kinds].some((k) => k !== "flyers"), flyer: kinds.has("flyers") }],
+      });
+      // Un par un : un échec isolé ne fait pas perdre les autres emplacements.
+      let created = 0;
+      for (const placement of state.posterPlacements) {
+        try {
+          await apiCreatePrestation(campaign.id, {
+            location: `${t.poster.placements.kinds[placement.kind]} — ${placement.location.trim()}`.slice(0, 250),
+            plannedLatitude: placement.lat,
+            plannedLongitude: placement.lng,
+            plannedInstallationDate: new Date(`${placement.date}T09:00:00`).toISOString(),
+          });
+          created += 1;
+        } catch {
+          // compté comme manquant dans la confirmation
+        }
+      }
+      setPosterResult({ campaign, created });
+      setStepDir("forward");
+      setStepIndex(POSTER_STEP.CONFIRMATION);
+    } catch (error) {
+      setPosterError(error instanceof ApiError || error instanceof Error ? error.message : dash.common.genericError);
+    } finally {
+      setPosterSubmitting(false);
+    }
+  }
 
   async function submitRadioCampaign() {
     const radioPayload = buildRadioCampagnePayload(state, t, f.locale);
@@ -323,6 +415,10 @@ export function CampaignWizard() {
   }
 
   function goNext() {
+    if (isPoster && stepIndex === POSTER_STEP.RECAP) {
+      void submitPosterCampaign();
+      return;
+    }
     if (isRadio && stepIndex === RADIO_STEP.RECAP) {
       void submitRadioCampaign();
       return;
@@ -373,9 +469,9 @@ export function CampaignWizard() {
           </div>
 
           <div>
-            {isRadio && stepIndex >= RADIO_STEP.STATION && stepIndex < RADIO_STEP.CONFIRMATION ? (
+            {(isRadio || isPoster) && stepIndex >= 1 && stepIndex < lastStep ? (
               <RadioWizardStepper stepIndex={stepIndex - 1} />
-            ) : !isRadio || stepIndex === 0 ? (
+            ) : (!isRadio && !isPoster) || stepIndex === 0 ? (
               <WizardStepper stepIndex={stepIndex} />
             ) : null}
 
@@ -383,13 +479,13 @@ export function CampaignWizard() {
             <div key={stepIndex} className={stepDir === "back" ? "dash-step-back" : "dash-step-forward"}>
               {stepIndex === 0 && <StepType value={state.type} onChange={(type) => setState((prev) => ({ ...prev, type }))} />}
 
-              {!isRadio && stepIndex === 1 && (
+              {!isRadio && !isPoster && stepIndex === 1 && (
                 <StepDefinition
                   data={state.definition}
                   onChange={(definition) => setState((prev) => ({ ...prev, definition }))}
                 />
               )}
-              {!isRadio && stepIndex === 2 && (
+              {!isRadio && !isPoster && stepIndex === 2 && (
                 <StepObjective
                   value={state.objective}
                   onChange={(objective) => setState((prev) => ({ ...prev, objective }))}
@@ -397,20 +493,58 @@ export function CampaignWizard() {
                   onCustomObjectiveChange={(customObjective) => setState((prev) => ({ ...prev, customObjective }))}
                 />
               )}
-              {!isRadio && stepIndex === 3 && (
+              {!isRadio && !isPoster && stepIndex === 3 && (
                 <StepAudience data={state.audience} onChange={(audience) => setState((prev) => ({ ...prev, audience }))} />
               )}
-              {!isRadio && stepIndex === 4 && (
+              {!isRadio && !isPoster && stepIndex === 4 && (
                 <StepBudget data={state.budget} onChange={(budget) => setState((prev) => ({ ...prev, budget }))} />
               )}
-              {!isRadio && stepIndex === 5 && (
+              {!isRadio && !isPoster && stepIndex === 5 && (
                 <StepChannels value={state.channels} onToggle={toggleChannel} onReadyChange={setChannelsReady} />
               )}
-              {!isRadio && stepIndex === 6 && (
+              {!isRadio && !isPoster && stepIndex === 6 && (
                 <StepSimulation
                   payload={payload}
                   digitalDetailsPayload={isDigital ? digitalDetailsPayload : null}
                   channelsPayload={isDigital ? channelsPayload : null}
+                />
+              )}
+
+              {isPoster && stepIndex === POSTER_STEP.DEFINITION && (
+                <StepDefinition
+                  data={state.definition}
+                  onChange={(definition) => setState((prev) => ({ ...prev, definition }))}
+                />
+              )}
+              {isPoster && stepIndex === POSTER_STEP.BUDGET && (
+                <StepBudget data={state.budget} onChange={(budget) => setState((prev) => ({ ...prev, budget }))} />
+              )}
+              {isPoster && stepIndex === POSTER_STEP.PLACEMENTS && (
+                <StepPosterPlacements
+                  value={state.posterPlacements}
+                  onChange={(posterPlacements) => setState((prev) => ({ ...prev, posterPlacements }))}
+                  defaultDate={state.budget.startDate}
+                  minDate={state.budget.startDate}
+                  maxDate={state.budget.endDate}
+                />
+              )}
+              {isPoster && stepIndex === POSTER_STEP.RECAP && (
+                <StepPosterRecap
+                  name={state.definition.name.trim()}
+                  product={state.definition.product.trim()}
+                  budget={totalBudget(state.budget)}
+                  startDate={state.budget.startDate}
+                  endDate={state.budget.endDate}
+                  placements={state.posterPlacements}
+                  error={posterError}
+                />
+              )}
+              {isPoster && stepIndex === POSTER_STEP.CONFIRMATION && posterResult && (
+                <PosterConfirmation
+                  campaignId={posterResult.campaign.id}
+                  campaignName={posterResult.campaign.name}
+                  created={posterResult.created}
+                  requested={state.posterPlacements.length}
                 />
               )}
 
@@ -454,8 +588,15 @@ export function CampaignWizard() {
               <WizardFooterNav
                 onBack={goBack}
                 onNext={goNext}
-                nextDisabled={!canContinue || radioSubmitting}
-                nextLabel={isRadio && stepIndex === RADIO_STEP.RECAP && radioSubmitting ? t.creating : t.continue}
+                nextDisabled={!canContinue || radioSubmitting || posterSubmitting}
+                nextLabel={
+                  (isRadio && stepIndex === RADIO_STEP.RECAP && radioSubmitting) ||
+                  (isPoster && stepIndex === POSTER_STEP.RECAP && posterSubmitting)
+                    ? t.creating
+                    : isPoster && stepIndex === POSTER_STEP.RECAP
+                      ? t.poster.create
+                      : t.continue
+                }
                 showBack={stepIndex > 0}
               />
             )}
