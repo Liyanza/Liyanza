@@ -618,7 +618,8 @@ export interface RapportConformite {
 
 export interface CreatePrestationPayload {
   location: string;
-  providerId: string;
+  /** Facultatif : sans prestataire, la preuve arrive par le lien de preuve. */
+  providerId?: string;
   plannedLatitude: number;
   plannedLongitude: number;
   plannedInstallationDate: string;

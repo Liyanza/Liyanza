@@ -4,25 +4,47 @@
  */
 const dashField = {
   terrain: {
-    searchPlaceholder: "Rechercher un panneau...",
+    searchPlaceholder: "Rechercher un emplacement…",
     mapLoading: "Chargement de la carte...",
     loadError: "Impossible de charger le suivi terrain.",
-    missingFields: "Remplissez tous les champs et placez un point sur la carte.",
+    missingFields: "Indiquez le nom, la campagne et la date, et placez un point sur la carte.",
     createError: "Impossible de créer ce panneau.",
     title: "Suivi terrain",
-    subtitle:
-      "Panneaux/affiches suivis par géolocalisation — vert : preuve validée (placée à l'endroit où la photo a été prise), bleu : preuve à valider, rouge : preuve refusée, gris : en attente de preuve.",
-    add: "Ajouter un panneau",
+    subtitle: "Emplacements d'affichage et preuves photo : cliquez sur un emplacement pour le voir sur la carte.",
+    add: "Ajouter un emplacement",
+    /** Filtres et liste. */
+    campaignFilter: "Filtrer par campagne",
+    allCampaigns: "Toutes les campagnes",
+    stateFilter: "Filtrer par état de la preuve",
+    filterAll: "Tous",
+    noMatch: "Aucun emplacement ne correspond à ces filtres.",
+    emptyManager: "Aucun emplacement pour le moment. Cliquez sur « Ajouter un emplacement » puis sur la carte.",
+    /** {shown}, {total} = nombres d'emplacements. */
+    shown: "{shown} emplacement(s) affiché(s) sur {total}",
+    gapBadge: "Lieu à vérifier",
+    /** {date} = date de pose prévue. */
+    plannedOn: "pose prévue le {date}",
+    closeDetail: "Fermer la fiche",
+    linkHint: "Envoyez ce lien à la personne qui pose le support : elle prend la photo sur place, sans compte.",
+    /** Ajout d'un emplacement. */
+    addressPlaceholder: "Rechercher une adresse (ex. Carrefour Ndokoti)",
+    addressNoResult: "Aucune adresse trouvée.",
+    locationLabel: "Nom de l'emplacement",
+    campaignLabel: "Campagne",
+    dateLabel: "Date de pose",
+    providerLabel: "Prestataire (facultatif)",
+    providerNone: "Aucun : preuve par lien",
+    providerHint: "Sans prestataire inscrit, générez ensuite un lien de preuve à envoyer au poseur.",
     /** {lat}, {lng} = coordonnées du point placé. */
     pointPlaced: "Point placé ({lat}, {lng}) — complétez le formulaire ci-dessous.",
-    clickMap: "Cliquez sur la carte à l'endroit exact où le panneau doit être installé.",
-    newPanel: "Nouveau panneau",
+    clickMap: "Cherchez l'adresse ou déplacez la carte, puis cliquez à l'endroit exact du support.",
+    newPanel: "Nouvel emplacement",
     locationPlaceholder: "Lieu (ex : Rond-point Akwa)",
     campaignPlaceholder: "Campagne...",
     providerPlaceholder: "Prestataire...",
     noProvider: "Aucun prestataire — invitez-en un avec le rôle Prestataire depuis Équipes.",
     creating: "Création...",
-    create: "Créer le panneau",
+    create: "Ajouter l'emplacement",
     /** {count} = nombre de panneaux. */
     panels: "Panneaux ({count})",
     loading: "Chargement des panneaux…",

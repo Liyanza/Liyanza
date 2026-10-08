@@ -7,10 +7,11 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: (await getMessages("dash")).titles.terrain };
 }
 
-export default function TerrainPage() {
+export default async function TerrainPage({ searchParams }: { searchParams: Promise<{ campagne?: string }> }) {
+  const { campagne = "" } = await searchParams;
   return (
     <RoleGate allow={["ADMIN", "MARKETING_MANAGER", "COMMUNITY_MANAGER"]}>
-      <TerrainClient />
+      <TerrainClient initialCampaignId={campagne} />
     </RoleGate>
   );
 }
