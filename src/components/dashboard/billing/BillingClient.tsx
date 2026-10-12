@@ -280,6 +280,7 @@ function CheckoutForm({
   const f = useFormat();
   const [country, setCountry] = useState("CM");
   const [phone, setPhone] = useState("");
+  const [discountCode, setDiscountCode] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const amount = t.prices[plan][period];
@@ -295,13 +296,20 @@ function CheckoutForm({
     }
     setSubmitting(true);
     setError(null);
-    apiStartCheckout({ plan, period, phone: { number: digits, countryCode: country } }).then(
+    const code = discountCode.trim();
+    apiStartCheckout({
+      plan,
+      period,
+      phone: { number: digits, countryCode: country },
+      ...(code && { discountCode: code }),
+    }).then(
       (result) => {
         if (result.checkoutUrl) window.location.assign(result.checkoutUrl);
         else onCompleted();
       },
       (err: unknown) => {
-        setError(err instanceof ApiError && err.status !== 502 && err.status !== 503 ? err.message : t.checkoutError);
+        if (err instanceof ApiError && err.code === "DISCOUNT_INVALID") setError(t.discountInvalid);
+        else setError(err instanceof ApiError && err.status !== 502 && err.status !== 503 ? err.message : t.checkoutError);
         setSubmitting(false);
       }
     );
@@ -347,6 +355,20 @@ function CheckoutForm({
         </label>
       </div>
       <p className="mt-2 text-xs text-dash-muted">{t.phoneHint}</p>
+      <label className="mt-3 flex max-w-xs flex-col gap-1 text-xs font-semibold text-dash-muted">
+        {t.discountCode}
+        <input
+          type="text"
+          value={discountCode}
+          onChange={(event) => setDiscountCode(event.target.value)}
+          maxLength={100}
+         
+          spellCheck={false}
+          placeholder={t.discountPlaceholder}
+          className="rounded-lg border border-border bg-white px-3 py-2 text-sm text-dash-heading outline-none focus:border-green-accent-dark"
+        />
+      </label>
+      <p className="mt-1 text-xs text-dash-muted">{t.discountHint}</p>
       <p className="mt-1 text-xs text-dash-muted">{t.stacking}</p>
       {error && <p className="mt-3 text-xs font-medium text-red-600">{error}</p>}
       <div className="mt-4 flex flex-wrap items-center gap-2">
