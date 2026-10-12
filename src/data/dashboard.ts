@@ -1,8 +1,8 @@
 export interface NavItem {
   href: string;
   /** Clé du libellé dans dash.nav (dictionnaire). */
-  key: "home" | "campaigns" | "monitoring" | "terrain" | "assistant" | "recommendations" | "reports" | "teams" | "company" | "profile" | "notifications" | "help";
-  icon: "home" | "campaigns" | "monitoring" | "terrain" | "assistant" | "ai" | "reports" | "teams" | "company" | "profile" | "notifications" | "help";
+  key: "home" | "campaigns" | "monitoring" | "terrain" | "assistant" | "recommendations" | "reports" | "teams" | "company" | "billing" | "profile" | "notifications" | "help";
+  icon: "home" | "campaigns" | "monitoring" | "terrain" | "assistant" | "ai" | "reports" | "teams" | "company" | "billing" | "profile" | "notifications" | "help";
 }
 
 // "Monitoring" : réintroduit (maquette Figma "MARKETED-OSC-2026", frames
@@ -28,6 +28,7 @@ export const mainNavItems: NavItem[] = [
 
 export const settingsNavItems: NavItem[] = [
   { href: "/dashboard/entreprise", key: "company", icon: "company" },
+  { href: "/dashboard/abonnement", key: "billing", icon: "billing" },
   { href: "/dashboard/profil", key: "profile", icon: "profile" },
   { href: "/dashboard/notifications", key: "notifications", icon: "notifications" },
   { href: "/dashboard/aide", key: "help", icon: "help" },

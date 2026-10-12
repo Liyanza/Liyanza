@@ -166,6 +166,90 @@ const dashAccount = {
     markRead: "Marquer comme lue",
     pagination: "Affichage de {start} à {end} sur {total} notifications",
   },
+  billing: {
+    trialShort: "essai",
+    loading: "Chargement de l'abonnement…",
+    loadError: "Impossible de charger votre abonnement.",
+    current: "Offre actuelle",
+    sources: { PAID: "Abonnement actif", TRIAL: "Essai gratuit", FREE: "Offre gratuite" },
+    /** {date} = date de fin. */
+    paidUntil: "Valable jusqu'au {date}.",
+    /** {days} = jours restants, {date} = fin de l'essai. */
+    trialUntil: "Essai PRO : encore {days} j, jusqu'au {date}. Ensuite, retour à l'offre gratuite sauf souscription.",
+    freeText: "Passez à PRO pour mener plusieurs campagnes, utiliser toute l'IA et travailler en équipe.",
+    usageTitle: "Utilisation",
+    usage: {
+      campaigns: "Campagnes en cours",
+      members: "Membres de l'équipe",
+      copilot: "Questions au Copilot aujourd'hui",
+    },
+    unlimited: "illimité",
+    plansTitle: "Choisir une offre",
+    monthly: "Mensuel",
+    yearly: "Annuel",
+    yearlyHint: "2 mois offerts",
+    perMonth: "par mois",
+    perYear: "par an",
+    prices: {
+      PRO: { MONTHLY: "20 000 FCFA", YEARLY: "240 000 FCFA" },
+      BUSINESS: { MONTHLY: "30 000 FCFA", YEARLY: "360 000 FCFA" },
+    },
+    features: {
+      PRO: [
+        "Campagnes illimitées",
+        "Scénarios et recommandations IA",
+        "Copilot illimité",
+        "Monitoring avancé",
+        "Jusqu'à 3 membres",
+      ],
+      BUSINESS: ["Tout PRO inclus", "Équipe illimitée", "Gestion des accès", "Reporting avancé"],
+    },
+    currentPlan: "Votre offre",
+    /** {plan} = PRO ou BUSINESS. */
+    choose: "Choisir {plan}",
+    extend: "Prolonger",
+    payTitle: "Paiement",
+    /** {plan} = offre, {period} = mensuel/annuel, {amount} = prix. */
+    paySummary: "{plan} · {period} · {amount}",
+    country: "Pays",
+    phone: "Numéro Mobile Money",
+    phoneHint: "Chiffres uniquement, sans indicatif. Chariow vous proposera Orange Money, MTN MoMo ou la carte bancaire.",
+    phoneInvalid: "Saisissez un numéro de 6 à 15 chiffres.",
+    pay: "Payer {amount}",
+    redirecting: "Redirection vers le paiement…",
+    cancel: "Annuler",
+    checkoutError: "Le paiement n'a pas pu démarrer. Réessayez dans un instant.",
+    stacking: "Une offre déjà en cours n'est pas perdue : la nouvelle période s'ajoute à sa suite.",
+    adminOnly: "Seul un administrateur de l'entreprise peut souscrire ou prolonger une offre.",
+    unavailable: "Le paiement en ligne n'est pas encore ouvert. Écrivez-nous pour souscrire.",
+    returnPending: "Paiement en cours de confirmation par Chariow…",
+    /** {plan} = offre activée. */
+    returnSuccess: "Paiement confirmé : l'offre {plan} est active.",
+    returnTimeout:
+      "La confirmation tarde. Si vous avez payé, l'offre apparaîtra ici dès réception, vous pouvez fermer cette page.",
+    historyTitle: "Historique des paiements",
+    historyEmpty: "Aucun paiement pour l'instant.",
+    historyHeaders: { date: "Date", plan: "Offre", validity: "Validité", amount: "Montant", status: "Statut" },
+    periods: { MONTHLY: "Mensuel", YEARLY: "Annuel" },
+    statuses: { ACTIVE: "Payé", REVOKED: "Annulé" },
+    /** {start} – {end}. */
+    validity: "{start} – {end}",
+    limit: {
+      /** {limit} = nombre autorisé par l'offre. */
+      campaigns: "L'offre gratuite permet {limit} campagne en cours à la fois.",
+      members: "Votre offre permet {limit} membre(s) dans l'équipe.",
+      copilot: "Vous avez utilisé vos {limit} questions au Copilot du jour.",
+      aiAdvanced: "Cette fonction IA est réservée aux offres PRO et BUSINESS.",
+      generic: "Cette action dépasse les limites de votre offre.",
+      /** {plan} = offre requise. */
+      upgrade: "Passer à {plan}",
+    },
+    locked: {
+      title: "Réservé aux offres PRO et BUSINESS",
+      text: "Analyses détaillées, alertes et conseils de l'IA sur vos diffusions radio.",
+      cta: "Voir les offres",
+    },
+  },
   profile: {
     loadError: "Impossible de charger votre profil.",
     loading: "Chargement du profil…",

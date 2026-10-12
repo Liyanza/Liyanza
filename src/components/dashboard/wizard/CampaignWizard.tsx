@@ -29,6 +29,7 @@ import { fill, formatDate } from "@/i18n/format";
 import type { Locale } from "@/i18n/config";
 import type { Messages } from "@/i18n/dictionaries";
 import { radioStations } from "@/data/radioStations";
+import { CampaignQuotaNotice } from "@/components/dashboard/billing/PlanLimitNotice";
 import {
   apiAssociateChannels,
   apiCreateCampagne,
@@ -450,6 +451,7 @@ export function CampaignWizard() {
       <TopBar title={dash.titles.campaigns} />
       <main className="flex-1 overflow-y-auto bg-dash-wizard-canvas">
         <div className="mx-auto flex max-w-[1295px] flex-col gap-3 px-8 py-6">
+          <CampaignQuotaNotice />
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-xs">
               <Link href="/dashboard/campagnes" className="flex items-center gap-1 font-semibold text-dash-body hover:text-black">

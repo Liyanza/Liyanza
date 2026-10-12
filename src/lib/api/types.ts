@@ -672,3 +672,55 @@ export interface SubmitProofViaLinkResult {
   distanceMeters: number;
   locationMatch: boolean;
 }
+
+// ---------------------------------------------------------------------------
+// Abonnement (offres payées via Chariow)
+// ---------------------------------------------------------------------------
+
+export type PlanTier = "FREE" | "PRO" | "BUSINESS";
+export type PaidPlanTier = Exclude<PlanTier, "FREE">;
+export type BillingPeriod = "MONTHLY" | "YEARLY";
+
+/** Limites de l'offre en cours ; `null` = illimité. */
+export interface PlanLimits {
+  maxActiveCampaigns: number | null;
+  maxMembers: number | null;
+  copilotDailyMessages: number | null;
+  aiAdvanced: boolean;
+  advancedMonitoring: boolean;
+}
+
+export interface SubscriptionPurchase {
+  id: string;
+  plan: PaidPlanTier;
+  period: BillingPeriod;
+  status: "ACTIVE" | "REVOKED";
+  startsAt: string;
+  expiresAt: string;
+  amount: string | null;
+  createdAt: string;
+}
+
+export interface BillingSubscription {
+  plan: PlanTier;
+  /** PAID : offre achetée ; TRIAL : essai PRO de 14 jours ; FREE : sans offre. */
+  source: "PAID" | "TRIAL" | "FREE";
+  expiresAt: string | null;
+  trialEndsAt: string | null;
+  limits: PlanLimits;
+  usage: { activeCampaigns: number; members: number; copilotMessagesToday: number };
+  billingEnabled: boolean;
+  history: SubscriptionPurchase[];
+}
+
+export interface CheckoutPayload {
+  plan: PaidPlanTier;
+  period: BillingPeriod;
+  phone: { number: string; countryCode: string };
+}
+
+export interface CheckoutResult {
+  /** Page de paiement Chariow ; null si la vente n'exige pas de paiement. */
+  checkoutUrl: string | null;
+  step?: "completed" | "already_purchased";
+}

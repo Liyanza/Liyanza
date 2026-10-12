@@ -5,6 +5,7 @@ import {
   Bell,
   Building2,
   CircleHelp,
+  CreditCard,
   HomeIcon,
   MapPin,
   Megaphone,
@@ -19,6 +20,7 @@ import {
 import { Logo } from "@/components/Logo";
 import { mainNavItems, settingsNavItems, type NavItem } from "@/data/dashboard";
 import { useT } from "@/i18n/client";
+import { usePlan } from "@/context/PlanContext";
 
 const icons: Record<NavItem["icon"], LucideIcon> = {
   home: HomeIcon,
@@ -30,6 +32,7 @@ const icons: Record<NavItem["icon"], LucideIcon> = {
   reports: FileBarChart2,
   teams: Users,
   company: Building2,
+  billing: CreditCard,
   profile: User,
   notifications: Bell,
   help: CircleHelp,
@@ -50,7 +53,25 @@ function NavLink({ item, active }: { item: NavItem; active: boolean }) {
     >
       <Icon className="size-4" strokeWidth={2} aria-hidden="true" />
       {t[item.key]}
+      {item.key === "billing" && <PlanBadge />}
     </Link>
+  );
+}
+
+/** Offre en cours à côté du lien Abonnement (« PRO · essai » pendant l'essai). */
+function PlanBadge() {
+  const { subscription } = usePlan();
+  const t = useT("dashAccount").billing;
+  if (!subscription) return null;
+  const label = subscription.source === "TRIAL" ? `${subscription.plan} · ${t.trialShort}` : subscription.plan;
+  return (
+    <span
+      className={`ml-auto rounded-full px-2 py-0.5 text-[9px] font-bold tracking-[0.04em] ${
+        subscription.plan === "FREE" ? "bg-slate-100 text-dash-muted" : "bg-green-accent-dark/10 text-green-700"
+      }`}
+    >
+      {label}
+    </span>
   );
 }
 

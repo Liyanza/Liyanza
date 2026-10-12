@@ -15,12 +15,17 @@ import { CancelledTab } from "./CancelledTab";
 import { apiListCampagnes, ApiError } from "@/lib/api/client";
 import type { CampagneRecord } from "@/lib/api/types";
 import { useT } from "@/i18n/client";
-
+import { usePlan } from "@/context/PlanContext";
+import { LockedFeature } from "@/components/dashboard/billing/PlanLimitNotice";
 
 // Le pipeline Canaux/Diffusions (AdvertisingChannel/Broadcast) qui alimente
 // ce module n'existe que pour les campagnes RADIO/POSTER, jamais DIGITAL —
 // voir CampagnesService.validateCampaignComplete côté backend. Le suivi des
 // campagnes d'affichage se fait dans Terrain (emplacements et preuves).
+
+/** Onglets du monitoring avancé, réservés aux offres PRO et BUSINESS. */
+const PAID_TABS: MonitoringTabId[] = ["alertes", "analyses", "recommandation"];
+
 export function MonitoringClient() {
   const t = useT("dashInsights").monitoring;
   const dash = useT("dash");
@@ -29,6 +34,8 @@ export function MonitoringClient() {
   const [campaignsError, setCampaignsError] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState("");
   const [activeTab, setActiveTab] = useState<MonitoringTabId>("overview");
+  // Monitoring avancé (offres PRO/BUSINESS) ; ouvert tant que l'offre n'est pas chargée.
+  const advanced = usePlan().subscription?.limits.advancedMonitoring ?? true;
 
   useEffect(() => {
     apiListCampagnes({ type: "RADIO", limit: 100 }).then(
@@ -94,9 +101,15 @@ export function MonitoringClient() {
                 {activeTab === "diffusions" && <DiffusionsTab key={selectedId} campaignId={selectedId} />}
                 {activeTab === "planning" && <PlanningTab key={selectedId} campaignId={selectedId} />}
                 {activeTab === "rapports" && <RapportsTab key={selectedId} campaignId={selectedId} />}
-                {activeTab === "alertes" && <AlertsTab key={selectedId} campaignId={selectedId} />}
-                {activeTab === "analyses" && <AnalysesTab key={selectedId} campaignId={selectedId} />}
-                {activeTab === "recommandation" && <RecommendationTab key={selectedId} campaignId={selectedId} />}
+                {PAID_TABS.includes(activeTab) && !advanced ? (
+                  <LockedFeature />
+                ) : (
+                  <>
+                    {activeTab === "alertes" && <AlertsTab key={selectedId} campaignId={selectedId} />}
+                    {activeTab === "analyses" && <AnalysesTab key={selectedId} campaignId={selectedId} />}
+                    {activeTab === "recommandation" && <RecommendationTab key={selectedId} campaignId={selectedId} />}
+                  </>
+                )}
                 {activeTab === "annulees" && <CancelledTab key={selectedId} campaignId={selectedId} />}
               </>
             )

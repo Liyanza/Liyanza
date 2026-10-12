@@ -6,6 +6,23 @@ import { useT } from "@/i18n/client";
 import { MarkdownText } from "@/components/chat/MarkdownText";
 import { SkeletonPanel } from "@/components/dashboard/ui/Skeleton";
 import { COPILOT_MAX_MESSAGE_LENGTH, useCopilot, type CopilotMessage } from "./CopilotProvider";
+import { Link } from "@/i18n/navigation";
+import { fill } from "@/i18n/format";
+import { usePlan } from "@/context/PlanContext";
+
+/** Quota de questions du jour atteint (offre gratuite) : lien vers les offres. */
+function CopilotQuotaMessage() {
+  const t = useT("dashAccount").billing.limit;
+  const { subscription } = usePlan();
+  return (
+    <span>
+      {fill(t.copilot, { limit: subscription?.limits.copilotDailyMessages ?? 5 })}{" "}
+      <Link href="/dashboard/abonnement" className="font-semibold underline">
+        {fill(t.upgrade, { plan: "PRO" })}
+      </Link>
+    </span>
+  );
+}
 
 /**
  * Conversation courante du Copilot. Purement une vue : tout l'état vit dans
@@ -80,7 +97,15 @@ export function CopilotChat({ variant }: { variant: "panel" | "page" }) {
               className="flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3.5 py-2.5 text-xs leading-[1.5] text-[#6b4e16]"
             >
               <AlertTriangle className="mt-px size-3.5 shrink-0" aria-hidden="true" />
-              {notice === "noCompany" ? t.noCompany : notice === "loadError" ? t.loadError : t.error}
+              {notice === "planLimit" ? (
+                <CopilotQuotaMessage />
+              ) : notice === "noCompany" ? (
+                t.noCompany
+              ) : notice === "loadError" ? (
+                t.loadError
+              ) : (
+                t.error
+              )}
             </div>
           )}
         </div>
