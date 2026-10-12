@@ -4,6 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { useAuth } from "@/context/AuthContext";
 import {
   ApiError,
+  isPlanLimitError,
   apiCreateConversation,
   apiGetConversation,
   apiRegenerateLastAnswer,
@@ -33,7 +34,7 @@ const TOPIC_MAX_LENGTH = 80;
  */
 export type CopilotMessage = Pick<AiMessageRecord, "id" | "content" | "sender" | "feedback"> & { local?: boolean };
 
-export type CopilotNotice = "error" | "noCompany" | "loadError" | null;
+export type CopilotNotice = "error" | "noCompany" | "loadError" | "planLimit" | null;
 
 interface CopilotContextValue {
   enabled: boolean;
@@ -170,8 +171,9 @@ export function CopilotProvider({ children }: { children: ReactNode }) {
           // disparaît (la question reste affichée, avec l'erreur).
           setMessages((prev) => prev.filter((m) => m.id !== answerId));
           if (activeRef.current === startedIn || !startedIn) {
+            // 403 PLAN_LIMIT : quota de questions du jour de l'offre gratuite.
             const noCompany = error instanceof ApiError && error.status === 403;
-            setNotice(noCompany ? "noCompany" : "error");
+            setNotice(isPlanLimitError(error) ? "planLimit" : noCompany ? "noCompany" : "error");
           }
         }
       ).finally(() => {
@@ -213,8 +215,8 @@ export function CopilotProvider({ children }: { children: ReactNode }) {
           if (activeRef.current !== id) return;
           setMessages((prev) => prev.map((m) => (m.id === message.id ? message : m)));
         },
-        () => {
-          if (activeRef.current === id) setNotice("error");
+        (error: unknown) => {
+          if (activeRef.current === id) setNotice(isPlanLimitError(error) ? "planLimit" : "error");
         }
       )
       .finally(() => {

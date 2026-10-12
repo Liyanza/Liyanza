@@ -22,6 +22,8 @@ const ALLOWED_PREFIXES = [
   "conversations",
   // PATCH /diffusions/:id/constat (monitoring radio).
   "diffusions",
+  // GET /billing/subscription, POST /billing/checkout (abonnement).
+  "billing",
 ];
 
 // Statuts "null body" au sens de la spec Fetch (204/205/304) : construire une

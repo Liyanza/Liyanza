@@ -4,6 +4,7 @@ import { Sidebar } from "@/components/dashboard/layout/Sidebar";
 import { CopilotProvider } from "@/components/dashboard/copilot/CopilotProvider";
 import { CopilotPanel } from "@/components/dashboard/copilot/CopilotPanel";
 import { AuthProvider } from "@/context/AuthContext";
+import { PlanProvider } from "@/context/PlanContext";
 import { MessagesProvider } from "@/i18n/client";
 import { getMessages } from "@/i18n/server";
 
@@ -29,14 +30,16 @@ export default async function DashboardLayout({ children }: { children: ReactNod
   return (
     <MessagesProvider messages={{ dash, dashCampaigns, dashWizard, dashInsights, dashAccount, dashField }}>
       <AuthProvider>
-        {/* Copilot (assistant IA) : disponible sur toutes les pages du dashboard. */}
-        <CopilotProvider>
-          <div className="flex h-screen w-full overflow-hidden bg-white">
-            <Sidebar />
-            <div className="flex min-w-0 flex-1 flex-col">{children}</div>
-          </div>
-          <CopilotPanel />
-        </CopilotProvider>
+        <PlanProvider>
+          {/* Copilot (assistant IA) : disponible sur toutes les pages du dashboard. */}
+          <CopilotProvider>
+            <div className="flex h-screen w-full overflow-hidden bg-white">
+              <Sidebar />
+              <div className="flex min-w-0 flex-1 flex-col">{children}</div>
+            </div>
+            <CopilotPanel />
+          </CopilotProvider>
+        </PlanProvider>
       </AuthProvider>
     </MessagesProvider>
   );

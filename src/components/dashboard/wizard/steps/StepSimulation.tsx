@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { AlertTriangle, CheckCircle2, RefreshCw } from "lucide-react";
 import { CircularProgress } from "./CircularProgress";
+import { PlanLimitNotice } from "@/components/dashboard/billing/PlanLimitNotice";
 import { useT } from "@/i18n/client";
 import {
   apiCreateCampagne,
@@ -11,6 +12,7 @@ import {
   apiSelectDigitalChannels,
   apiUpsertDigitalDetails,
   ApiError,
+  isPlanLimitError,
 } from "@/lib/api/client";
 import type {
   CreateCampagnePayload,
@@ -39,6 +41,7 @@ export function StepSimulation({
   const checklist = t.simulation.checklist;
   const [percent, setPercent] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [planError, setPlanError] = useState<unknown>(null);
   const runningRef = useRef(false);
 
   const isDigital = Boolean(digitalDetailsPayload && channelsPayload);
@@ -86,6 +89,7 @@ export function StepSimulation({
       })
       .catch((err: unknown) => {
         setError(err instanceof ApiError ? err.message : common.genericError);
+        setPlanError(isPlanLimitError(err) ? err : null);
         runningRef.current = false;
       });
   }
@@ -94,6 +98,14 @@ export function StepSimulation({
     void runSubmission();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  if (planError) {
+    return (
+      <div className="px-5 pb-6 pt-3.5">
+        <PlanLimitNotice error={planError} />
+      </div>
+    );
+  }
 
   if (error) {
     return (

@@ -6,11 +6,13 @@ import { TopBar } from "@/components/dashboard/layout/TopBar";
 import { useAuth } from "@/context/AuthContext";
 import {
   apiCreateSubAccount,
+  isPlanLimitError,
   apiDeactivateUser,
   apiListUsers,
   apiUpdateUserRole,
   ApiError,
 } from "@/lib/api/client";
+import { PlanLimitNotice } from "@/components/dashboard/billing/PlanLimitNotice";
 import type { CompanyMember, Role } from "@/lib/api/types";
 import { useT } from "@/i18n/client";
 import { fill } from "@/i18n/format";
@@ -33,6 +35,7 @@ export function EquipesClient() {
   const [form, setForm] = useState(EMPTY_FORM);
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const [planError, setPlanError] = useState<unknown>(null);
   const [invitedName, setInvitedName] = useState<string | null>(null);
 
   const [pendingId, setPendingId] = useState<string | null>(null);
@@ -59,6 +62,7 @@ export function EquipesClient() {
     event.preventDefault();
     setSubmitting(true);
     setFormError(null);
+    setPlanError(null);
     apiCreateSubAccount(form).then(
       (result) => {
         if (result.status === "INVITED") {
@@ -73,7 +77,8 @@ export function EquipesClient() {
         setSubmitting(false);
       },
       (error: unknown) => {
-        setFormError(error instanceof ApiError ? error.message : tt.createError);
+        if (isPlanLimitError(error)) setPlanError(error);
+        else setFormError(error instanceof ApiError ? error.message : tt.createError);
         setSubmitting(false);
       }
     );
@@ -143,6 +148,7 @@ export function EquipesClient() {
                 {tt.inviteText}
               </p>
               {formError && <p className="mt-3 text-sm text-red-600">{formError}</p>}
+              <PlanLimitNotice error={planError} className="mt-3" />
               <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <input
                   required

@@ -54,6 +54,9 @@ import type {
   SubmitProofViaLinkResult,
   UpsertDigitalDetailsPayload,
   UserProfile,
+  BillingSubscription,
+  CheckoutPayload,
+  CheckoutResult,
 } from "./types";
 
 /** Erreur normalisée à partir d'une réponse d'erreur NestJS (`{message, statusCode}`). */
@@ -61,11 +64,14 @@ export class ApiError extends Error {
   status: number;
   /** Code métier renvoyé par le backend (ex. META_ADS_NOT_CONNECTED). */
   code?: string;
+  /** Corps d'erreur complet quand un code est présent (ex. limites d'offre de PLAN_LIMIT). */
+  details?: Record<string, unknown>;
 
-  constructor(status: number, message: string, code?: string) {
+  constructor(status: number, message: string, code?: string, details?: Record<string, unknown>) {
     super(message);
     this.status = status;
     this.code = code;
+    this.details = details;
   }
 }
 
@@ -125,7 +131,8 @@ async function request<T>(url: string, init?: RequestInit): Promise<T> {
     throw new ApiError(
       response.status,
       extractMessage(body, networkMessages().generic),
-      (body as NestErrorBody | null)?.code
+      (body as NestErrorBody | null)?.code,
+      body as Record<string, unknown> | undefined
     );
   }
 
@@ -209,7 +216,12 @@ async function streamRequest<TDone>(url: string, body: unknown, onDelta: (text: 
   if (!response.ok) {
     const errorBody: unknown = await response.json().catch(() => null);
     if (response.status === 429) throw new ApiError(429, networkMessages().tooMany);
-    throw new ApiError(response.status, extractMessage(errorBody, networkMessages().generic));
+    throw new ApiError(
+      response.status,
+      extractMessage(errorBody, networkMessages().generic),
+      (errorBody as NestErrorBody | null)?.code,
+      errorBody as Record<string, unknown> | undefined
+    );
   }
   return readEventStream<TDone>(response, onDelta);
 }
@@ -737,4 +749,25 @@ export function apiCreateEntreprise(payload: CreateEntreprisePayload) {
     method: "POST",
     body: JSON.stringify(payload),
   });
+}
+
+// ---------------------------------------------------------------------------
+// Abonnement
+// ---------------------------------------------------------------------------
+
+export function apiGetSubscription() {
+  return authenticatedRequest<BillingSubscription>("/api/backend/billing/subscription");
+}
+
+/** Démarre un paiement Chariow (ADMIN) ; l'offre n'est accordée qu'à la réception du Pulse de vente. */
+export function apiStartCheckout(payload: CheckoutPayload) {
+  return authenticatedRequest<CheckoutResult>("/api/backend/billing/checkout", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+/** Erreur 403 renvoyée quand une action dépasse les limites de l'offre en cours. */
+export function isPlanLimitError(error: unknown): error is ApiError {
+  return error instanceof ApiError && error.code === "PLAN_LIMIT";
 }

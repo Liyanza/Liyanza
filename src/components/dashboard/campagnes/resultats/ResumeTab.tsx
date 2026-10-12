@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { AlertTriangle, CheckCircle2, Lightbulb, Loader2, Sparkles } from "lucide-react";
 import { useFormat, useT } from "@/i18n/client";
-import { apiAnalyzeDigitalSimulation } from "@/lib/api/client";
+import { apiAnalyzeDigitalSimulation, isPlanLimitError } from "@/lib/api/client";
+import { PlanLimitNotice } from "@/components/dashboard/billing/PlanLimitNotice";
 import { BudgetDonutChart } from "./charts";
 import type { DigitalSimulationAnalysis, DigitalSimulationRecord } from "@/lib/api/types";
 
@@ -122,14 +123,17 @@ function GenerateAnalysis({
   const t = useT("dashCampaigns").results.resume;
   const [pending, setPending] = useState(false);
   const [failed, setFailed] = useState(false);
+  const [planError, setPlanError] = useState<unknown>(null);
 
   async function generate() {
     setPending(true);
     setFailed(false);
+    setPlanError(null);
     try {
       onSimulationChange(await apiAnalyzeDigitalSimulation(campaignId, simulation.id));
-    } catch {
-      setFailed(true);
+    } catch (error) {
+      if (isPlanLimitError(error)) setPlanError(error);
+      else setFailed(true);
     } finally {
       setPending(false);
     }
@@ -149,6 +153,7 @@ function GenerateAnalysis({
               {t.aiGenerateError}
             </p>
           )}
+          <PlanLimitNotice error={planError} className="mt-2" />
         </div>
       </div>
       <button

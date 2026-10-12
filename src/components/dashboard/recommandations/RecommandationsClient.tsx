@@ -8,7 +8,9 @@ import {
   apiListCampagnes,
   apiListRecommendations,
   ApiError,
+  isPlanLimitError,
 } from "@/lib/api/client";
+import { PlanLimitNotice } from "@/components/dashboard/billing/PlanLimitNotice";
 import type { CampagneRecord, CampaignRecommendation } from "@/lib/api/types";
 import { SkeletonPanel } from "@/components/dashboard/ui/Skeleton";
 import { RecommendationCard } from "@/components/dashboard/recommandations/RecommendationCard";
@@ -46,6 +48,7 @@ export function RecommandationsClient() {
   const [recommendations, setRecommendations] = useState<CampaignRecommendation[]>([]);
   const [recoLoading, setRecoLoading] = useState(false);
   const [recoError, setRecoError] = useState<string | null>(null);
+  const [planError, setPlanError] = useState<unknown>(null);
   const [generating, setGenerating] = useState(false);
 
   const fetchRecommendations = useCallback((campaignId: string) => {
@@ -95,13 +98,15 @@ export function RecommandationsClient() {
     const campaignId = selectedId;
     setGenerating(true);
     setRecoError(null);
+    setPlanError(null);
     apiGenerateRecommendations(campaignId)
       .then((result) => {
         // Réponse arrivée après un changement de campagne : on l'ignore.
         if (selectedRef.current === campaignId) setRecommendations(result);
       })
       .catch((error: unknown) => {
-        setRecoError(error instanceof ApiError ? error.message : t.generateError);
+        if (isPlanLimitError(error)) setPlanError(error);
+        else setRecoError(error instanceof ApiError ? error.message : t.generateError);
       })
       .finally(() => setGenerating(false));
   }
@@ -182,6 +187,7 @@ export function RecommandationsClient() {
                 </button>
               </div>
 
+              <PlanLimitNotice error={planError} />
               {recoError && (
                 <p role="alert" className="rounded-lg bg-red-50 px-4 py-2.5 text-sm font-medium text-red-600">
                   {recoError}

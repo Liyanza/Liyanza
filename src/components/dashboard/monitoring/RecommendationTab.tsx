@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { Lightbulb, Loader2, RefreshCw, Sparkles } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import { apiGenerateRecommendations, apiListRecommendations, ApiError } from "@/lib/api/client";
+import { apiGenerateRecommendations, apiListRecommendations, ApiError, isPlanLimitError } from "@/lib/api/client";
+import { PlanLimitNotice } from "@/components/dashboard/billing/PlanLimitNotice";
 import type { CampaignRecommendation } from "@/lib/api/types";
 import { RecommendationCard } from "@/components/dashboard/recommandations/RecommendationCard";
 import { SkeletonRows } from "@/components/dashboard/ui/Skeleton";
@@ -18,6 +19,7 @@ export function RecommendationTab({ campaignId }: { campaignId: string }) {
   const [items, setItems] = useState<CampaignRecommendation[] | null>(null);
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [planError, setPlanError] = useState<unknown>(null);
 
   useEffect(() => {
     if (!canUse) return;
@@ -34,9 +36,13 @@ export function RecommendationTab({ campaignId }: { campaignId: string }) {
   function generate() {
     setGenerating(true);
     setError(null);
+    setPlanError(null);
     apiGenerateRecommendations(campaignId)
       .then((result) => setItems(result))
-      .catch((err: unknown) => setError(err instanceof ApiError ? err.message : t.generateError))
+      .catch((err: unknown) => {
+        if (isPlanLimitError(err)) setPlanError(err);
+        else setError(err instanceof ApiError ? err.message : t.generateError);
+      })
       .finally(() => setGenerating(false));
   }
 
@@ -65,6 +71,7 @@ export function RecommendationTab({ campaignId }: { campaignId: string }) {
           {generating ? ti.generating : items.length > 0 ? t.regenerate : ti.generate}
         </button>
       </div>
+      <PlanLimitNotice error={planError} />
       {error && <p className="rounded-lg bg-red-50 px-4 py-2.5 text-sm font-medium text-red-600">{error}</p>}
       {generating ? (
         <div role="status" className="rounded-2xl border border-blue-500/20 bg-blue-500/5 p-8 text-center text-sm text-dash-body">
