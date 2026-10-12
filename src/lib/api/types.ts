@@ -717,6 +717,8 @@ export interface CheckoutPayload {
   plan: PaidPlanTier;
   period: BillingPeriod;
   phone: { number: string; countryCode: string };
+  /** Code de réduction de la boutique Chariow. */
+  discountCode?: string;
 }
 
 export interface CheckoutResult {
