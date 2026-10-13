@@ -246,6 +246,7 @@ const dashAccount = {
       campaigns: "L'offre gratuite permet {limit} campagne en cours à la fois.",
       members: "Votre offre permet {limit} membre(s) dans l'équipe.",
       copilot: "Vous avez utilisé vos {limit} questions au Copilot du jour.",
+      copilotDemo: "La démo est limitée à {limit} questions au Copilot par jour pour tous les visiteurs. Créez votre compte gratuit pour continuer.",
       aiAdvanced: "Cette fonction IA est réservée aux offres PRO et BUSINESS.",
       generic: "Cette action dépasse les limites de votre offre.",
       /** {plan} = offre requise. */

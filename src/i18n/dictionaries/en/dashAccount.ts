@@ -215,6 +215,7 @@ const dashAccount: typeof fr = {
       campaigns: "The free plan allows {limit} ongoing campaign at a time.",
       members: "Your plan allows {limit} team member(s).",
       copilot: "You have used your {limit} Copilot questions for today.",
+      copilotDemo: "The demo is limited to {limit} Copilot questions a day across all visitors. Create your free account to continue.",
       aiAdvanced: "This AI feature is reserved for the PRO and BUSINESS plans.",
       generic: "This action exceeds your plan's limits.",
       upgrade: "Upgrade to {plan}",

@@ -9,14 +9,19 @@ import { COPILOT_MAX_MESSAGE_LENGTH, useCopilot, type CopilotMessage } from "./C
 import { Link } from "@/i18n/navigation";
 import { fill } from "@/i18n/format";
 import { usePlan } from "@/context/PlanContext";
+import { useAuth } from "@/context/AuthContext";
 
 /** Quota de questions du jour atteint (offre gratuite) : lien vers les offres. */
 function CopilotQuotaMessage() {
   const t = useT("dashAccount").billing.limit;
   const { subscription } = usePlan();
+  const { user } = useAuth();
+  const limit = subscription?.limits.copilotDailyMessages ?? 5;
+  // Démo : quota partagé par tous les visiteurs, l'offre n'y change rien.
+  if (user?.demo) return <span>{fill(t.copilotDemo, { limit })}</span>;
   return (
     <span>
-      {fill(t.copilot, { limit: subscription?.limits.copilotDailyMessages ?? 5 })}{" "}
+      {fill(t.copilot, { limit })}{" "}
       <Link href="/dashboard/abonnement" className="font-semibold underline">
         {fill(t.upgrade, { plan: "PRO" })}
       </Link>
