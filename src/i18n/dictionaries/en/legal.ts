@@ -11,7 +11,7 @@ const legal: typeof fr = {
     eyebrow: "Legal",
     title: "Terms of use",
     intro: "The rules that govern access to and use of KIYANZA, for you and for us.",
-    date: "17 September 2026",
+    date: "13 October 2026",
   },
   privacy: {
     meta: {
@@ -21,7 +21,7 @@ const legal: typeof fr = {
     eyebrow: "Your data",
     title: "Privacy policy",
     intro: "How we collect, use and protect your personal data on KIYANZA.",
-    date: "17 September 2026",
+    date: "13 October 2026",
   },
   deletion: {
     meta: {

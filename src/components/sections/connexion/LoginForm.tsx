@@ -9,6 +9,7 @@ import { SocialButtons } from "@/components/auth/SocialButtons";
 import { OrDivider } from "@/components/auth/OrDivider";
 import { apiLogin, ApiError } from "@/lib/api/client";
 import { useT } from "@/i18n/client";
+import { DemoButton } from "@/components/demo/DemoButton";
 
 export function LoginForm() {
   const t = useT("auth");
@@ -119,6 +120,16 @@ export function LoginForm() {
             )}
           </button>
         </form>
+
+        <div className="flex flex-col items-center gap-2 rounded-xl bg-green-accent-dark/5 px-4 py-4 text-center">
+          <p className="text-sm text-[#52525b]">{t.login.demoPrompt}</p>
+          <DemoButton
+            label={t.login.demo}
+            loadingLabel={t.login.demoLoading}
+            errorLabel={t.login.demoError}
+            className="border-2 border-green-600 bg-white px-6 py-2.5 text-sm text-green-600 hover:bg-green-600/5"
+          />
+        </div>
       </div>
 
       <div className="mt-6 flex flex-col items-center gap-6 border-t border-[#f4f4f5] pt-6">

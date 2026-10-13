@@ -12,7 +12,7 @@ export const termsOfServiceSections = [
   { id: "contenu-utilisateur", title: "Votre contenu et vos données" },
   { id: "obligations", title: "Obligations et usage autorisé" },
   { id: "propriete-intellectuelle", title: "Propriété intellectuelle" },
-  { id: "tarifs", title: "Tarifs et facturation" },
+  { id: "tarifs", title: "Abonnements, paiement et remboursement" },
   { id: "disponibilite", title: "Disponibilité et évolutions du service" },
   { id: "responsabilite", title: "Limitation de responsabilité" },
   { id: "suspension", title: "Suspension et résiliation" },
@@ -223,15 +223,60 @@ export function TermsOfServiceContent() {
           </p>
         </LegalSection>
 
-        <LegalSection id="tarifs" title="10. Tarifs et facturation">
+        <LegalSection id="tarifs" title="10. Abonnements, paiement et remboursement">
           <p>
-            Les formules et tarifs du Service sont décrits sur notre page{" "}
-            <Link href="/tarifs">Tarifs</Link>. Sauf mention contraire, les prix
-            sont indiqués hors taxes et peuvent évoluer&nbsp;; toute
-            modification tarifaire sera communiquée aux Utilisateurs
-            concernés avant son entrée en vigueur pour les abonnements en
-            cours.
+            Le Service propose une offre gratuite (FREE) et des offres payantes
+            (PRO et BUSINESS), dont le contenu, les limites et les prix sont
+            décrits sur notre page <Link href="/tarifs">Tarifs</Link>. Les prix
+            sont indiqués en francs CFA (FCFA).
           </p>
+          <ul>
+            <li>
+              <strong>Essai gratuit.</strong> Chaque nouvelle entreprise bénéficie
+              de 14 jours de l&apos;offre PRO, sans moyen de paiement. À la fin de
+              l&apos;essai, le compte passe à l&apos;offre gratuite, sauf
+              souscription.
+            </li>
+            <li>
+              <strong>Souscription.</strong> Seul un administrateur de
+              l&apos;entreprise peut souscrire. L&apos;abonnement profite à tous
+              les membres de l&apos;entreprise.
+            </li>
+            <li>
+              <strong>Paiement.</strong> Le paiement est encaissé par notre
+              prestataire Chariow, par Mobile Money ou par carte. L&apos;offre est
+              activée dès la confirmation du paiement par Chariow.
+            </li>
+            <li>
+              <strong>Durée, sans renouvellement automatique.</strong> Un
+              abonnement couvre 1 mois ou 12 mois à compter de son activation. Il
+              n&apos;est jamais reconduit ni prélevé automatiquement&nbsp;: pour
+              continuer, vous achetez une nouvelle période, qui s&apos;ajoute à la
+              fin de la période en cours. Le passage de PRO à BUSINESS prend effet
+              immédiatement.
+            </li>
+            <li>
+              <strong>Fin d&apos;abonnement.</strong> À l&apos;échéance, le compte
+              repasse à l&apos;offre gratuite&nbsp;: vos données sont conservées,
+              seules les fonctions et limites de l&apos;offre gratuite
+              s&apos;appliquent.
+            </li>
+            <li>
+              <strong>Remboursement.</strong> L&apos;essai gratuit permet
+              d&apos;évaluer le Service avant tout achat&nbsp;: une période
+              commencée n&apos;est pas remboursable. Un paiement en double ou un
+              paiement débité sans que l&apos;offre ait été activée, à la suite
+              d&apos;une erreur technique de notre part, est remboursé
+              intégralement sur demande adressée à{" "}
+              <a href="mailto:contact@kiyanza.com">contact@kiyanza.com</a> dans les
+              30 jours suivant le paiement. Un abonnement remboursé est retiré.
+            </li>
+            <li>
+              <strong>Évolution des prix.</strong> Toute modification tarifaire est
+              annoncée avant son entrée en vigueur et ne s&apos;applique pas aux
+              périodes déjà payées.
+            </li>
+          </ul>
         </LegalSection>
 
         <LegalSection
@@ -290,20 +335,18 @@ export function TermsOfServiceContent() {
 
         <LegalSection id="droit-applicable" title="15. Droit applicable et litiges">
           <p>
-            Les présentes Conditions sont régies par le droit{" "}
-            <strong>droit applicable — au Cameroun</strong>. Tout litige
-            relatif à leur interprétation ou leur exécution relève de la
-            compétence exclusive des tribunaux{" "}
-            <strong>juridiction compétente — Cameroun</strong>, sauf
-            disposition d&apos;ordre public contraire.
+            Les présentes Conditions sont régies par le droit camerounais. En cas
+            de litige, nous vous invitons à nous contacter d&apos;abord afin de
+            rechercher une solution amiable. À défaut, le litige relève des
+            tribunaux camerounais compétents, sauf disposition d&apos;ordre public
+            contraire.
           </p>
         </LegalSection>
 
         <LegalSection id="contact" title="16. Contact">
           <p>
-            Pour toute question relative aux présentes Conditions, vous
-            pouvez nous contacter à l&apos;adresse&nbsp;:{" "}
-            <strong>adresse email de contact — contact@kiyanza.com</strong>.
+            Pour toute question relative aux présentes Conditions, écrivez-nous à{" "}
+            <a href="mailto:contact@kiyanza.com">contact@kiyanza.com</a>.
           </p>
         </LegalSection>
       </div>

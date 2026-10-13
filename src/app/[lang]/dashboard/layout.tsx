@@ -5,6 +5,7 @@ import { CopilotProvider } from "@/components/dashboard/copilot/CopilotProvider"
 import { CopilotPanel } from "@/components/dashboard/copilot/CopilotPanel";
 import { AuthProvider } from "@/context/AuthContext";
 import { PlanProvider } from "@/context/PlanContext";
+import { DemoBanner } from "@/components/demo/DemoBanner";
 import { MessagesProvider } from "@/i18n/client";
 import { getMessages } from "@/i18n/server";
 
@@ -35,7 +36,10 @@ export default async function DashboardLayout({ children }: { children: ReactNod
           <CopilotProvider>
             <div className="flex h-screen w-full overflow-hidden bg-white">
               <Sidebar />
-              <div className="flex min-w-0 flex-1 flex-col">{children}</div>
+              <div className="flex min-w-0 flex-1 flex-col">
+                <DemoBanner />
+                {children}
+              </div>
             </div>
             <CopilotPanel />
           </CopilotProvider>

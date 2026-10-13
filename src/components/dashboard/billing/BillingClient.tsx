@@ -11,6 +11,7 @@ import { apiStartCheckout, ApiError } from "@/lib/api/client";
 import type { BillingPeriod, BillingSubscription, PaidPlanTier } from "@/lib/api/types";
 import { useFormat, useT } from "@/i18n/client";
 import { fill } from "@/i18n/format";
+import { Link } from "@/i18n/navigation";
 
 const PAID_PLANS: PaidPlanTier[] = ["PRO", "BUSINESS"];
 const TIER_RANK = { FREE: 0, PRO: 1, BUSINESS: 2 } as const;
@@ -52,7 +53,9 @@ export function BillingClient({ returning }: { returning: boolean }) {
   const f = useFormat();
   const { user } = useAuth();
   const { subscription, refresh } = usePlan();
-  const isAdmin = user?.role === "ADMIN";
+  const isDemo = Boolean(user?.demo);
+  // La démo est en lecture seule : aucune souscription possible.
+  const isAdmin = user?.role === "ADMIN" && !isDemo;
   // Instant d'ouverture : sert aux jours d'essai restants et à reconnaître
   // l'achat qui vient d'être payé au retour de Chariow.
   const [openedAt] = useState(() => Date.now());
@@ -222,7 +225,7 @@ export function BillingClient({ returning }: { returning: boolean }) {
                 {!subscription.billingEnabled ? (
                   <p className="mt-4 text-xs text-dash-muted">{t.unavailable}</p>
                 ) : !isAdmin ? (
-                  <p className="mt-4 text-xs text-dash-muted">{t.adminOnly}</p>
+                  <p className="mt-4 text-xs text-dash-muted">{isDemo ? t.demo : t.adminOnly}</p>
                 ) : (
                   selected && (
                     <CheckoutForm
@@ -371,6 +374,13 @@ function CheckoutForm({
       <p className="mt-1 text-xs text-dash-muted">{t.discountHint}</p>
       <p className="mt-1 text-xs text-dash-muted">{t.stacking}</p>
       {error && <p className="mt-3 text-xs font-medium text-red-600">{error}</p>}
+      <p className="mt-3 text-xs text-dash-muted">
+        {t.termsStart}{" "}
+        <Link href="/conditions-utilisation#tarifs" className="font-semibold text-dash-heading underline">
+          {t.termsLink}
+        </Link>
+        .
+      </p>
       <div className="mt-4 flex flex-wrap items-center gap-2">
         <button
           type="submit"

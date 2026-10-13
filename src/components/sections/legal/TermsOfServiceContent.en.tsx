@@ -17,7 +17,7 @@ export const termsOfServiceSectionsEn = [
   { id: "contenu-utilisateur", title: "Your content and your data" },
   { id: "obligations", title: "Obligations and permitted use" },
   { id: "propriete-intellectuelle", title: "Intellectual property" },
-  { id: "tarifs", title: "Pricing and billing" },
+  { id: "tarifs", title: "Subscriptions, payment and refunds" },
   { id: "disponibilite", title: "Availability and changes to the service" },
   { id: "responsabilite", title: "Limitation of liability" },
   { id: "suspension", title: "Suspension and termination" },
@@ -155,13 +155,53 @@ export function TermsOfServiceContentEn() {
           </p>
         </LegalSection>
 
-        <LegalSection id="tarifs" title="10. Pricing and billing">
+        <LegalSection id="tarifs" title="10. Subscriptions, payment and refunds">
           <p>
-            The Service&apos;s plans and prices are described on our{" "}
-            <Link href="/tarifs">Pricing</Link> page. Unless otherwise stated, prices exclude taxes
-            and may change; any price change will be communicated to the Users concerned before it
-            takes effect for ongoing subscriptions.
+            The Service offers a free plan (FREE) and paid plans (PRO and
+            BUSINESS), whose content, limits and prices are described on our{" "}
+            <Link href="/tarifs">Pricing</Link> page. Prices are shown in CFA
+            francs (FCFA).
           </p>
+          <ul>
+            <li>
+              <strong>Free trial.</strong> Every new company gets 14 days of the PRO
+              plan, with no payment method. At the end of the trial, the account
+              moves to the free plan unless you subscribe.
+            </li>
+            <li>
+              <strong>Subscribing.</strong> Only a company administrator can
+              subscribe. The subscription benefits every member of the company.
+            </li>
+            <li>
+              <strong>Payment.</strong> Payment is collected by our provider
+              Chariow, by Mobile Money or card. The plan is activated as soon as
+              Chariow confirms the payment.
+            </li>
+            <li>
+              <strong>Term, no automatic renewal.</strong> A subscription covers 1
+              month or 12 months from its activation. It is never renewed or charged
+              automatically: to continue, you buy a new period, which is added after
+              the current one. Upgrading from PRO to BUSINESS takes effect
+              immediately.
+            </li>
+            <li>
+              <strong>End of subscription.</strong> When it expires, the account
+              returns to the free plan: your data is kept, only the features and
+              limits of the free plan apply.
+            </li>
+            <li>
+              <strong>Refunds.</strong> The free trial lets you evaluate the Service
+              before buying: a period that has started is not refundable. A double
+              payment, or a payment taken without the plan being activated because
+              of a technical error on our side, is refunded in full on request to{" "}
+              <a href="mailto:contact@kiyanza.com">contact@kiyanza.com</a> within 30
+              days of the payment. A refunded subscription is withdrawn.
+            </li>
+            <li>
+              <strong>Price changes.</strong> Any price change is announced before
+              it takes effect and does not apply to periods already paid for.
+            </li>
+          </ul>
         </LegalSection>
 
         <LegalSection id="disponibilite" title="11. Availability and changes to the service">
@@ -205,17 +245,17 @@ export function TermsOfServiceContentEn() {
 
         <LegalSection id="droit-applicable" title="15. Governing law and disputes">
           <p>
-            These Terms are governed by <strong>the law applicable in Cameroon</strong>. Any dispute
-            relating to their interpretation or performance falls under the exclusive jurisdiction of
-            the <strong>competent courts of Cameroon</strong>, unless mandatory public policy
-            provisions provide otherwise.
+            These Terms are governed by Cameroonian law. In the event of a dispute,
+            please contact us first so we can look for an amicable solution.
+            Failing that, the dispute falls under the competent Cameroonian courts,
+            unless mandatory public policy provisions provide otherwise.
           </p>
         </LegalSection>
 
         <LegalSection id="contact" title="16. Contact">
           <p>
-            For any question about these Terms, you can contact us at:{" "}
-            <strong>contact@kiyanza.com</strong>.
+            For any question about these Terms, write to us at{" "}
+            <a href="mailto:contact@kiyanza.com">contact@kiyanza.com</a>.
           </p>
         </LegalSection>
       </div>

@@ -62,6 +62,10 @@ const dash: typeof fr = {
     RADIO: "Radio",
     POSTER: "Outdoor",
   },
+  demo: {
+    banner: "Demo: you are exploring KIYANZA with a fictitious company, read-only.",
+    cta: "Create my free account",
+  },
   common: {
     loading: "Loading…",
     comingSoon: "Coming soon",

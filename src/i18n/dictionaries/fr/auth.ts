@@ -66,6 +66,10 @@ const auth = {
     forgot: "Mot de passe oublié ?",
     legalStart: "En vous connectant, vous acceptez nos",
     legalAnd: "et notre",
+    demoPrompt: "Envie de voir avant de vous inscrire ?",
+    demo: "Explorer la démo",
+    demoLoading: "Ouverture de la démo…",
+    demoError: "La démo est momentanément indisponible.",
   },
   signup: {
     title: "Créer un compte",

@@ -13,6 +13,9 @@ const home = {
     text: "KIYANZA centralise la création, le monitoring et l'optimisation de vos campagnes marketing. Prenez de meilleures décisions, plus vite.",
     ctaPrimary: "Commencer gratuitement",
     ctaSecondary: "Voir les fonctionnalités",
+    ctaDemo: "Voir la démo",
+    demoLoading: "Ouverture de la démo…",
+    demoError: "La démo est momentanément indisponible.",
     trust: ["Aucune carte requise", "Annulation à tout moment", "IA incluse"],
     imageAlt:
       "Une professionnelle du marketing souriante, ordinateur portable à la main, prête à piloter ses campagnes avec KIYANZA",
