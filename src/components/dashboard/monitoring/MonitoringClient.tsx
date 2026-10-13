@@ -41,7 +41,13 @@ export function MonitoringClient() {
     apiListCampagnes({ type: "RADIO", limit: 100 }).then(
       (result) => {
         setCampaigns(result.items);
-        if (result.items.length > 0) setSelectedId(result.items[0].id);
+        // Par défaut, la campagne en cours (sinon planifiée) : c'est celle
+        // dont les diffusions bougent, plutôt qu'un brouillon encore vide.
+        const preferred =
+          result.items.find((c) => c.status === "IN_PROGRESS") ??
+          result.items.find((c) => c.status === "PLANNED") ??
+          result.items[0];
+        if (preferred) setSelectedId(preferred.id);
         setCampaignsLoading(false);
       },
       (error: unknown) => {
