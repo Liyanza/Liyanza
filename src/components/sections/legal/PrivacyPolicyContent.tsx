@@ -159,29 +159,46 @@ export function PrivacyPolicyContent() {
 
         <LegalSection id="partage" title="6. Avec qui nous partageons vos données">
           <p>
-            Nous ne vendons jamais vos données personnelles. Elles peuvent
-            être partagées, dans la stricte mesure nécessaire, avec&nbsp;:
+            Nous ne vendons jamais vos données personnelles. Elles sont
+            partagées, dans la stricte mesure nécessaire, avec&nbsp;:
           </p>
           <ul>
             <li>
-              nos <strong>sous-traitants techniques</strong>&nbsp;: hébergeur
-              de l&apos;application et de la base de données, prestataire de
-              stockage des médias, prestataire d&apos;envoi d&apos;emails
-              transactionnels&nbsp;;
+              nos <strong>sous-traitants techniques</strong>&nbsp;:{" "}
+              <strong>Amazon Web Services</strong> (hébergement de l&apos;API, de
+              la base de données, de l&apos;assistant IA et des sauvegardes, sur
+              des serveurs situés à Paris, France), <strong>Vercel</strong>{" "}
+              (hébergement du site web), <strong>Brevo</strong> (envoi des emails
+              transactionnels)&nbsp;;
+            </li>
+            <li>
+              <strong>Google</strong> (modèles d&apos;IA Gemini)&nbsp;: les
+              questions posées à l&apos;assistant et les données de campagne
+              nécessaires à la réponse lui sont transmises pour générer les
+              analyses et recommandations&nbsp;;
+            </li>
+            <li>
+              <strong>Chariow</strong>, notre prestataire de paiement&nbsp;: lors
+              d&apos;un abonnement, vos nom, email et numéro de téléphone lui sont
+              transmis. Le paiement (Mobile Money ou carte) a lieu sur sa page
+              sécurisée&nbsp;: nous ne recevons jamais vos données de carte ni vos
+              codes Mobile Money&nbsp;;
+            </li>
+            <li>
+              <strong>OpenStreetMap (Nominatim)</strong>, pour transformer en
+              coordonnées les adresses que vous recherchez sur la carte&nbsp;;
             </li>
             <li>
               <strong>Google</strong> et <strong>Meta (Facebook/Instagram)</strong>,
               dans le cadre strict de l&apos;authentification et, si vous
-              l&apos;activez, de la diffusion de vos campagnes digitales sur
-              vos propres comptes&nbsp;;
+              connectez vos pages, de la lecture de leurs statistiques&nbsp;;
             </li>
             <li>
-              les <strong>autres utilisateurs de votre entreprise</strong>,
-              dans la limite de leur rôle et niveau d&apos;accès&nbsp;;
+              les <strong>autres utilisateurs de votre entreprise</strong>, dans
+              la limite de leur rôle et niveau d&apos;accès&nbsp;;
             </li>
             <li>
-              toute <strong>autorité compétente</strong>, si la loi nous y
-              oblige.
+              toute <strong>autorité compétente</strong>, si la loi nous y oblige.
             </li>
           </ul>
         </LegalSection>
@@ -191,24 +208,40 @@ export function PrivacyPolicyContent() {
           title="7. Transferts de données hors de votre pays"
         >
           <p>
-            Certains de nos prestataires (hébergement, stockage, envoi
-            d&apos;emails, fournisseurs d&apos;authentification Google/Meta)
-            peuvent traiter des données en dehors de votre pays de
-            résidence. Lorsque c&apos;est le cas, nous veillons à ce que ces
-            transferts bénéficient de garanties appropriées (clauses
-            contractuelles types ou équivalent).
+            Vos données sont hébergées principalement en France (Amazon Web
+            Services, région de Paris). Certains prestataires (Vercel, Google,
+            Meta, Brevo, Chariow) peuvent les traiter dans d&apos;autres pays,
+            notamment aux États-Unis ou dans l&apos;Union européenne.
+          </p>
+          <p>
+            Ces transferts sont encadrés par les engagements contractuels de
+            protection des données de ces prestataires et, pour les utilisateurs
+            situés au Cameroun, effectués dans le respect de la loi
+            n°&nbsp;2024/017 du 23 décembre 2024 relative à la protection des
+            données à caractère personnel.
           </p>
         </LegalSection>
 
         <LegalSection id="duree-conservation" title="8. Durée de conservation">
-          <p>
-            Vos données de compte sont conservées tant que votre compte est
-            actif, puis archivées ou supprimées dans un délai raisonnable
-            après sa clôture, sous réserve des durées de conservation
-            imposées par la loi (par exemple à des fins comptables).
-            Les journaux techniques sont conservés pour une durée limitée
-            nécessaire à la sécurité du Service.
-          </p>
+          <ul>
+            <li>
+              Données de compte et de campagnes&nbsp;: tant que votre compte est
+              actif, puis supprimées dans les 3 mois suivant sa clôture.
+            </li>
+            <li>
+              Sauvegardes de la base de données&nbsp;: 30 jours, puis effacées
+              automatiquement.
+            </li>
+            <li>
+              Historique des paiements et abonnements&nbsp;: 10 ans, durée de
+              conservation des pièces comptables prévue par l&apos;Acte uniforme
+              OHADA relatif au droit comptable.
+            </li>
+            <li>
+              Journaux techniques&nbsp;: durée limitée nécessaire à la sécurité
+              du Service.
+            </li>
+          </ul>
         </LegalSection>
 
         <LegalSection id="securite" title="9. Sécurité de vos données">
@@ -236,10 +269,10 @@ export function PrivacyPolicyContent() {
 
         <LegalSection id="droits" title="11. Vos droits">
           <p>
-            Conformément à la réglementation applicable en matière de
-            protection des données (notamment le RGPD si vous résidez dans
-            l&apos;Union européenne), vous disposez des droits
-            suivants&nbsp;:
+            Conformément à la loi camerounaise n°&nbsp;2024/017 du 23 décembre
+            2024 relative à la protection des données à caractère personnel (et
+            au RGPD si vous résidez dans l&apos;Union européenne), vous disposez
+            des droits suivants&nbsp;:
           </p>
           <ul>
             <li>droit d&apos;accès à vos données&nbsp;;</li>
@@ -258,14 +291,13 @@ export function PrivacyPolicyContent() {
             </li>
           </ul>
           <p>
-            Pour exercer ces droits, contactez-nous à l&apos;adresse indiquée
-            en section «&nbsp;Contact&nbsp;». Vous disposez également du
-            droit d&apos;introduire une réclamation auprès de l&apos;autorité
-            de protection des données compétente{" "}
-            <strong>
-              autorité de contrôle compétente — APDP
-            </strong>
-            .
+            Pour exercer ces droits, contactez-nous à l&apos;adresse indiquée en
+            section «&nbsp;Contact&nbsp;»&nbsp;; nous répondons dans un délai
+            d&apos;un mois. Vous pouvez également introduire une réclamation
+            auprès de l&apos;Autorité de protection des données à caractère
+            personnel (APDP) du Cameroun ou, si vous résidez dans l&apos;Union
+            européenne, auprès de l&apos;autorité de protection des données de
+            votre pays.
           </p>
         </LegalSection>
 
@@ -288,9 +320,9 @@ export function PrivacyPolicyContent() {
 
         <LegalSection id="contact" title="14. Contact et réclamations">
           <p>
-            Pour toute question relative à cette Politique ou pour exercer
-            vos droits, contactez-nous à l&apos;adresse&nbsp;:{" "}
-            <strong>adresse email de contact — contact@kiyanza.com</strong>.
+            Pour toute question relative à cette Politique ou pour exercer vos
+            droits, écrivez-nous à{" "}
+            <a href="mailto:contact@kiyanza.com">contact@kiyanza.com</a>.
           </p>
         </LegalSection>
       </div>

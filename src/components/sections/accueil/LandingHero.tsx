@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { FloatingStat, StatLine } from "@/components/ui/FloatingStat";
 import { HeroIntro } from "@/components/motion/HeroIntro";
 import { getMessages } from "@/i18n/server";
+import { DemoButton } from "@/components/demo/DemoButton";
 
 export async function LandingHero() {
   const t = (await getMessages("home")).hero;
@@ -44,14 +45,12 @@ export async function LandingHero() {
               >
                 {t.ctaPrimary}
               </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                href="/#fonctionnalites"
-                className="!border-green-600 !text-green-600 hover:!bg-green-600/5"
-              >
-                {t.ctaSecondary}
-              </Button>
+              <DemoButton
+                label={t.ctaDemo}
+                loadingLabel={t.demoLoading}
+                errorLabel={t.demoError}
+                className="border-2 border-green-600 bg-transparent px-8 py-4 text-sm text-green-600 hover:bg-green-600/5"
+              />
             </div>
 
             <ul data-intro="meta" className="mt-10 flex flex-wrap gap-x-6 gap-y-3">

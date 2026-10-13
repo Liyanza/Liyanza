@@ -28,6 +28,8 @@ export interface AuthenticatedIdentity {
   email: string;
   role: Role;
   companyId: string | null;
+  /** Session de l'entreprise de démonstration (lecture seule). */
+  demo?: boolean;
 }
 
 /** Profil d'affichage uniquement (prénom/nom) — jamais utilisé pour une décision d'autorisation. */

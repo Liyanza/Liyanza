@@ -61,6 +61,8 @@ interface CopilotContextValue {
 
   /** Incrémenté quand l'historique change (création, renommage, suppression). */
   historyVersion: number;
+  /** Conversations ouvertes dans cet onglet (la démo ne montre que celles-ci). */
+  ownConversationIds: string[];
   refreshHistory: () => void;
 }
 
@@ -80,6 +82,7 @@ export function CopilotProvider({ children }: { children: ReactNode }) {
   const [pending, setPending] = useState(false);
   const [notice, setNotice] = useState<CopilotNotice>(null);
   const [historyVersion, setHistoryVersion] = useState(0);
+  const [ownConversationIds, setOwnConversationIds] = useState<string[]>([]);
 
   // Conversation « active » au moment où une réponse arrive : une réponse
   // qui revient après que l'utilisateur a changé de conversation est ignorée.
@@ -133,6 +136,7 @@ export function CopilotProvider({ children }: { children: ReactNode }) {
         if (!id) {
           const conversation = await apiCreateConversation(content.slice(0, TOPIC_MAX_LENGTH));
           id = conversation.id;
+          setOwnConversationIds((ids) => [...ids, conversation.id]);
           activeRef.current = id;
           setConversationId(id);
           setHistoryVersion((v) => v + 1);
@@ -264,6 +268,7 @@ export function CopilotProvider({ children }: { children: ReactNode }) {
       setFeedback,
       historyVersion,
       refreshHistory,
+      ownConversationIds,
     }),
     [
       enabled,
@@ -284,6 +289,7 @@ export function CopilotProvider({ children }: { children: ReactNode }) {
       setFeedback,
       historyVersion,
       refreshHistory,
+      ownConversationIds,
     ]
   );
 

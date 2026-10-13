@@ -224,6 +224,9 @@ const dashAccount = {
     cancel: "Annuler",
     checkoutError: "Le paiement n'a pas pu démarrer. Réessayez dans un instant.",
     stacking: "Une offre déjà en cours n'est pas perdue : la nouvelle période s'ajoute à sa suite.",
+    demo: "Démo : la souscription est désactivée. Créez votre compte pour bénéficier de 14 jours d'essai PRO.",
+    termsStart: "En payant, vous acceptez les",
+    termsLink: "conditions d'abonnement et de remboursement",
     adminOnly: "Seul un administrateur de l'entreprise peut souscrire ou prolonger une offre.",
     unavailable: "Le paiement en ligne n'est pas encore ouvert. Écrivez-nous pour souscrire.",
     returnPending: "Paiement en cours de confirmation par Chariow…",
@@ -243,6 +246,7 @@ const dashAccount = {
       campaigns: "L'offre gratuite permet {limit} campagne en cours à la fois.",
       members: "Votre offre permet {limit} membre(s) dans l'équipe.",
       copilot: "Vous avez utilisé vos {limit} questions au Copilot du jour.",
+      copilotDemo: "La démo est limitée à {limit} questions au Copilot par jour pour tous les visiteurs. Créez votre compte gratuit pour continuer.",
       aiAdvanced: "Cette fonction IA est réservée aux offres PRO et BUSINESS.",
       generic: "Cette action dépasse les limites de votre offre.",
       /** {plan} = offre requise. */

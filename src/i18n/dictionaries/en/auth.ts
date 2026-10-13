@@ -67,6 +67,10 @@ const auth: typeof fr = {
     forgot: "Forgot password?",
     legalStart: "By logging in, you accept our",
     legalAnd: "and our",
+    demoPrompt: "Want to look around before signing up?",
+    demo: "Explore the demo",
+    demoLoading: "Opening the demo…",
+    demoError: "The demo is temporarily unavailable.",
   },
   signup: {
     title: "Create an account",

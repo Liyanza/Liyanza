@@ -13,7 +13,7 @@ const legal = {
     eyebrow: "Cadre légal",
     title: "Conditions d'utilisation",
     intro: "Les règles qui encadrent l'accès et l'utilisation de KIYANZA, pour vous comme pour nous.",
-    date: "17 septembre 2026",
+    date: "13 octobre 2026",
   },
   privacy: {
     meta: {
@@ -23,7 +23,7 @@ const legal = {
     eyebrow: "Vos données",
     title: "Politique de confidentialité",
     intro: "Comment nous collectons, utilisons et protégeons vos données à caractère personnel sur KIYANZA.",
-    date: "17 septembre 2026",
+    date: "13 octobre 2026",
   },
   deletion: {
     meta: {

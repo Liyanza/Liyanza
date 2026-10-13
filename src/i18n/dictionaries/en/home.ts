@@ -14,6 +14,9 @@ const home: typeof fr = {
     text: "KIYANZA brings together the creation, monitoring and optimisation of your marketing campaigns. Make better decisions, faster.",
     ctaPrimary: "Get started for free",
     ctaSecondary: "See the features",
+    ctaDemo: "See the demo",
+    demoLoading: "Opening the demo…",
+    demoError: "The demo is temporarily unavailable.",
     trust: ["No card required", "Cancel anytime", "AI included"],
     imageAlt:
       "A smiling marketing professional, laptop in hand, ready to run her campaigns with KIYANZA",

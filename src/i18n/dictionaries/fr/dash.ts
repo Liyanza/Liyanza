@@ -66,6 +66,10 @@ const dash = {
     RADIO: "Radio",
     POSTER: "Affichage",
   },
+  demo: {
+    banner: "Démo : vous explorez KIYANZA avec une entreprise fictive, en lecture seule.",
+    cta: "Créer mon compte gratuit",
+  },
   common: {
     loading: "Chargement…",
     comingSoon: "Bientôt disponible",

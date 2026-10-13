@@ -5,6 +5,7 @@ import { Check, MessagesSquare, Pencil, SquarePen, Trash2, X } from "lucide-reac
 import { TopBar } from "@/components/dashboard/layout/TopBar";
 import { useLocale, useT } from "@/i18n/client";
 import { apiDeleteConversation, apiListConversations, apiRenameConversation } from "@/lib/api/client";
+import { useAuth } from "@/context/AuthContext";
 import type { AiConversationSummary } from "@/lib/api/types";
 import { CopilotChat } from "./CopilotChat";
 import { useCopilot } from "./CopilotProvider";
@@ -44,8 +45,12 @@ export function AssistantPageClient() {
 function HistoryList() {
   const t = useT("dash").copilot;
   const locale = useLocale();
-  const { conversationId, selectConversation, historyVersion, refreshHistory } = useCopilot();
-  const [items, setItems] = useState<AiConversationSummary[] | null>(null);
+  const { conversationId, selectConversation, historyVersion, refreshHistory, ownConversationIds } = useCopilot();
+  const { user } = useAuth();
+  const [allItems, setItems] = useState<AiConversationSummary[] | null>(null);
+  // Démo : tous les visiteurs partagent un même compte ; chacun ne voit que
+  // les conversations ouvertes dans son propre onglet.
+  const items = user?.demo && allItems ? allItems.filter((item) => ownConversationIds.includes(item.id)) : allItems;
   const [failed, setFailed] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [draft, setDraft] = useState("");

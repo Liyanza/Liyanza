@@ -120,43 +120,81 @@ export function PrivacyPolicyContentEn() {
 
         <LegalSection id="partage" title="6. Who we share your data with">
           <p>
-            We never sell your personal data. It may be shared, only to the extent strictly necessary,
-            with:
+            We never sell your personal data. It is shared, only as far as
+            necessary, with:
           </p>
           <ul>
             <li>
-              our <strong>technical processors</strong>: application and database hosting provider,
-              media storage provider, transactional email provider;
+              our <strong>technical processors</strong>:{" "}
+              <strong>Amazon Web Services</strong> (hosting of the API, database,
+              AI assistant and backups, on servers located in Paris, France),{" "}
+              <strong>Vercel</strong> (website hosting), <strong>Brevo</strong>{" "}
+              (transactional emails);
             </li>
             <li>
-              <strong>Google</strong> and <strong>Meta (Facebook/Instagram)</strong>, strictly for
-              authentication and, if you enable it, for running your digital campaigns on your own
-              accounts;
+              <strong>Google</strong> (Gemini AI models): the questions you ask the
+              assistant and the campaign data needed to answer are sent to it to
+              generate analyses and recommendations;
             </li>
             <li>
-              <strong>other users in your company</strong>, within the limits of their role and access
-              level;
+              <strong>Chariow</strong>, our payment provider: when you subscribe,
+              your name, email and phone number are sent to it. Payment (Mobile
+              Money or card) happens on its secure page: we never receive your card
+              details or Mobile Money codes;
             </li>
-            <li>any <strong>competent authority</strong>, where required by law.</li>
+            <li>
+              <strong>OpenStreetMap (Nominatim)</strong>, to turn the addresses you
+              search on the map into coordinates;
+            </li>
+            <li>
+              <strong>Google</strong> and <strong>Meta (Facebook/Instagram)</strong>,
+              strictly for sign-in and, if you connect your pages, to read their
+              statistics;
+            </li>
+            <li>
+              the <strong>other users of your company</strong>, within the limits
+              of their role and access level;
+            </li>
+            <li>
+              any <strong>competent authority</strong>, where the law requires it.
+            </li>
           </ul>
         </LegalSection>
 
-        <LegalSection id="transferts" title="7. Data transfers outside your country">
+        <LegalSection
+          id="transferts"
+          title="7. Transfers of data outside your country"
+        >
           <p>
-            Some of our providers (hosting, storage, email delivery, Google/Meta authentication
-            providers) may process data outside your country of residence. Where this is the case, we
-            ensure that such transfers are covered by appropriate safeguards (standard contractual
-            clauses or equivalent).
+            Your data is mainly hosted in France (Amazon Web Services, Paris
+            region). Some providers (Vercel, Google, Meta, Brevo, Chariow) may
+            process it in other countries, notably in the United States or the
+            European Union.
+          </p>
+          <p>
+            These transfers are covered by these providers&apos; contractual data
+            protection commitments and, for users located in Cameroon, carried out
+            in compliance with Law No.&nbsp;2024/017 of 23 December 2024 on the
+            protection of personal data.
           </p>
         </LegalSection>
 
         <LegalSection id="duree-conservation" title="8. Retention period">
-          <p>
-            Your account data is kept for as long as your account is active, then archived or deleted
-            within a reasonable period after it is closed, subject to retention periods required by law
-            (for example for accounting purposes). Technical logs are kept for a limited period
-            necessary for the security of the Service.
-          </p>
+          <ul>
+            <li>
+              Account and campaign data: as long as your account is active, then
+              deleted within 3 months of its closure.
+            </li>
+            <li>Database backups: 30 days, then deleted automatically.</li>
+            <li>
+              Payment and subscription history: 10 years, the retention period for
+              accounting records set by the OHADA Uniform Act on accounting law.
+            </li>
+            <li>
+              Technical logs: a limited period necessary for the security of the
+              Service.
+            </li>
+          </ul>
         </LegalSection>
 
         <LegalSection id="securite" title="9. Security of your data">
@@ -179,21 +217,27 @@ export function PrivacyPolicyContentEn() {
 
         <LegalSection id="droits" title="11. Your rights">
           <p>
-            In accordance with applicable data protection regulations (including the GDPR if you live
-            in the European Union), you have the following rights:
+            Under Cameroonian Law No.&nbsp;2024/017 of 23 December 2024 on the
+            protection of personal data (and the GDPR if you live in the European
+            Union), you have the following rights:
           </p>
           <ul>
-            <li>the right to access your data;</li>
-            <li>the right to rectify inaccurate data;</li>
-            <li>the right to erasure (&ldquo;right to be forgotten&rdquo;);</li>
-            <li>the right to data portability;</li>
-            <li>the right to object to and restrict certain processing;</li>
-            <li>the right to withdraw your consent at any time, where processing is based on it.</li>
+            <li>right of access to your data;</li>
+            <li>right to rectify inaccurate data;</li>
+            <li>right to erasure (&quot;right to be forgotten&quot;);</li>
+            <li>right to data portability;</li>
+            <li>right to object to and restrict certain processing;</li>
+            <li>
+              right to withdraw your consent at any time, where processing is based
+              on it.
+            </li>
           </ul>
           <p>
-            To exercise these rights, contact us at the address given in the &ldquo;Contact&rdquo;
-            section. You also have the right to lodge a complaint with the competent data protection
-            authority (<strong>competent supervisory authority — APDP</strong>).
+            To exercise these rights, contact us at the address given in the
+            &quot;Contact&quot; section; we answer within one month. You may also
+            lodge a complaint with Cameroon&apos;s personal data protection
+            authority (APDP) or, if you live in the European Union, with your
+            country&apos;s data protection authority.
           </p>
         </LegalSection>
 
@@ -213,8 +257,8 @@ export function PrivacyPolicyContentEn() {
 
         <LegalSection id="contact" title="14. Contact and complaints">
           <p>
-            For any question about this Policy or to exercise your rights, contact us at:{" "}
-            <strong>contact@kiyanza.com</strong>.
+            For any question about this Policy or to exercise your rights, write to
+            us at <a href="mailto:contact@kiyanza.com">contact@kiyanza.com</a>.
           </p>
         </LegalSection>
       </div>

@@ -83,6 +83,8 @@ interface NestErrorBody {
 
 function extractMessage(body: unknown, fallback: string): string {
   const nestBody = body as NestErrorBody | null;
+  // Démo en lecture seule : message localisé plutôt que celui du backend.
+  if (nestBody?.code === "DEMO_READ_ONLY") return networkMessages().demoReadOnly;
   if (nestBody?.message) {
     return Array.isArray(nestBody.message) ? nestBody.message.join(" ") : nestBody.message;
   }
@@ -96,11 +98,13 @@ const NETWORK_MESSAGES = {
   fr: {
     offline: "Impossible de contacter le serveur. Vérifiez votre connexion.",
     tooMany: "Trop de tentatives. Réessayez dans une minute.",
+    demoReadOnly: "Mode démo : cette action est désactivée. Créez votre compte gratuit pour l'utiliser.",
     generic: "Une erreur est survenue.",
   },
   en: {
     offline: "Unable to reach the server. Check your connection.",
     tooMany: "Too many attempts. Try again in a minute.",
+    demoReadOnly: "Demo mode: this action is disabled. Create your free account to use it.",
     generic: "Something went wrong.",
   },
 };
@@ -242,6 +246,11 @@ export function apiLogin(email: string, password: string) {
     method: "POST",
     body: JSON.stringify({ email, password }),
   });
+}
+
+/** Session sur l'entreprise de démonstration (lecture seule). */
+export function apiStartDemo() {
+  return request<{ user: LoginUser }>("/api/auth/demo", { method: "POST" });
 }
 
 export function apiLogout() {
